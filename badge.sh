@@ -2,17 +2,21 @@
 
 # Eslint badge
 
-file="eslint_frontend_report.txt"
-file+="eslint_backend_report.txt"
+files=$(find . -name "eslint*.txt")
 
-NBERR=$(grep -e "^ERROR" $file | wc -l)
-NBWARN=$(grep -e "^WARNING" $file | wc -l)
+NBERR=0
+NBWARN=0
+
+for file in $files; do
+    NBERR=$((NBERR + $(grep -e "^ERROR" $file | wc -l)))
+    NBWARN+=$((NBWARN + $(grep -e "^WARNING" $file | wc -l)))
+done
+
 color="green"
-if [[ $NBERR > 0 ]]
-then 
+if [[ $NBERR > 0 ]]; then
     color="red"
-    else if [[ $NBWARN > 0 ]]
-    then 
+else
+    if [[ $NBWARN > 0 ]]; then
         color="orange"
     fi
 fi
@@ -22,8 +26,7 @@ anybadge -o -l "eslint" -v "$NBERR $NBWARN" -c "$color" -f "eslint.svg"
 
 file="cypress_report.txt"
 grep -e "All specs passed!" $file
-if [[ $? -eq 0 ]]
-then
+if [[ $? -eq 0 ]]; then
     color="green"
 else
     color="red"

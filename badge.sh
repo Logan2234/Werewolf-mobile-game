@@ -8,8 +8,8 @@ NBERR=0
 NBWARN=0
 
 for file in $files; do
-    NBERR=$((NBERR + $(grep -e "^ERROR" $file | wc -l)))
-    NBWARN+=$((NBWARN + $(grep -e "^WARNING" $file | wc -l)))
+    NBERR=$((NBERR + `grep -e "^ERROR" $file | wc -l`))
+    NBWARN=$((NBWARN + `grep -e "^WARNING" $file | wc -l`))
 done
 
 color="green"

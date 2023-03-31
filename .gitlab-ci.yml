@@ -44,10 +44,10 @@ jest:
     artifacts:
         when: always
         paths:
-            - ../jest_report.txt
+            - jest_report.txt
         reports:
             junit:
-                - junit.xml
+                - backend/junit.xml
 
 jobcypress:
     stage: test
@@ -62,7 +62,7 @@ jobcypress:
         - kill -9 $(ps | grep node | awk '{print $1}') # Cette ligne pourrait permettre de tuer serve
     artifacts:
         paths:
-            - ../cypress_report.txt
+            - cypress_report.txt
 
 badge_creation: # Étape de création des badges
     stage: badges

@@ -40,11 +40,11 @@ jest:
     script:
         - cd backend
         - npm i
-        - npx jest --ci --reporters=default --reporters=jest-junit --passWithNoTests > jest_report.txt
+        - npx jest --ci --reporters=default --reporters=jest-junit --passWithNoTests > ../jest_report.txt
     artifacts:
         when: always
         paths:
-            - jest_report.txt
+            - ../jest_report.txt
         reports:
             junit:
                 - junit.xml
@@ -58,11 +58,11 @@ jobcypress:
         - cd frontend
         - npm i # Installe ce qui est décrit dans package.json
         - npx serve &
-        - npx cypress run > cypress_report.txt # Lance les tests
+        - npx cypress run > ../cypress_report.txt # Lance les tests
         - kill -9 $(ps | grep node | awk '{print $1}') # Cette ligne pourrait permettre de tuer serve
     artifacts:
         paths:
-            - cypress_report.txt
+            - ../cypress_report.txt
 
 badge_creation: # Étape de création des badges
     stage: badges

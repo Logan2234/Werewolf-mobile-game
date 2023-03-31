@@ -1,8 +1,9 @@
-//maPremiereAppli/cypress/e2e/spec.cy.js
+//frontend/cypress/e2e/spec.cy.js
 describe('template spec', () => {
     it('passes', () => {
         cy.visit('http://localhost:5000');
-        cy.get('#emailInput').clear().type('Sebastien.Viardot@grenoble-inp.fr');
+        cy.get('#emailInput').clear();
+        cy.get('#emailInput').type('Sebastien.Viardot@grenoble-inp.fr');
         cy.get('#connect').click();
         cy.contains('C\'est mon bonjour n° 0');
         cy.contains('Re Bonjour?').click();

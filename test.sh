@@ -4,7 +4,7 @@
     cd backend
     npm install
     npm run start &
-    cd ../maPremiereAppli
+    cd ../frontend
     npx expo export:web
     cd web-build
     npx serve &

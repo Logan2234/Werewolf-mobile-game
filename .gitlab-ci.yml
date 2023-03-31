@@ -1,0 +1,102 @@
+# La page est disponible au lien suivant:
+# TODO: Mettre le lien de la page
+
+stages:
+  - lint # Pour la vérification statique du code
+  - test # Test avec cypress et supertest / Jest
+  - badges # Création des badges
+  - deploy # Fabrication de l'application
+
+lintjs: # Vérification de la qualité du code JS
+  stage: lint
+  image: node
+  script:
+    - npm install eslint
+    - npm install eslint-config-standard
+    - npm install eslint-plugin-cypress
+    - npm install eslint-plugin-react
+    - npm install eslint-plugin-jest
+    - npx eslint --config frontend/.eslintrc.js `find ./frontend/ -name "*.js" -not -path "./frontend/node_modules/*` > eslint_frontend_report.txt
+    - npx eslint --config backend/.eslintrc.js `find ./backend/ -name "*.js" -not -path "./backend/node_modules/*` > eslint_backend_report.txt
+  artifacts:
+    paths:
+      - eslint_frontend_report.txt
+      - eslint_backend_report.txt
+
+# jest:
+#   stage: test
+#   image: node # L'image de départ dispose des outils node
+#   script:
+#     - cd backend
+#     - npm i # Installe ce qui est décrit dans package.json
+#     - npm run test 2> jest_report.txt # Lance les tests
+#   artifacts:
+#     paths:
+#       - jest_report.txt
+
+# jobcypress:
+#   stage: test
+#   tags:
+#     - docker  # Comme on utilise une image pour isoler on doit utiliser un runner docker 
+#   image: cypress/base:16.18.1 # Image fournie par cypress avec ce qu'il faut  
+#   script:
+#     - cd frontend
+#     - npm i # Installe ce qui est décrit dans package.json
+#     - npx serve &
+#     - npx cypress run > cypress_report.txt # Lance les tests
+#     # - kill -9 $(ps | grep node | awk '{print $1}') # Cette ligne pourrait permettre de tuer serve
+#   artifacts:
+#     paths:
+#       - cypress_report.txt
+
+badge_creation: # Étape de création des badges
+  stage: badges
+  image: python # On utilise python pour cela
+  script:
+    - pip install anybadge # package anybadge pour créer les .svg
+    - ./badge.sh # script permettant la création d'un fichier svg par fichier js (il y en a 2 ça va)
+  artifacts:
+    paths:
+      - eslint.svg
+      - test.svg
+  dependencies:
+    - lintjs
+    - jest
+    - jobcypress
+
+# Job pour exposer l'API sur Scalingo
+# URL d'exposition de l'API : https://tp-web-ensimag.osc-fr1.scalingo.io
+# scalingo:
+#   stage: deploy
+#   rules:
+#     - when: always
+#   tags:
+#     - docker
+#   variables:
+#     # SCALINGO_API_TOKEN # variable à ne pas définir en clair ici (cf instructions à la fin du .gitlab-ci.yml ci-dessous)
+#     SCALINGO_APP_NAME: tp-web-ensimag # le nom de votre appli chez scalingo
+#     SCALINGO_REGION: osc-fr1 # l'instance de scalingo sur laquelle votre appli est déployée
+#     GIT_DEPTH: 0
+#     PROJECT_DIR: backendsqlite # Le répertoire dans le dépôt où est le backend
+#   image: ruby:3.1.3 # car dpl est codé en Ruby
+#   script:
+#     - gem install dpl --pre # gem est le gestionnaire de paquets pour Ruby
+#     - curl -O https://cli-dl.scalingo.com/install && bash install # scalingo CLI est installé
+#     - scalingo --app=$SCALINGO_APP_NAME env-set PROJECT_DIR=$PROJECT_DIR # Pour indiquer sur le dépôt distant où est le backend (s'il est à la racine du projet ceci est facultatif)
+#     - dpl --provider=scalingo --app=$SCALINGO_APP_NAME --api-token=$SCALINGO_API_TOKEN --region=$SCALINGO_REGION --branch=refs/heads/main
+#     # la variable SCALINGO_API_TOKEN contient le token que vous avez généré chez scalingo via le menu `User Settings > API tokens`
+#     #
+#     # Afin que la variable SCALINGO_API_TOKEN n'apparaissent pas en clair sur notre dépôt public gitlab, on définit cette variable via 
+#     # le menu `Settings > CI/CD > Variables` et on la masque dans le résultat des logs des jobs en lui appliquant la propriété "Masked"
+#     # Plus de détails sur https://docs.gitlab.com/ee/ci/variables/index.html.
+
+# pages: # Job spécifique permettant de dire qu'on déploie un site GitLab Pages.
+#   stage: deploy
+#   script:
+#     - mkdir -p public # Création du répertoire public
+#     - cp ./frontend/src/frontend/* public/
+#   artifacts:
+#     paths:
+#       - public
+#   dependencies:
+#     - scalingo

@@ -28,17 +28,19 @@ file="cypress_report.txt"
 grep -e "All specs passed!" $file
 if [[ $? -eq 0 ]]; then
     color="green"
+    anybadge -o -l "Cypress tests" -v "OK" -c "$color" -f "cypress_test.svg"
 else
     color="red"
+    anybadge -o -l "Cypress tests" -v "KO" -c "$color" -f "cypress_test.svg"
 fi
-anybadge -o -l "Cypress tests" -c "$color" -f "cypress_test.svg"
 
 file="jest_report.txt"
 grep -e "failed" $file
 if [[ $? -eq 0 ]]
 then
     color="red"
+    anybadge -o -l "JEST" -v "KO" -c "$color" -f "jest_test.svg"
 else
     color="green"
+    anybadge -o -l "JEST" -v "OK" -c "$color" -f "jest_test.svg"
 fi
-anybadge -o -l "JEST" -c "$color" -f "jest_test.svg"

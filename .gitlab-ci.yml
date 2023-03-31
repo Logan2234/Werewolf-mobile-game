@@ -61,8 +61,8 @@ badge_creation: # Étape de création des badges
       - test.svg
   dependencies:
     - lintjs
-    - jest
-    - jobcypress
+#    - jest
+#    - jobcypress
 
 # Job pour exposer l'API sur Scalingo
 # URL d'exposition de l'API : https://tp-web-ensimag.osc-fr1.scalingo.io

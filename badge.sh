@@ -33,12 +33,12 @@ else
 fi
 anybadge -o -l "Cypress tests" -c "$color" -f "cypress_test.svg"
 
-# file="jest_report.txt"
-# grep -e "29 passed" $file
-# if [[ $? -eq 0 ]]
-# then
-#     color="green"
-# else
-#     color="red"
-# fi
-# anybadge -o -l "JEST" -v "$NBERR $NBWARN" -c "$color" -f "test.svg"
+file="jest_report.txt"
+grep -e "failed" $file
+if [[ $? -eq 0 ]]
+then
+    color="red"
+else
+    color="green"
+fi
+anybadge -o -l "JEST" -c "$color" -f "jest_test.svg"

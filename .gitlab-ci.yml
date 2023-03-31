@@ -2,26 +2,26 @@
 # TODO: Mettre le lien de la page
 
 stages:
-  - lint # Pour la vérification statique du code
-  - test # Test avec cypress et supertest / Jest
-  - badges # Création des badges
-  - deploy # Fabrication de l'application
+    - lint # Pour la vérification statique du code
+    - test # Test avec cypress et supertest / Jest
+    - badges # Création des badges
+    - deploy # Fabrication de l'application
 
 lintjs: # Vérification de la qualité du code JS
-  stage: lint
-  image: node
-  script:
-    - npm install eslint
-    - npm install eslint-config-standard
-    - npm install eslint-plugin-cypress
-    - npm install eslint-plugin-react
-    - npm install eslint-plugin-jest
-    - npx eslint --config frontend/.eslintrc `find ./frontend/ -name "*.js" -not -path "./frontend/node_modules/*` > eslint_frontend_report.txt
-    - npx eslint --config backend/.eslintrc `find ./backend/ -name "*.js" -not -path "./backend/node_modules/*` > eslint_backend_report.txt
-  artifacts:
-    paths:
-      - eslint_frontend_report.txt
-      - eslint_backend_report.txt
+    stage: lint
+    image: node
+    script:
+        - npm install eslint
+        - npm install eslint-config-standard
+        - npm install eslint-plugin-cypress
+        - npm install eslint-plugin-react
+        - npm install eslint-plugin-jest
+        - npx eslint --config frontend/.eslintrc `find ./frontend/ -name "*.js" -not -path "./frontend/node_modules/*` > eslint_frontend_report.txt
+        - npx eslint --config backend/.eslintrc `find ./backend/ -name "*.js" -not -path "./backend/node_modules/*` > eslint_backend_report.txt
+    artifacts:
+        paths:
+            - eslint_frontend_report.txt
+            - eslint_backend_report.txt
 
 # jest:
 #   stage: test
@@ -34,35 +34,51 @@ lintjs: # Vérification de la qualité du code JS
 #     paths:
 #       - jest_report.txt
 
-# jobcypress:
-#   stage: test
-#   tags:
-#     - docker  # Comme on utilise une image pour isoler on doit utiliser un runner docker 
-#   image: cypress/base:16.18.1 # Image fournie par cypress avec ce qu'il faut  
-#   script:
-#     - cd frontend
-#     - npm i # Installe ce qui est décrit dans package.json
-#     - npx serve &
-#     - npx cypress run > cypress_report.txt # Lance les tests
-#     # - kill -9 $(ps | grep node | awk '{print $1}') # Cette ligne pourrait permettre de tuer serve
-#   artifacts:
-#     paths:
-#       - cypress_report.txt
+jest:
+    image: node:latest
+    stage: test
+    script:
+        - cd backend
+        - npm i
+        - npx jest --ci --reporters=default --reporters=jest-junit --passWithNoTests > jest_report.txt
+    artifacts:
+        when: always
+        paths:
+            - jest_report.txt
+        reports:
+            junit:
+                - junit.xml
+
+jobcypress:
+    stage: test
+    tags:
+        - docker # Comme on utilise une image pour isoler on doit utiliser un runner docker
+    image: cypress/base:16.18.1 # Image fournie par cypress avec ce qu'il faut
+    script:
+        - cd frontend
+        - npm i # Installe ce qui est décrit dans package.json
+        - npx serve &
+        - npx cypress run > cypress_report.txt # Lance les tests
+        - kill -9 $(ps | grep node | awk '{print $1}') # Cette ligne pourrait permettre de tuer serve
+    artifacts:
+        paths:
+            - cypress_report.txt
 
 badge_creation: # Étape de création des badges
-  stage: badges
-  image: python # On utilise python pour cela
-  script:
-    - pip install anybadge # package anybadge pour créer les .svg
-    - ./badge.sh # script permettant la création d'un fichier svg par fichier js (il y en a 2 ça va)
-  artifacts:
-    paths:
-      - eslint.svg
-      - cypress_test.svg
-  dependencies:
-    - lintjs
-#    - jest
-#    - jobcypress
+    stage: badges
+    image: python # On utilise python pour cela
+    script:
+        - pip install anybadge # package anybadge pour créer les .svg
+        - ./badge.sh # script permettant la création d'un fichier svg par fichier js (il y en a 2 ça va)
+    artifacts:
+        paths:
+            - eslint.svg
+            - cypress_test.svg
+            - jest_test.svg
+    dependencies:
+        - lintjs
+        - jobcypress
+        - jest
 
 # Job pour exposer l'API sur Scalingo
 # URL d'exposition de l'API : https://tp-web-ensimag.osc-fr1.scalingo.io
@@ -86,7 +102,7 @@ badge_creation: # Étape de création des badges
 #     - dpl --provider=scalingo --app=$SCALINGO_APP_NAME --api-token=$SCALINGO_API_TOKEN --region=$SCALINGO_REGION --branch=refs/heads/main
 #     # la variable SCALINGO_API_TOKEN contient le token que vous avez généré chez scalingo via le menu `User Settings > API tokens`
 #     #
-#     # Afin que la variable SCALINGO_API_TOKEN n'apparaissent pas en clair sur notre dépôt public gitlab, on définit cette variable via 
+#     # Afin que la variable SCALINGO_API_TOKEN n'apparaissent pas en clair sur notre dépôt public gitlab, on définit cette variable via
 #     # le menu `Settings > CI/CD > Variables` et on la masque dans le résultat des logs des jobs en lui appliquant la propriété "Masked"
 #     # Plus de détails sur https://docs.gitlab.com/ee/ci/variables/index.html.
 

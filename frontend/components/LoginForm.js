@@ -3,16 +3,16 @@ import { useState } from 'react';
 import Bouton from './Bouton';
 
 export default function LoginForm({ onConnect }) {
-    const [email, setEmail] = useState(null);
+    const [pseudo, setPseudo] = useState(null);
     const [password, setPassword] = useState(null);
     return (
         <View style={styles.container}>
             <TextInput
-                nativeID='emailInput'
+                nativeID='pseudoInput'
                 style={styles.input}
-                onChangeText={setEmail}
-                value={email}
-                placeholder="email" />
+                onChangeText={setPseudo}
+                value={pseudo}
+                placeholder="pseudo" />
             <TextInput
                 nativeID='passwordInput'
                 style={styles.input}
@@ -23,7 +23,7 @@ export default function LoginForm({ onConnect }) {
             <Bouton
                 nativeID='connect'
                 label='Se connecter'
-                onPress={() => onConnect(email, password)}
+                onPress={() => onConnect(pseudo, password)}
             />
         </View>
     );

@@ -1,67 +1,39 @@
 //App.js
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
-import CreateForm from './components/CreateForm';
-import Bouton from './components/Bouton';
-import * as Location from 'expo-location';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
+import { BACKEND } from './constants';
+import CreateSession from './components/CreateSession';
 
 export default function App() {
-    const [connected, isConnected] = useState(false);
     const [token, setToken] = useState(null);
     const [connexionOrRegistration, setConnexionOrRegistration] = useState(1);
 
-    function register(pseudo, password) {
-        fetch(`${BACKEND}/signin`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pseudo, password })
-        })
-            .then(response => response.json())
-            .catch(error => {
-                alert('Pseudo déjà utilisé, veuillez en entrer un autre')
-            });
-    }
-
-    function connect(pseudo, password) {
+    function createSession(pseudo, minPlayer, maxPlayer, lengthDay, lengthNight,
+        startDate, contamination, insomnie, voyance, spiritisme, loupGarous) {
         fetch(`${BACKEND}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pseudo, password })
+            body: JSON.stringify({
+                minPlayer, maxPlayer, lengthDay, lengthNight,
+                startDate, contamination, insomnie, voyance, spiritisme, loupGarous
+            })
         })
             .then(response => response.json())
             .then(data => { if (data.token) { setToken(data.token); } else { alert('Pseudo ou mot de passe incorrect'); } })
-            .catch(error => alert('Server error'));
+            .catch(error => alert('Server error: ' + error));
     }
 
-    function createSession(pseudo, minPlayer, maxPlayer, lengthDay, lengthNight,
-        startDate, contamination, insomnie, voyance, spiritisme, loupGarous ) {
-            fetch(`${BACKEND}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ minPlayer, maxPlayer, lengthDay, lengthNight,
-                    startDate, contamination, insomnie, voyance, spiritisme, loupGarous})
-            })
-                .then(response => response.json())
-                .then(data => { if (data.token) { setToken(data.token); } else { alert('Pseudo ou mot de passe incorrect'); } })
-                .catch(error => alert('Server error'));
-        }
-
-
-    useEffect(() => {
-
-    }, []);
     return (
         <View style={styles.container}>
             {
-                (connexionOrRegistration)
-                    ? <RegisterForm onRegister={register} changeView={setConnexionOrRegistration} />
-                    : <LoginForm onConnect={connect} changeView={setConnexionOrRegistration} />
+                (!token)
+                    ? (connexionOrRegistration)
+                        ? <RegisterForm setToken={setToken} changeView={setConnexionOrRegistration} />
+                        : <LoginForm setToken={setToken} changeView={setConnexionOrRegistration} />
+                    : <CreateSession onCreate={createSession} />
             }
             <StatusBar style="auto" />
         </View>

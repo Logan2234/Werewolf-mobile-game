@@ -7,25 +7,27 @@ const has = require('has-keys');
 
 
 module.exports = {
-    async getUserById(req, res){
-        if(!has(req.params, 'id'))
-            throw {code: status.BAD_REQUEST, message: 'You must specify the id'};
+    // async getUserById(req, res){
+    //     if(!has(req.params, 'id'))
+    //         throw {code: status.BAD_REQUEST, message: 'You must specify the id'};
 
-        let {id} = req.params;
+    //     let {id} = req.params;
 
-        let data = await userModel.findOne({where: {id}});
+    //     let data = await userModel.findOne({where: {id}});
 
-        if(!data)
-            throw {code: status.BAD_REQUEST, message: 'User not found'};
+    //     if(!data)
+    //         throw {code: status.BAD_REQUEST, message: 'User not found'};
 
-        res.json({status: true, message: 'Returning user', data});
-    },
-    async getUsers(req, res){
-        let data = await userModel.findAll();
+    //     res.json({status: true, message: 'Returning user', data});
+    // },
 
-        res.json({status: true, message: 'Returning users', data});
-    },
-    async newUser(req, res){
+    // async getUsers(req, res){
+    //     let data = await userModel.findAll();
+
+    //     res.json({status: true, message: 'Returning users', data});
+    // },
+
+    async signIn(req, res){
         if(!has(req.params, ['name', 'email']))
             throw {code: status.BAD_REQUEST, message: 'You must specify the name and email'};
 

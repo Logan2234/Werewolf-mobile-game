@@ -1,9 +1,14 @@
 const status = require('http-status');
 
 const userModel = require('../models/users.js');
+const jws = require('jws')
+const bcrypt = require('bcrypt') // eslint-disable-line no-unused-vars 
+const CodeError = require('../util/CodeError.js')
 
 
 const has = require('has-keys');
+require('mandatoryenv').load(['TOKENSECRET'])
+const { TOKENSECRET } = process.env
 
 
 module.exports = {

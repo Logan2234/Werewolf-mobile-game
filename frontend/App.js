@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
+import CreateForm from './components/CreateForm';
 import Bouton from './components/Bouton';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,13 +38,28 @@ export default function App() {
             .catch(error => alert('Server error'));
     }
 
+    function createSession(pseudo, minPlayer, maxPlayer, lengthDay, lengthNight,
+        startDate, contamination, insomnie, voyance, spiritisme, loupGarous ) {
+            fetch(`${BACKEND}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ minPlayer, maxPlayer, lengthDay, lengthNight,
+                    startDate, contamination, insomnie, voyance, spiritisme, loupGarous})
+            })
+                .then(response => response.json())
+                .then(data => { if (data.token) { setToken(data.token); } else { alert('Pseudo ou mot de passe incorrect'); } })
+                .catch(error => alert('Server error'));
+        }
+
+
     useEffect(() => {
 
     }, []);
     return (
         <View style={styles.container}>
-            <RegisterForm onRegister={register} />
-            <LoginForm onConnect={connect} />
+            <CreateForm onCreate={createSession} />
+            {/* <RegisterForm onRegister={register} />
+            <LoginForm onConnect={connect} /> */}
             <StatusBar style="auto" />
         </View>
     );

@@ -15,7 +15,7 @@ export default function LoginForm({ onConnect }) {
                 style={styles.input}
                 onChangeText={setPseudo}
                 value={pseudo}
-                placeholder="pseudo" />
+                placeholder="Pseudo" />
             <TextInput
                 nativeID='passwordInput'
                 style={styles.input}

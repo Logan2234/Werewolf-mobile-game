@@ -28,14 +28,29 @@ module.exports = {
     // },
 
     async signIn(req, res){
-        if(!has(req.params, ['name', 'email']))
-            throw {code: status.BAD_REQUEST, message: 'You must specify the name and email'};
+        if(!has(req.params, ['username', 'pasword']))
+            throw {code: status.BAD_REQUEST, message: 'You must specify the username and password'};
 
-        let { name, email } = req.body;
+        let { username, password } = req.body;
         
-        await userModel.create({name, email});
+        await userModel.create({username, password});
 
         res.json({status: true, message: 'User Added'});
+    },
+    async logIn(req, res){
+        if(!has(req.params, ['username', 'pasword']))
+            throw {code: status.BAD_REQUEST, message: 'You must specify the username and password'};
+
+        let { username, password } = req.body;
+        
+        const user = await userModel.findOne({where: {username, password}});
+
+        if (user){
+            const token = jws.sign({ header: { alg: 'HS256' }, payload: username, secret: TOKENSECRET })
+            res.json({ status: true, message: 'Login success', token })
+            return
+        }
+        res.status(status.FORBIDDEN).json({ status: false, message: 'Wrong username or password' })
     },
     async updateUser(req, res){
         if(!has(req.body, ['id', 'name', 'email']))

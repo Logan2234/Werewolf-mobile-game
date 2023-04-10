@@ -1,7 +1,7 @@
 //SizedText.js
 import { StyleSheet, Text } from 'react-native';
 
-export default function Bouton({ style, label, size }) {
+export default function SizedText({ style, label, size }) {
     return (
         <Text style={[styles.text, style, {fontSize: parseFloat(size)}]}>{label}</Text>
     );

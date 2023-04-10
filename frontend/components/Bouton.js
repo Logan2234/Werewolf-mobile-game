@@ -2,9 +2,9 @@
 import { StyleSheet, Pressable } from 'react-native';
 import SizedText from './SizedText';
 
-export default function Bouton({ label, onPress }) {
+export default function Bouton({ style, label, onPress }) {
     return (
-        <Pressable style={styles.buttonLabel} onPress={onPress}>
+        <Pressable style={[style, styles.buttonLabel]} onPress={onPress}>
             <SizedText style={styles.label} size='15' label={label}/>
         </Pressable>
     );
@@ -12,7 +12,7 @@ export default function Bouton({ label, onPress }) {
 
 const styles = StyleSheet.create({
     buttonLabel: {
-        backgroundColor: '#5865F2',
+        backgroundColor: '#3AC670',
         borderRadius: 5,
         padding: 10,
         fontSize: 15

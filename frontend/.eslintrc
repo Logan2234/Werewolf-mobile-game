@@ -8,14 +8,17 @@
         "plugin:react/recommended",
         "plugin:cypress/recommended"
     ],
-    "overrides": [
-    ],
+    "overrides": [],
     "parserOptions": {
         "ecmaVersion": "latest",
-        "sourceType": "module"
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
     },
     "plugins": [
-        "react"
+        "react",
+        "react-native"
     ],
     "rules": {
         "indent": [
@@ -35,7 +38,7 @@
             "always"
         ],
         // suppress errors for missing 'import React' in files
-        "react/react-in-jsx-scope": "off"
-        
+        "react/react-in-jsx-scope": "off",
+        "react/prop-types": 0
     }
 }

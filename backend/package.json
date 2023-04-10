@@ -39,6 +39,9 @@
         "pg-hstore": "^2.3.3",
         "rotating-file-stream": "^1.4.6",
         "sequelize": "^6.31.0",
-        "sqlite3": "^5.1.6"
+        "sqlite3": "^5.1.6",
+        "swagger": "^0.0.1",
+        "swagger-autogen": "^2.23.1",
+        "swagger-ui-express": "^4.6.2"
     }
 }

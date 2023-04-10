@@ -10,9 +10,9 @@ router.post('/signin', user.signIn);
 
 router.post('/login', user.logIn);
 
-router.post('/createSession', user.newSession);
+// router.post('/createSession', user.newSession);
 
-router.delete('/createSession', user.deleteSession);
+// router.delete('/createSession', user.deleteSession);
 
 
 module.exports = router;

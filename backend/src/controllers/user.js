@@ -28,11 +28,16 @@ module.exports = {
     // },
 
     async signIn(req, res){
-        if(!has(req.params, ['username', 'pasword']))
+        
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'username') || !has(JSON.parse(req.body.data), 'password'))
             throw {code: status.BAD_REQUEST, message: 'You must specify the username and password'};
 
-        let { username, password } = req.body;
-        
+        const username = JSON.parse(req.body.data).username;
+        if (username == '') throw new CodeError('You must set an username !', status.BAD_REQUEST);
+
+        const password = JSON.parse(req.body.data).password;
+        if (password == '') throw new CodeError('You must set a password !', status.BAD_REQUEST);
+    
         await userModel.create({username, password});
 
         res.json({status: true, message: 'User Added'});

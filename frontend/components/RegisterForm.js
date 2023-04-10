@@ -18,6 +18,9 @@ export default function RegisterForm({ onRegister }) {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.titleText}>
+                {'Inscription'}
+            </Text>
             <TextInput
                 nativeID='pseudoInput'
                 style={styles.input}
@@ -55,5 +58,9 @@ export default function RegisterForm({ onRegister }) {
 const styles = StyleSheet.create({
     container: { flex: 1 },
     input: { height: 40, margin: 12, borderWidth: 1 },
-    baseText: { color: 'red' }
+    baseText: { color: 'red' },
+    titleText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+      }
 });

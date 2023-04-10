@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View, Text } from 'react-native';
 import { useState } from 'react';
 import Bouton from './Bouton';
 
@@ -7,6 +7,9 @@ export default function LoginForm({ onConnect }) {
     const [password, setPassword] = useState(null);
     return (
         <View style={styles.container}>
+            <Text style={styles.titleText}>
+                {'Connexion'}
+            </Text>
             <TextInput
                 nativeID='pseudoInput'
                 style={styles.input}
@@ -30,5 +33,9 @@ export default function LoginForm({ onConnect }) {
 }
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    input: { height: 40, margin: 12, borderWidth: 1 }
+    input: { height: 40, margin: 12, borderWidth: 1 },
+    titleText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+      }
 });

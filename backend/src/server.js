@@ -17,12 +17,10 @@ const logger = require('./util/logger');
 // Load .env Enviroment Variables to process.env
 
 require('mandatoryenv').load([
-    'DB_HOST',
-    'DB_DATABASE',
-    'DB_USER',
-    'DB_PASSWORD',
+    'DB',
     'PORT',
-    'SECRET'
+    'SECRET',
+    'TOKENSECRET'
 ]);
 
 const { PORT } = process.env;

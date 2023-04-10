@@ -1,21 +1,17 @@
 import { StyleSheet, TextInput, Text, View } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Bouton from './Bouton';
 
 export default function RegisterForm({ onRegister }) {
-    const [pseudo, setPseudo] = useState(null);
-    const [password, setPassword] = useState(null);
-    const [passwordConfirmation, setPasswordConfirmation] = useState(null);
+    const [pseudo, setPseudo] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordConfirmation, setPasswordConfirmation] = useState("");
+    const [afficheMotDePasseDiffere, setAfficheMotDePasseDiffere] = useState(false);
 
-    let afficheMotDePasseDiffere = false;
-
-    function verify(passwordConfirmation) {
-        setPasswordConfirmation(passwordConfirmation);
-        if (passwordConfirmation !== password) {
-            afficheMotDePasseDiffere = true;
-        }
-    }
-
+    useEffect(()=>{
+        setAfficheMotDePasseDiffere(() => passwordConfirmation.length > 0 && password.length > 0 && passwordConfirmation !== password);
+    },[passwordConfirmation, password]);
+    
     return (
         <View style={styles.container}>
             <TextInput
@@ -23,7 +19,7 @@ export default function RegisterForm({ onRegister }) {
                 style={styles.input}
                 onChangeText={setPseudo}
                 value={pseudo}
-                placeholder="pseudo" />
+                placeholder="Pseudo" />
             <TextInput
                 nativeID='passwordInput'
                 style={styles.input}
@@ -35,15 +31,15 @@ export default function RegisterForm({ onRegister }) {
                 nativeID='passwordInputConfirmation'
                 style={styles.input}
                 secureTextEntry={true}
-                onChangeText={verify}
-                value={password}
+                onChangeText={setPasswordConfirmation}
+                value={passwordConfirmation}
                 placeholder="Password" />
-            <Text style={styles.baseText}>
-                {
-                    afficheMotDePasseDiffere &&
-                    'Mot de passe invalide'
-                }
-            </Text>
+            {
+                (afficheMotDePasseDiffere == true) ?
+                    <Text style={styles.baseText}>
+                        {'Les mots de passe ne correspondent pas'}
+                    </Text> : null
+            }
             <Bouton
                 nativeID='register'
                 label='Enregistrer'
@@ -53,7 +49,7 @@ export default function RegisterForm({ onRegister }) {
     );
 }
 const styles = StyleSheet.create({
-    container: { flex: 1 },
+    container: { flex: 1, backgroundColor: 'red', justifyContent: 'center' },
     input: { height: 40, margin: 12, borderWidth: 1 },
     baseText: { color: 'red' }
 });

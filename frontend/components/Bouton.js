@@ -1,20 +1,24 @@
-//App.js
-import { StyleSheet, Text, Pressable } from 'react-native';
+//Bouton.js
+import { StyleSheet, Pressable } from 'react-native';
+import SizedText from './SizedText';
 
 export default function Bouton({ label, onPress }) {
     return (
-        <Pressable onPress={onPress}>
-            <Text style={styles.buttonLabel}>{label}</Text>
+        <Pressable style={styles.buttonLabel} onPress={onPress}>
+            <SizedText style={styles.label} size='15' label={label}/>
         </Pressable>
     );
 }
 
 const styles = StyleSheet.create({
     buttonLabel: {
-        color: 'white',
-        backgroundColor: 'blue',
+        backgroundColor: '#5865F2',
         borderRadius: 5,
-        margin: 5,
-        padding: 5
+        padding: 10,
+        fontSize: 15
+    },
+    label: {
+        textAlign: 'center',
+        color: 'white',
     }
 });

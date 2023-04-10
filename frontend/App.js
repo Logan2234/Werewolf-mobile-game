@@ -13,9 +13,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function App() {
     const [connected, isConnected] = useState(false);
     const [token, setToken] = useState(null);
+    const [connexionOrRegistration, setConnexionOrRegistration] = useState(1);
 
     function register(pseudo, password) {
-        fetch (`${BACKEND}/signin`,{
+        fetch(`${BACKEND}/signin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pseudo, password })
@@ -42,8 +43,11 @@ export default function App() {
     }, []);
     return (
         <View style={styles.container}>
-            <RegisterForm onRegister={register} />
-            <LoginForm onConnect={connect} />
+            {
+                (connexionOrRegistration)
+                    ? <RegisterForm onRegister={register} changeView={setConnexionOrRegistration} />
+                    : <LoginForm onConnect={connect} changeView={setConnexionOrRegistration} />
+            }
             <StatusBar style="auto" />
         </View>
     );

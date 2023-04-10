@@ -23,7 +23,7 @@ const users = db.define('users', {
             is: /^[a-z\-'\s]{1,32}$/i
         }
     }
-})
+}, { timestamps: false })
 
 
 module.exports = users;

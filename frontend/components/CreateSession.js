@@ -1,6 +1,6 @@
 import { StyleSheet, TextInput, View, Text } from 'react-native';
 import { useState } from 'react';
-import { commonStyles } from '../constants';
+import * as constants from '../constants';
 import Bouton from './Bouton';
 import Title from './Title';
 
@@ -25,7 +25,7 @@ export default function CreateSession({ onCreate }) {
     const [loupGarous, setLoupGarous] = useState('0.3');
 
     return (
-        <View style={[commonStyles.container, styles.container]}>
+        <View style={[constants.commonStyles.container, styles.container]}>
             <Title style={styles.title} label='Création d&apos;une session' />
 
             <View style={styles.textAndInput}>
@@ -152,6 +152,7 @@ export default function CreateSession({ onCreate }) {
                     keyboardType='number-pad'
                     onChangeText={setStartDate}
                     value={startDate}
+                    
                 />
             </View>
 
@@ -163,7 +164,7 @@ export default function CreateSession({ onCreate }) {
 }
 const styles = StyleSheet.create({
     container: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-    textAndInput: { display: 'flex', alignItems: 'center', justifyContent:'space-between', flexDirection: 'row', width: '100%', paddingHorizontal: '15%'},
+    textAndInput: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', width: '100%', paddingHorizontal: '15%' },
     input: { height: 35, borderWidth: 1, width: 60, paddingLeft: 5, borderRadius: 5, borderColor: '#B5BAC1', color: '#B5BAC1', fontSize: 15 },
     title: { marginTop: 50, marginBottom: 10 },
     bouton: { marginBottom: 30, marginTop: 10 },

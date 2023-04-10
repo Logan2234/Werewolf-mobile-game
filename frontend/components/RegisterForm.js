@@ -1,7 +1,8 @@
-import { TextInput, Pressable, Text, View } from 'react-native';
+import { TextInput, Pressable, View } from 'react-native';
 import { useState, useEffect } from 'react';
 import { BACKEND, loginAndRegisterStyle as styles, commonStyles } from '../constants';
 import Bouton from './Bouton';
+import Title from './Title';
 import SizedText from './SizedText';
 
 export default function RegisterForm({ setToken, changeView }) {
@@ -33,9 +34,7 @@ export default function RegisterForm({ setToken, changeView }) {
 
     return (
         <View style={[styles.form, commonStyles.container]}>
-            <View style={styles.header}>
-                <Text style={styles.titleText}>Inscription</Text>
-            </View>
+            <Title style={styles.header} label='Inscription' />
             <View style={styles.fields}>
                 <TextInput
                     nativeID='pseudoInput'

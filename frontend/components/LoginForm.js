@@ -1,7 +1,8 @@
-import { TextInput, View, Text, Pressable } from 'react-native';
+import { TextInput, View, Pressable } from 'react-native';
 import { useState } from 'react';
 import { BACKEND, loginAndRegisterStyle as styles, commonStyles } from '../constants';
 import Bouton from './Bouton';
+import Title from './Title';
 import SizedText from './SizedText';
 
 export default function LoginForm({ setToken, changeView }) {
@@ -25,9 +26,7 @@ export default function LoginForm({ setToken, changeView }) {
 
     return (
         <View style={[styles.form, commonStyles.container]}>
-            <View style={styles.header}>
-                <Text style={styles.titleText}>Connexion</Text>
-            </View>
+            <Title style={styles.header} label='Connexion' />
             <View style={styles.fields}>
                 <TextInput
                     nativeID='pseudoInput'

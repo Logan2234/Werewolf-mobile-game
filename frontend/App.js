@@ -29,7 +29,7 @@ export default function App() {
     return (
         <View style={styles.container}>
             {
-                (token)
+                (!token)
                     ? (connexionOrRegistration)
                         ? <RegisterForm setToken={setToken} changeView={setConnexionOrRegistration} />
                         : <LoginForm setToken={setToken} changeView={setConnexionOrRegistration} />

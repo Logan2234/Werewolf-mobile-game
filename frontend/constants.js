@@ -5,9 +5,10 @@ export const BACKEND = 'https://localhost:3000';
 export const loginAndRegisterStyle = StyleSheet.create({
     form: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
 
+    header: { marginTop: 120 },
+
     fields: { display: 'flex', gap: 25, alignItems: 'center' },
     input: { height: 40, borderWidth: 1, width: 200, paddingLeft: 5, borderRadius: 5, borderColor: '#B5BAC1', color: '#B5BAC1', fontSize: 15 },
-
     error: { color: 'red', marginTop: -15 },
 
     footer: { display: 'flex', flexDirection: 'row', marginBottom: 30 },

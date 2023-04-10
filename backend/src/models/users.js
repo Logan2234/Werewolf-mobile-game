@@ -7,13 +7,21 @@ const db = require('./database.js');
 const users = db.define('users', {
     id: {
         primaryKey: true,
-        type: Sequelize.NUMBER
+        type: Sequelize.INTEGER,
+        autoIncrement: true
     },
-    name: {
-        type: Sequelize.STRING
+    username: {
+        unique: true,
+        type: Sequelize.STRING,
+        validate: {
+            is: /^[a-z\-'\s]{1,32}$/i
+        }
     },
-    email: {
-        type: Sequelize.STRING
+    password: {
+        type: Sequelize.STRING,
+        validate: {
+            is: /^[a-z\-'\s]{1,32}$/i
+        }
     }
 })
 

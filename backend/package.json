@@ -5,8 +5,9 @@
     "main": "src/server.js",
     "scripts": {
         "setup": "npm install && npm update",
-        "start": "node src/server.js",
+        "start": "npm run doc && npm run updatedb  && node src/server.js",
         "updatedb": "node src/util/updatedb.js",
+        "doc": "node src/util/swagger.js",
         "startdev": "npm run doc && nodemon src/server.js",
         "migration:init": "migrate init --migrations-dir ./src/migrations",
         "migration:create": "migrate create --migrations-dir ./src/migrations --template-file ./src/migrations/.template.js",

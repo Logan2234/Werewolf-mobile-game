@@ -1,9 +1,7 @@
 
 const Sequelize = require('sequelize');
-const { search } = require('../routes/user.js');
 
 const db = require('./database.js');
-const games = require('./games.js');
 
 
 const users = db.define('users', {

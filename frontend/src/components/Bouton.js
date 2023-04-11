@@ -1,6 +1,7 @@
 //Bouton.js
 import { StyleSheet, Pressable } from 'react-native';
 import SizedText from './SizedText';
+import { primaryColor } from '../constants/colors';
 
 export default function Bouton({ style, label, onPress }) {
     return (
@@ -12,7 +13,7 @@ export default function Bouton({ style, label, onPress }) {
 
 const styles = StyleSheet.create({
     buttonLabel: {
-        backgroundColor: '#3AC670',
+        backgroundColor: primaryColor,
         borderRadius: 5,
         padding: 10,
         fontSize: 15

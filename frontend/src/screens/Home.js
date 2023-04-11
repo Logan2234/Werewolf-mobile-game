@@ -13,7 +13,6 @@ const backActionHandler = () => {
     alert('Alert!', 'Are you sure you want to go back?');
 };
 
-
 export default function Home() {
     const [token, setToken] = useState(null);
     const [pseudo, setPseudo] = useState('');

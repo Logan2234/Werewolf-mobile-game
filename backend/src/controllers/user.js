@@ -12,26 +12,6 @@ const { TOKENSECRET } = process.env
 
 
 module.exports = {
-    // async getUserById(req, res){
-    //     if(!has(req.params, 'id'))
-    //         throw {code: status.BAD_REQUEST, message: 'You must specify the id'};
-
-    //     let {id} = req.params;
-
-    //     let data = await userModel.findOne({where: {id}});
-
-    //     if(!data)
-    //         throw {code: status.BAD_REQUEST, message: 'User not found'};
-
-    //     res.json({status: true, message: 'Returning user', data});
-    // },
-
-    // async getUsers(req, res){
-    //     let data = await userModel.findAll();
-
-    //     res.json({status: true, message: 'Returning users', data});
-    // },
-
     async signIn(req, res){
         
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'username') || !has(JSON.parse(req.body.data), 'password'))
@@ -66,24 +46,24 @@ module.exports = {
         }
         res.status(status.FORBIDDEN).json({ status: false, message: 'Wrong username or password' })
     },
-    async updateUser(req, res){
-        if(!has(req.body, ['id', 'name', 'email']))
-            throw {code: status.BAD_REQUEST, message: 'You must specify the id, name and email'};
+    // async updateUser(req, res){
+    //     if(!has(req.body, ['id', 'name', 'email']))
+    //         throw {code: status.BAD_REQUEST, message: 'You must specify the id, name and email'};
 
-        let { id, name, email } = req.body;
+    //     let { id, name, email } = req.body;
     
-        await userModel.updateUser({name, email}, {where:{id}});
+    //     await userModel.updateUser({name, email}, {where:{id}});
 
-        res.json({status: true, message: 'User updated'});
-    },
-    async deleteUser(req, res){
-        if(!has(req.params, 'id'))
-            throw {code: status.BAD_REQUEST, message: 'You must specify the id'};
+    //     res.json({status: true, message: 'User updated'});
+    // },
+    // async deleteUser(req, res){
+    //     if(!has(req.params, 'id'))
+    //         throw {code: status.BAD_REQUEST, message: 'You must specify the id'};
 
-        let { id } = req.params;
+    //     let { id } = req.params;
 
-        await userModel.destroy({where: {id}});
+    //     await userModel.destroy({where: {id}});
 
-        res.json({status: true, message: 'User deleted'});
-    }
+    //     res.json({status: true, message: 'User deleted'});
+    // }
 }

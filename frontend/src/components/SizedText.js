@@ -1,5 +1,6 @@
 //SizedText.js
 import { StyleSheet, Text } from 'react-native';
+import { textColor } from '../constants/colors';
 
 export default function SizedText({ style, label, size }) {
     return (
@@ -9,6 +10,6 @@ export default function SizedText({ style, label, size }) {
 
 const styles = StyleSheet.create({
     text: {
-        color: 'white',
+        color: textColor,
     }
 });

@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const db = require('./database.js');
 
-const usersPlaying = db.define('UsersInQ', {
+const usersInQ = db.define('UsersInQs', {
     idUser: {
         primaryKey: true,
         type: Sequelize.INTEGER,
@@ -14,4 +14,4 @@ const usersPlaying = db.define('UsersInQ', {
 
 }, { timestamps: false })
 
-module.exports = usersPlaying;
+module.exports = usersInQ;

@@ -12,15 +12,9 @@ const users = db.define('users', {
     username: {
         unique: true,
         type: Sequelize.STRING,
-        validate: {
-            is: /^[a-z\-'\s]{1,32}$/i
-        }
     },
     password: {
         type: Sequelize.STRING,
-        validate: {
-            is: /^[a-z\-'\s]{1,32}$/i
-        }
     }
 
 }, { timestamps: false })

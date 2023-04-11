@@ -87,6 +87,46 @@
           }
         }
       }
+    },
+    "/joinSession/{idSession}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idSession",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idSession",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
     }
   }
 }

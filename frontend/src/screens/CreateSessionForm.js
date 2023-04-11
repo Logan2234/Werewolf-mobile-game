@@ -2,15 +2,13 @@ import { StyleSheet, View } from 'react-native';
 import { commonStyles } from '../constants/style';
 import Bouton from '../components/Bouton';
 import Title from '../components/Title';
+import SizedText from '../components/SizedText';
 import Field from '../components/Field';
 import { BACKEND } from '../constants/backend';
 import { useState } from 'react';
-
 // Pour les dates
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import moment from "moment";
-import { textColor } from '../constants/colors';
-
 
 
 export default function CreateSessionForm() {
@@ -25,11 +23,11 @@ export default function CreateSessionForm() {
     const [lengthDayMin, setLengthDayMin] = useState('0');
     const [lengthNightMin, setLengthNightMin] = useState('0');
 
-    const [startDate, setStartDate] = useState( new Date()); //TODO : faire une fonction dans utils
-        // () => {
-        // const date = new Date();
-        // return Date(moment(date).add(1,'day'));
-        // }
+    const [startDate, setStartDate] = useState(new Date()); //TODO : faire une fonction dans utils
+    // () => {
+    // const date = new Date();
+    // return Date(moment(date).add(1,'day'));
+    // }
 
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
@@ -45,20 +43,20 @@ export default function CreateSessionForm() {
         }
         setMode(currentMode);
     };
-    const showDatepicker = () => {showMode('date');};
-    const showTimepicker = () => {showMode('time');};
+    const showDatepicker = () => { showMode('date'); };
+    const showTimepicker = () => { showMode('time'); };
 
     const [contamination, setContamination] = useState('0');
     const [insomnie, setInsomnie] = useState('0');
     const [voyance, setVoyance] = useState('0');
     const [spiritisme, setSpiritisme] = useState('0');
     const [loupGarous, setLoupGarous] = useState('0.3');
-    
+
     // ------------------------ Calcul de vérification --------------------------------------
     function createSession() {
         const lengthDay = lengthDayHours * 60 + lengthDayMin;
         const lengthNight = lengthNightHours * 60 + lengthNightMin;
-        
+
         fetch(`${BACKEND}/createSession`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -80,6 +78,7 @@ export default function CreateSessionForm() {
                 style={styles.input}
                 setFunction={setMinPlayer}
                 value={minPlayer}
+
                 label='Nombre minimal de joueurs'
                 pad='number-pad'
             />
@@ -159,17 +158,17 @@ export default function CreateSessionForm() {
             <View style={styles.textAndInput}>
                 <Bouton onPress={showDatepicker} label="Date de début" />
                 <Bouton onPress={showTimepicker} label="Heure de début" />
-                <SizedText label ={'Début :' + startDate.toLocaleString() } size='15'  />
-                    {show && (
-                        <RNDateTimePicker
-                            testID="dateTimePicker"
-                            value={startDate}
-                            mode={mode}
-                            is24Hour={true}
-                            onChange={onChange}
-                            minimumDate={new Date()}
-                        />
-                    )}
+                <SizedText label={'Début :' + startDate.toLocaleString()} size='15' />
+                {show && (
+                    <RNDateTimePicker
+                        testID="dateTimePicker"
+                        value={startDate}
+                        mode={mode}
+                        is24Hour={true}
+                        onChange={onChange}
+                        minimumDate={new Date()}
+                    />
+                )}
             </View>
             <Bouton
                 nativeID='createSession'

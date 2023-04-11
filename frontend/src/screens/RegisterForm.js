@@ -43,7 +43,7 @@ export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, 
                 <Field nativeID='passwordInputConfirmation' value={passwordConfirmation} setFunction={setPasswordConfirmation} placeholder='Confirmation du mot de passe' secureTextEntry={true} />
                 {
                     (afficheMotDePasseDiffere == true) ?
-                        <SizedText style={styles.error} label='Les mots de passe ne correspondent pas' size='15' />
+                        <SizedText style={styles.error} label='Les mots de passe ne correspondent pas' />
                         : null
                 }
                 <Bouton nativeID='register' label='S&apos;enregistrer' onPress={() => register(pseudo, password)} />

@@ -25,5 +25,8 @@ module.exports = {
 
         
         
+    },
+    async joinSession (req, res){
+        
     }
 }

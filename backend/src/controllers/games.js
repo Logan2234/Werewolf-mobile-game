@@ -88,7 +88,7 @@ module.exports = {
         res.json({status: true, message: 'Session found', session})
     },
 
-    async destroySession (req, res){
+    async destroySession (idSession){ //TODO
         if (!has(req.params, 'idSession')) throw new CodeError('You must specify the id of the session', status.BAD_REQUEST)
         let {idSession} = req.params
         idSession = parseInt(idSession)

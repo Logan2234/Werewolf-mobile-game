@@ -48,4 +48,4 @@ const session = db.define('Games', {
 }, { timestamps: false })
 
 
-module.exports = users;
+module.exports = session;

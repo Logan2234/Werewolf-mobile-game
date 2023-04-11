@@ -57,5 +57,9 @@ module.exports = {
 
         await gameModel.create({"nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "debutJour": debutJour, "finJour": finJour, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC});
         res.json({status: true, message: 'Session created' });
+    },
+
+    async joinSession (req, res){
+
     }
 }

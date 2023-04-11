@@ -13,9 +13,10 @@ import moment from "moment";
 // Pour l'envoi au backend
 import checkProba from '../utils/Probability';
 import subDates from '../utils/Dates';
+import RecapSession from './ShareSession';
 
 
-export default function CreateSessionForm() {
+export default function CreateSessionForm({token}) {
 
     // ------------------------ Constantes --------------------------------------
     const [minPlayer, setMinPlayer] = useState('5');
@@ -56,20 +57,22 @@ export default function CreateSessionForm() {
     const [spiritisme, setSpiritisme] = useState('0');
     const [loupGarous, setLoupGarous] = useState('0.3');
 
+    const [idGame, setIdGame] = useState(null);
+
     // ------------------------ Création de la session --------------------------------------
     function createSession() {
         const lengthDay = lengthDayHours * 60 + lengthDayMin;
         const lengthNight = lengthNightHours * 60 + lengthNightMin;
         
         // Vérification des probas
-        const probaContamination = checkProba(contamination);
-        if (probaContamination == null){return;}
-        const probaInsomnie = checkProba(insomnie);
-        if (probaInsomnie == null){return;}
-        const probaVoyance = checkProba(voyance);
-        if (probaVoyance == null){return;}
-        const probaSpiritisme = checkProba(spiritisme);
-        if (probaSpiritisme == null){return;}
+        const probaC = checkProba(contamination);
+        if (probaC == null){return;}
+        const probaIn = checkProba(insomnie);
+        if (probaIn == null){return;}
+        const probaVo = checkProba(voyance);
+        if (probaVo == null){return;}
+        const probaSp = checkProba(spiritisme);
+        if (probaSp == null){return;}
         const probaLG = checkProba(loupGarous);
         if (probaLG == null){return;}
 
@@ -77,12 +80,19 @@ export default function CreateSessionForm() {
 
         fetch(`${BACKEND}/createSession`, {
             method: 'POST',
-            body: JSON.stringify({
-                minPlayer, maxPlayer, lengthDay, lengthNight,
-                timer, probaContamination, probaInsomnie, probaVoyance, probaSpiritisme, probaLG
+            headers: {'x-access-token': token},
+            body: new URLSearchParams({"data":
+                '{"nbMinJoueurs": '+minPlayer+', "nbMaxJoueurs": '+maxPlayer+', "dureeJour": '+lengthDay+', “dureeNuit”: '+lengthNight+', "probaLG": '+probaLG+', "probaV": '+probaVo+', "probaS": '+probaSp+', "probaI": '+probaIn+', "probaC": '+probaC+', "debutPartie":  '+timer+'}'
             })
         })
             .then(response => response.json())
+            .then(data => {
+                if (data.idGame){
+                    setIdGame(data.idGame);
+                    RecapSession(minPlayer, maxPlayer, lengthDay, lengthNight,
+                    startDate, contamination, insomnie, voyance, spiritisme, loupGarous, idGame)
+                }
+            })
             .catch(error => alert('Server error: ' + error));
     }
 

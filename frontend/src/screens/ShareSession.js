@@ -1,15 +1,12 @@
 // Affichage récapitulatif de la session qui vient d'être créée avec le numéro de l'ID
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { commonStyles } from '../constants/style';
-import Bouton from '../components/Bouton';
 import Title from '../components/Title';
 import SizedText from '../components/SizedText';
 import Field from '../components/Field';
-import { useState } from 'react';
 
 export default function RecapSession(minPlayer, maxPlayer, lengthDay, lengthNight,
     startDate, contamination, insomnie, voyance, spiritisme, loupGarous, idSession) {
-
 
     return (
         <View style={[styles.container, commonStyles.container]}>

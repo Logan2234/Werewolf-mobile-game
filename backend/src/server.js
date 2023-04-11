@@ -41,6 +41,11 @@ app.use(cookieParser());
 app.use(cors());
 app.use(helmet());
 
+// Swagger Documentation
+const swaggerUi = require('swagger-ui-express')
+const swaggerFile = require('../swagger_output.json')
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+
 // This middleware adds the json header to every response
 app.use('*', (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');

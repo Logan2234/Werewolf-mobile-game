@@ -78,7 +78,6 @@ export default function CreateSessionForm() {
                 style={styles.input}
                 setFunction={setMinPlayer}
                 value={minPlayer}
-
                 label='Nombre minimal de joueurs'
                 pad='number-pad'
             />
@@ -89,7 +88,6 @@ export default function CreateSessionForm() {
                 value={maxPlayer}
                 label='Nombre maximal de joueurs'
                 pad='number-pad' />
-
             <Field
                 nativeID='lengthDayHours'
                 style={styles.input}
@@ -154,11 +152,11 @@ export default function CreateSessionForm() {
                 setFunction={setLoupGarous}
                 value={loupGarous}
                 pad='number-pad' />
-            <SizedText label={'Début de la partie'} sze='15' />
+            <SizedText label={'Début de la partie'} />
             <View style={styles.textAndInput}>
                 <Bouton onPress={showDatepicker} label="Date de début" />
                 <Bouton onPress={showTimepicker} label="Heure de début" />
-                <SizedText label={'Début :' + startDate.toLocaleString()} size='15' />
+                <SizedText label={'Début :' + startDate.toLocaleString()} />
                 {show && (
                     <RNDateTimePicker
                         testID="dateTimePicker"

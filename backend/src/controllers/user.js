@@ -85,5 +85,22 @@ module.exports = {
         await userModel.destroy({where: {id}});
 
         res.json({status: true, message: 'User deleted'});
+    },
+    async verificationUser (req, res, next) {
+        // Code vérifiant qu'il y a bien un token dans l'entête
+        if (!req.headers || !req.headers.hasOwnProperty('x-access-token'))
+          { throw { code: 403, message: 'Token missing' } }
+        // Code vérifiant la validité du token 
+        if (!jws.verify(req.headers['x-access-token'],'HS256',TOKENSECRET))
+          { throw { code: 403, message: 'Token invalid' } }
+        // Le payload du token contient le login de l'utilisateur
+        // On modifie l'objet requête pour mettre le login à disposition pour les middleware suivants
+        req.login=jws.decode(req.headers['x-access-token']).payload
+        const username = req.login
+        const data = await userModel.findOne({ where: { username }, attributes: ['id', 'username'] })
+        if (!data) throw new CodeError('User not found', status.NOT_FOUND)
+    
+        next()
+        
     }
 }

@@ -15,8 +15,7 @@ export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, 
     function register(pseudo, password) {
         fetch(`${BACKEND}/signin`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pseudo, password })
+            body: new URLSearchParams({"data": '{"username": "' + pseudo + '","password": "'+ password+'"}'})
         })
             .then(response => response.json())
             .then(data => {

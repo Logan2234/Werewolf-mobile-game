@@ -11,8 +11,8 @@ export default function LoginForm({ changeView, setToken, pseudo, setPseudo, pas
     function connect(pseudo, password) {
         fetch(`${BACKEND}/login`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pseudo, password })
+            body: new URLSearchParams({"data": '{"username": "' + pseudo + '","password": "'+ password+'"}'})
+
         })
             .then(response => response.json())
             .then(data => {
@@ -39,6 +39,6 @@ export default function LoginForm({ changeView, setToken, pseudo, setPseudo, pas
                     <SizedText style={commonStyles.link} size='17' label='Inscrivez-vous!' />
                 </Pressable>
             </View>
-        </View >
+        </View>
     );
 }

@@ -30,7 +30,7 @@ export default function Home() {
 
     return (<View style={styles.root}>
         {
-            (token)
+            (!token)
                 ? (loginOrRegister)
                     ? <RegisterForm setToken={setToken} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setLoginOrRegister} />
                     : <LoginForm setToken={setToken} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setLoginOrRegister} />

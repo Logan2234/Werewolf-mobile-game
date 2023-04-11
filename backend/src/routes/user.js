@@ -6,15 +6,13 @@ const user = require('../controllers/user.js');
 
 
 
-router.get('/api/users/:id', user.getUserById);
+router.post('/signin', user.signIn);
 
-router.get('/api/users', user.getUsers);
+router.post('/login', user.logIn);
 
-router.post('/api/users', user.newUser);
+// router.post('/createSession', user.newSession);
 
-router.delete('/users/:id', user.deleteUser);
-
-router.put('/api/users', user.updateUser);
+// router.delete('/createSession', user.deleteSession);
 
 
 module.exports = router;

@@ -4,6 +4,9 @@ import { commonStyles } from '../constants';
 import Bouton from './Bouton';
 import Title from './Title';
 import Field from './Field';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import moment from "moment";
+
 
 export default function CreateForm({ onCreate }) {
     const [pseudo, setPseudo] = useState(null); // à récupérer
@@ -17,7 +20,28 @@ export default function CreateForm({ onCreate }) {
     const [lengthDayMin, setLengthDayMin] = useState('0');
     const [lengthNightMin, setLengthNightMin] = useState('0');
 
-    const [startDate, setStartDate] = useState(null) // choper demain 8h
+    const [startDate, setStartDate] = useState( new Date()); //TODO : faire une fonction dans utils
+        // () => {
+        // const date = new Date();
+        // return Date(moment(date).add(1,'day'));
+        // }
+
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate;
+        setShow(false);
+        setStartDate(currentDate);
+    };
+    const showMode = (currentMode) => {
+        if (Platform.OS === 'android') {
+            setShow(true);
+        }
+        setMode(currentMode);
+    };
+    const showDatepicker = () => {showMode('date');};
+    const showTimepicker = () => {showMode('time');};
 
     const [contamination, setContamination] = useState('0');
     const [insomnie, setInsomnie] = useState('0');
@@ -67,12 +91,8 @@ export default function CreateForm({ onCreate }) {
                 value={lengthNightMin}
                 label={'Durée d\'une nuit en minutes'}
                 pad='number-pad' />
-            <Field
-                nativeID='startDate'
-                setFunction={setStartDate}
-                value={startDate}
-                label='Début de la partie'
-                pad='number-pad' />
+
+
             <Field
                 nativeID='contaminationProba'
                 setFunction={setContamination}
@@ -103,6 +123,22 @@ export default function CreateForm({ onCreate }) {
                 setFunction={setLoupGarous}
                 value={loupGarous}
                 pad='number-pad' />
+            <Text style={styles.baseText}>Début de la partie</Text>
+            <View style={styles.textAndInput}>
+                <Bouton onPress={showDatepicker} label="Date de début" />
+                <Bouton onPress={showTimepicker} label="Heure de début" />
+                <Text style={styles.baseText}> Début : {startDate.toLocaleString()}</Text>
+                    {show && (
+                        <RNDateTimePicker
+                            testID="dateTimePicker"
+                            value={startDate}
+                            mode={mode}
+                            is24Hour={true}
+                            onChange={onChange}
+                            minimumDate={new Date()}
+                        />
+                    )}
+            </View>
             <Bouton
                 nativeID='createSession'
                 label='Créer la session'
@@ -115,6 +151,7 @@ export default function CreateForm({ onCreate }) {
 }
 
 const styles = StyleSheet.create({
+    baseText: { paddingTop: 10, color: 'white' },
     container: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
     title: { marginTop: 50, marginBottom: 10 },
     bouton: { marginBottom: 30, marginTop: 10 },

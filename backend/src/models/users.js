@@ -28,5 +28,4 @@ const users = db.define('users', {
 
 }, { timestamps: false })
 
-games.hasMany(users, {foreignKey: 'userId'})
 module.exports = users;

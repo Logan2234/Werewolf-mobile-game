@@ -24,8 +24,9 @@ module.exports = {
         if (password == '') throw new CodeError('You must set a password !', status.BAD_REQUEST);
     
         await userModel.create({username, password});
+        const token = jws.sign({ header: { alg: 'HS256' }, payload: username, secret: TOKENSECRET })
 
-        res.json({status: true, message: 'User Added'});
+        res.json({status: true, message: 'User Added', token});
     },
     async logIn(req, res){
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'username') || !has(JSON.parse(req.body.data), 'password'))

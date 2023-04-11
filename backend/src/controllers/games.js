@@ -1,7 +1,7 @@
 const status = require('http-status');
 
 const gameModel = require('../models/games.js');
-
+const CodeError = require('../util/CodeError.js')
 
 const has = require('has-keys');
 

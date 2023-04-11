@@ -6,6 +6,7 @@ import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import { BACKEND } from './constants';
 import CreateSession from './components/CreateSession';
+import CreateForm from './components/CreateForm';
 
 export default function App() {
     const [token, setToken] = useState(null);
@@ -28,13 +29,14 @@ export default function App() {
 
     return (
         <View style={styles.container}>
-            {
+            {/* {
                 (!token)
                     ? (connexionOrRegistration)
                         ? <RegisterForm setToken={setToken} changeView={setConnexionOrRegistration} />
                         : <LoginForm setToken={setToken} changeView={setConnexionOrRegistration} />
                     : <CreateSession onCreate={createSession} />
-            }
+            } */}
+            <CreateForm onCreate={createSession}/>
             <StatusBar style="auto" />
         </View>
     );

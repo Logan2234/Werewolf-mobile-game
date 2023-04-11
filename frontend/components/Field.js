@@ -1,22 +1,22 @@
-//Bouton.js
-import { StyleSheet, TextInput, Text} from 'react-native';
+//Field.js
+import { StyleSheet, TextInput, Text, View } from 'react-native';
 import SizedText from './SizedText';
 
-export default function Field({ label, setFunction, value }) {
+export default function Field({ label, setFunction, value, pad }) {
     return (
-        <><Text style={styles.baseText}>{label}</Text><TextInput
-            style={styles.input}
-            onChangeText={setFunction}
-            value={value}
-            placeholder={label} /></>
+        <View style={styles.textAndInput}>
+            <Text style={styles.baseText}>{label}</Text>
+            <TextInput style={styles.input}
+                onChangeText={setFunction}
+                value={value}
+                placeholder={label}
+                keyboardType= {pad} />
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    baseText: { paddingTop: 10 },    
-    fields: { display: 'flex', gap: 25, alignItems: 'center' },
-    input: { height: 40, borderWidth: 1, width: 200, paddingLeft: 5, borderRadius: 5, borderColor: '#B5BAC1', color: '#B5BAC1', fontSize: 15, marginBottom: 5 },
-
-    footer: { display: 'flex', flexDirection: 'row', marginBottom: 30 },
-    link: { color: '#5865F2' },
+    baseText: { paddingTop: 10, color: 'white' },
+    input: { height: 35, borderWidth: 1, width: 60, paddingLeft: 5, borderRadius: 5, borderColor: '#B5BAC1', color: '#B5BAC1', fontSize: 15 },
+    textAndInput: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', width: '100%', paddingHorizontal: '15%' },
 });

@@ -10,6 +10,10 @@ import { useState } from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import moment from "moment";
 
+// Pour l'envoi au backend
+import checkProba from '../utils/Probability';
+import subDates from '../utils/Dates';
+
 
 export default function CreateSessionForm() {
 
@@ -23,7 +27,7 @@ export default function CreateSessionForm() {
     const [lengthDayMin, setLengthDayMin] = useState('0');
     const [lengthNightMin, setLengthNightMin] = useState('0');
 
-    const [startDate, setStartDate] = useState(new Date()); //TODO : faire une fonction dans utils
+    const [startDate, setStartDate] = useState(new Date()); //TODO : faire une fonction dans utils pour avoir le jour de demain 8h
     // () => {
     // const date = new Date();
     // return Date(moment(date).add(1,'day'));
@@ -52,24 +56,37 @@ export default function CreateSessionForm() {
     const [spiritisme, setSpiritisme] = useState('0');
     const [loupGarous, setLoupGarous] = useState('0.3');
 
-    // ------------------------ Calcul de vérification --------------------------------------
+    // ------------------------ Création de la session --------------------------------------
     function createSession() {
         const lengthDay = lengthDayHours * 60 + lengthDayMin;
         const lengthNight = lengthNightHours * 60 + lengthNightMin;
+        
+        // Vérification des probas
+        const probaContamination = checkProba(contamination);
+        if (probaContamination == null){return;}
+        const probaInsomnie = checkProba(insomnie);
+        if (probaInsomnie == null){return;}
+        const probaVoyance = checkProba(voyance);
+        if (probaVoyance == null){return;}
+        const probaSpiritisme = checkProba(spiritisme);
+        if (probaSpiritisme == null){return;}
+        const probaLG = checkProba(loupGarous);
+        if (probaLG == null){return;}
+
+        timer = subDates(startDate, new Date());
 
         fetch(`${BACKEND}/createSession`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 minPlayer, maxPlayer, lengthDay, lengthNight,
-                startDate, contamination, insomnie, voyance, spiritisme, loupGarous
+                timer, probaContamination, probaInsomnie, probaVoyance, probaSpiritisme, probaLG
             })
         })
             .then(response => response.json())
             .catch(error => alert('Server error: ' + error));
     }
 
-    // ------------------------ Interface --------------------------------------
+    // ------------------------ Affichage --------------------------------------
     return (
         <View style={[styles.container, commonStyles.container]}>
             <Title label='Création d&apos;une partie' />

@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-const { search } = require('../routes/games.js');
 
 const db = require('./database.js');
 

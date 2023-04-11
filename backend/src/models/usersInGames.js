@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const db = require('./database.js');
 
-const usersInQs = db.define('UsersInQs', {
+const usersInGames = db.define('UsersInGames', {
     idUser: {
         primaryKey: true,
         type: Sequelize.INTEGER,
@@ -10,9 +10,14 @@ const usersInQs = db.define('UsersInQs', {
     },
     idGame: {
         type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    // ! Attention ! Le rôle ne peut être que : V, S, I, C, VI ou LG
+    role: { 
+        type: Sequelize.STRING,
         allowNull: false,
     }
 
 }, { timestamps: false })
 
-module.exports = usersInQs;
+module.exports = usersInGames;

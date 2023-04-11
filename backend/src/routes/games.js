@@ -8,7 +8,7 @@ const games = require('../controllers/games.js');
 
 router.post('/createSession', user.verificationUser, games.createSession);
 
-// router.delete('/createSession', user.verificationUser, games.deleteSession);
+router.delete('/createSession/:idSession', user.verificationUser, games.destroySession);
 
 router.get('/joinSession/:idSession', user.verificationUser, games.getSessionParam);
 

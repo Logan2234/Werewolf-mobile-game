@@ -2,7 +2,7 @@ const status = require('http-status');
 
 const gameModel = require('../models/games.js');
 const userModel = require('../models/users.js');
-const usersInQModel = require('../models/usersInQ.js');
+const usersInQModel = require('../models/usersInQs.js');
 const CodeError = require('../util/CodeError.js')
 
 const has = require('has-keys');
@@ -57,19 +57,21 @@ module.exports = {
         if (probaC < 0 || probaC > 100)
             throw new CodeError('The probability of a contaminator must be between 0 and 100', status.BAD_REQUEST)
 
-        await gameModel.create({"nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "debutJour": debutJour, "finJour": finJour, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC});
-        res.json({status: true, message: 'Session created' });
+        const gameData = await gameModel.create({"nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "debutJour": debutJour, "finJour": finJour, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC});
+
+        const idGame = gameData.id
+        res.json({status: true, message: 'Session created', idGame});
     },
 
     async joinSession (req, res){
         const username = req.login
-        let data = await userModel.findOne({username})
-        userId = parseInt(data.id)
+        const data = await userModel.findOne({where: {username}})
+        const userId = parseInt(data.id)
         let {idSession} = req.params
         idSession = parseInt(idSession)
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
-        console.log(parseInt(idSession))
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
+        console.log(idSession)
+        console.log(data)
+        console.log(username)
         await usersInQModel.create({"idUser": userId, "idGame": idSession})
         res.json({status: true, message: 'Session joined' })
     },
@@ -80,5 +82,14 @@ module.exports = {
         idSession = parseInt(idSession)
         const session = await gameModel.findOne({where: {"id": idSession}})
         res.json({status: true, message: 'Session found', session})
+    },
+
+    async destroySession (req, res){
+        if (!has(req.params, 'idSession')) throw new CodeError('You must specify the id of the session', status.BAD_REQUEST)
+        let {idSession} = req.params
+        idSession = parseInt(idSession)
+        await gameModel.destroy({where: {"id": idSession}})
+        await usersInQModel.destroy({where: {"idGame": idSession}})
+        res.json({status: true, message: 'Session destroyed' })
     }
 }

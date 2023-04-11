@@ -1,6 +1,8 @@
 const status = require('http-status');
 
 const gameModel = require('../models/games.js');
+const userModel = require('../models/users.js');
+const usersInQModel = require('../models/usersInQ.js');
 const CodeError = require('../util/CodeError.js')
 
 const has = require('has-keys');
@@ -60,6 +62,23 @@ module.exports = {
     },
 
     async joinSession (req, res){
-
+        const username = req.login
+        let data = await userModel.findOne({username})
+        userId = parseInt(data.id)
+        let {idSession} = req.params
+        idSession = parseInt(idSession)
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
+        console.log(parseInt(idSession))
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
+        await usersInQModel.create({"idUser": userId, "idGame": idSession})
+        res.json({status: true, message: 'Session joined' })
+    },
+    
+    async getSessionParam (req, res){
+        if (!has(req.params, 'idSession')) throw new CodeError('You must specify the id of the session', status.BAD_REQUEST)
+        let {idSession} = req.params
+        idSession = parseInt(idSession)
+        const session = await gameModel.findOne({where: {"id": idSession}})
+        res.json({status: true, message: 'Session found', session})
     }
 }

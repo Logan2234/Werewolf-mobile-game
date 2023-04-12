@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, StyleSheet, BackHandler, Alert } from 'react-native';
+import { View, BackHandler, Alert } from 'react-native';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import CreateSessionForm from './CreateSessionForm';
 import JoinSession from './JoinSession';
 import CreateOrJoin from './CreateOrJoin';
-import { backgroundColor } from '../constants/colors';
+import { commonStyles } from '../constants/style';
 
 export default function Home() {
     const [token, setToken] = useState(null);
@@ -45,9 +45,9 @@ export default function Home() {
 
     }, [createOrJoin, token]);
 
-    return (<View style={styles.root}>
+    return (<View style={commonStyles.container}>
         {
-            (!token)
+            (token)
                 ? (loginOrRegister)
                     ? <RegisterForm setToken={setToken} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setLoginOrRegister} />
                     : <LoginForm setToken={setToken} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setLoginOrRegister} />
@@ -60,7 +60,3 @@ export default function Home() {
         <StatusBar style="auto" />
     </View>);
 }
-
-const styles = StyleSheet.create({
-    root: { backgroundColor: backgroundColor },
-});

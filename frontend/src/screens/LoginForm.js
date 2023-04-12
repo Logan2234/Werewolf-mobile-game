@@ -11,7 +11,7 @@ export default function LoginForm({ changeView, setToken, pseudo, setPseudo, pas
     function connect(pseudo, password) {
         fetch(`${BACKEND}/login`, {
             method: 'POST',
-            body: new URLSearchParams({"data": '{"username": "' + pseudo + '","password": "'+ password+'"}'})
+            body: new URLSearchParams({'data': '{"username": "' + pseudo + '","password": "'+ password+'"}'})
 
         })
             .then(response => response.json())
@@ -34,9 +34,9 @@ export default function LoginForm({ changeView, setToken, pseudo, setPseudo, pas
             </View>
 
             <View style={styles.footer}>
-                <SizedText label='Pas encore inscrit ? ' size='17' />
+                <SizedText label='Pas encore inscrit ? ' size={17} />
                 <Pressable onPress={() => changeView(1)}>
-                    <SizedText style={commonStyles.link} size='17' label='Inscrivez-vous!' />
+                    <SizedText style={commonStyles.link} size={17} label='Inscrivez-vous!' />
                 </Pressable>
             </View>
         </View>

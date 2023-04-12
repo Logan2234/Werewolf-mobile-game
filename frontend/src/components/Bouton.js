@@ -6,14 +6,14 @@ import { fontSize } from '../constants/style';
 
 export default function Bouton({ style, label, onPress, labelSize }) {
     return (
-        <Pressable style={[styles.buttonLabel, style]} onPress={onPress}>
+        <Pressable style={[styles.button, style]} onPress={onPress}>
             <SizedText style={styles.label} label={label} size={labelSize}/>
         </Pressable>
     );
 }
 
 const styles = StyleSheet.create({
-    buttonLabel: {
+    button: {
         backgroundColor: primaryColor,
         borderRadius: 5,
         padding: 10,

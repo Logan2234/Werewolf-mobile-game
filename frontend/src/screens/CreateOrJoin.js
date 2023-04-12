@@ -13,5 +13,5 @@ export default function JoinSession({onClick}) {
 
 const styles = StyleSheet.create({
     container: { display: 'flex', justifyContent: 'center', gap: 50, alignItems: 'center' },
-    bouton: { height: '12%', width: '75%', borderRadius: 20},
+    bouton: { height: '12%', width: '75%', borderRadius: 20 },
 });

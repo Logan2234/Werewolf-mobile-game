@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     titre: {
         fontWeight: 'bold',
         marginTop: 50,
-        marginBottom: 10
+        marginBottom: 10,
+        textAlign: 'center'
     }
 });

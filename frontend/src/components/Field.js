@@ -24,5 +24,5 @@ export default function Field({ style, label, setFunction, value, pad, placehold
 const styles = StyleSheet.create({
     text: { paddingTop: 10 },
     input: { height: 40, borderWidth: 1, width: 200, paddingLeft: 5, borderRadius: 5, borderColor: secondaryColor, color: secondaryColor, fontSize: 15 },
-    textAndInput: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', width: '100%', paddingHorizontal: '15%' },
+    textAndInput: { display: 'flex', justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: '15%' },
 });

@@ -2,13 +2,12 @@ import { StyleSheet, View } from 'react-native';
 import { commonStyles } from '../constants/style';
 import Bouton from '../components/Bouton';
 import Title from '../components/Title';
-import SizedText from '../components/SizedText';
 import Field from '../components/Field';
+import SelectDateHeure from '../components/SelectDateHeure';
 import { BACKEND } from '../constants/backend';
 import { useState } from 'react';
 // Pour les dates
-import RNDateTimePicker from '@react-native-community/datetimepicker';
-import moment from "moment";
+import moment from 'moment';
 
 
 export default function CreateSessionForm() {
@@ -28,23 +27,6 @@ export default function CreateSessionForm() {
     // const date = new Date();
     // return Date(moment(date).add(1,'day'));
     // }
-
-    const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false);
-
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate;
-        setShow(false);
-        setStartDate(currentDate);
-    };
-    const showMode = (currentMode) => {
-        if (Platform.OS === 'android') {
-            setShow(true);
-        }
-        setMode(currentMode);
-    };
-    const showDatepicker = () => { showMode('date'); };
-    const showTimepicker = () => { showMode('time'); };
 
     const [contamination, setContamination] = useState('0');
     const [insomnie, setInsomnie] = useState('0');
@@ -152,26 +134,12 @@ export default function CreateSessionForm() {
                 setFunction={setLoupGarous}
                 value={loupGarous}
                 pad='number-pad' />
-            <SizedText label={'Début de la partie'} />
-            <View style={styles.textAndInput}>
-                <Bouton onPress={showDatepicker} label="Date de début" />
-                <Bouton onPress={showTimepicker} label="Heure de début" />
-                <SizedText label={'Début :' + startDate.toLocaleString()} />
-                {show && (
-                    <RNDateTimePicker
-                        testID="dateTimePicker"
-                        value={startDate}
-                        mode={mode}
-                        is24Hour={true}
-                        onChange={onChange}
-                        minimumDate={new Date()}
-                    />
-                )}
-            </View>
+            <SelectDateHeure label='Début de la partie' startDate={startDate} setStartDate={setStartDate} />
             <Bouton
                 nativeID='createSession'
                 label='Créer la session'
                 style={styles.bouton}
+                labelSize={18}
                 onPress={() => createSession()}
             />
         </View>
@@ -180,7 +148,7 @@ export default function CreateSessionForm() {
 
 // ------------------------ Style --------------------------------------
 const styles = StyleSheet.create({
-    container: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
+    container: { display: 'flex', justifyContent: 'space-between' }, // TODO alignItems fait de la merde
     input: { height: 35, width: 60 },
-    bouton: { marginBottom: 30, marginTop: 10 },
+    bouton: { marginTop: 10, height: 50 },
 });

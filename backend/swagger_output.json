@@ -88,6 +88,29 @@
         }
       }
     },
+    "/createSession/{idSession}": {
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idSession",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/joinSession/{idSession}": {
       "get": {
         "description": "",

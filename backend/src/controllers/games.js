@@ -61,19 +61,21 @@ module.exports = {
         if (debutPartie < 0)
             throw new CodeError('The time of the beginning of the game must be higher than 0 minutes', status.BAD_REQUEST)
 
-        await gameModel.create({"nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC});
-        res.json({status: true, message: 'Session created' });
+        const gameData = await gameModel.create({"nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC});
+        
+        const idGame = gameData.id
+        res.json({status: true, message: 'Session created', idGame});
     },
 
     async joinSession (req, res){
         const username = req.login
-        let data = await userModel.findOne({username})
-        userId = parseInt(data.id)
+        const data = await userModel.findOne({where: {username}})
+        const userId = parseInt(data.id)
         let {idSession} = req.params
         idSession = parseInt(idSession)
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
-        console.log(parseInt(idSession))
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
+        console.log(idSession)
+        console.log(data)
+        console.log(username)
         await usersInQModel.create({"idUser": userId, "idGame": idSession})
         res.json({status: true, message: 'Session joined' })
     },
@@ -84,5 +86,14 @@ module.exports = {
         idSession = parseInt(idSession)
         const session = await gameModel.findOne({where: {"id": idSession}})
         res.json({status: true, message: 'Session found', session})
+    },
+
+    async destroySession (idSession){ //TODO
+        if (!has(req.params, 'idSession')) throw new CodeError('You must specify the id of the session', status.BAD_REQUEST)
+        let {idSession} = req.params
+        idSession = parseInt(idSession)
+        await gameModel.destroy({where: {"id": idSession}})
+        await usersInQModel.destroy({where: {"idGame": idSession}})
+        res.json({status: true, message: 'Session destroyed' })
     }
 }

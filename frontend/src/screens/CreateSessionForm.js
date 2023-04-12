@@ -12,10 +12,10 @@ import moment from 'moment';
 // Pour l'envoi au backend
 import checkProba from '../utils/Probability';
 import subDates from '../utils/Dates';
-import ShareSession from './ShareSession';
+import { vues } from '../constants/screens';
 
 
-export default function CreateSessionForm({ token }) {
+export default function CreateSessionForm({ token, changeView, setIdSession }) {
 
     // ------------------------ Constantes --------------------------------------
     const [minPlayer, setMinPlayer] = useState('5');
@@ -38,8 +38,6 @@ export default function CreateSessionForm({ token }) {
     const [voyance, setVoyance] = useState('0');
     const [spiritisme, setSpiritisme] = useState('0');
     const [loupGarous, setLoupGarous] = useState('0.3');
-
-    const [idGame, setIdGame] = useState(null);
 
     // ------------------------ Création de la session --------------------------------------
     function verifyData() {
@@ -69,7 +67,6 @@ export default function CreateSessionForm({ token }) {
     }
 
     function sendData(lengthDay, lengthNight, timer, probaLG, probaVo, probaSp, probaIn, probaC) {
-        alert('{"nbMinJoueurs": ' + minPlayer + ', "nbMaxJoueurs": ' + maxPlayer + ', "dureeJour": ' + lengthDay + ', "dureeNuit": ' + lengthNight + ', "probaLG": ' + probaLG + ', "probaV": ' + probaVo + ', "probaS": ' + probaSp + ', "probaI": ' + probaIn + ', "probaC": ' + probaC + ', "debutPartie":  ' + timer + '}');
         fetch(`${BACKEND}/createSession`, {
             method: 'POST',
             headers: { 'x-access-token': token },
@@ -81,9 +78,8 @@ export default function CreateSessionForm({ token }) {
             .then(response => response.json())
             .then(data => {
                 if (data.idGame) {
-                    setIdGame(data.idGame);
-                    ShareSession(minPlayer, maxPlayer, lengthDay, lengthNight,
-                        startDate, contamination, insomnie, voyance, spiritisme, loupGarous, idGame);
+                    setIdSession(data.idGame);
+                    changeView(vues.SHARE_SESSION);
                 }
             })
             .catch(error => alert('Server error: ' + error));
@@ -202,7 +198,7 @@ const styles = StyleSheet.create({
     container: {
         display: 'flex',
         justifyContent: 'space-between'
-    }, // TODO alignItems fait de la merde
+    },
     input: {
         height: 35,
         width: 60,

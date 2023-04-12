@@ -15,7 +15,8 @@ export default function Home() {
     const [token, setToken] = useState(null);
     const [pseudo, setPseudo] = useState('');
     const [password, setPassword] = useState('');
-    const [currentVue, setCurrentVue] = useState(vues.CREATE_OR_JOIN);
+    const [idSession, setIdSession] = useState('');
+    const [currentVue, setCurrentVue] = useState(vues.LOGIN);
 
     useEffect(() => {
         const backActionHandler = () => {
@@ -54,10 +55,10 @@ export default function Home() {
                     : (currentVue === vues.CREATE_OR_JOIN)
                         ? <CreateOrJoin changeView={setCurrentVue} />
                         : (currentVue === vues.JOIN_SESSION)
-                            ? <JoinSession token={token} />
+                            ? <JoinSession idSession={idSession} setIdSession={setIdSession} changeView={setCurrentVue} />
                             : (currentVue === vues.CREATE_SESSION)
-                                ? <CreateSessionForm token={token} />
-                                : <ShareSession />
+                                ? <CreateSessionForm setIdSession={setIdSession} changeView={setCurrentVue} token={token} />
+                                : <ShareSession idSession={idSession} token={token} />
         }
         <StatusBar animated={true} barStyle='default' backgroundColor={backgroundColor} />
     </View>);

@@ -4,74 +4,109 @@ import { commonStyles } from '../constants/style';
 import Title from '../components/Title';
 import SizedText from '../components/SizedText';
 import Field from '../components/Field';
+import { BACKEND } from '../constants/backend';
+import { useEffect, useState } from 'react';
 
-export default function ShareSession(minPlayer, maxPlayer, lengthDay, lengthNight,
-    startDate, contamination, insomnie, voyance, spiritisme, loupGarous, idSession) {
+export default function ShareSession({ idSession, token }) {
+    const [donnees, setDonnees] = useState({});
+
+    useEffect(() => {
+        fetch(`${BACKEND}/joinSession/${idSession}`, {
+            method: 'GET',
+            headers: { 'x-access-token': token },
+        })
+            .then(response => response.json())
+            .then(data => {
+                setDonnees(data.session);
+            })
+            .catch(error => alert('Server error: ' + error));
+    }, [token, idSession]);
 
     return (
         <View style={[styles.container, commonStyles.container]}>
             <Title label='Récapitulatif de la session' />
             <Field
                 editable={false}
-                style={styles.input}
-                value={minPlayer}
+                inputStyle={styles.input}
+                fieldStyle={styles.field}
+                value={donnees.nbMinJoueurs}
                 label={'Nombre minimal de joueurs'} />
             <Field
                 editable={false}
-                style={styles.input}
-                value={maxPlayer}
+                inputStyle={styles.input}
+                fieldStyle={styles.field}
+                value={donnees.nbMaxJoueurs}
                 label='Nombre maximal de joueurs' />
             <Field
                 editable={false}
-                style={styles.input}
-                value={lengthDay}
+                inputStyle={styles.input}
+                fieldStyle={styles.field}
+                value={donnees.dureeJour}
                 label={'Durée d\'une journée en minutes'} />
             <Field
                 editable={false}
-                style={styles.input}
-                value={lengthNight}
+                inputStyle={styles.input}
+                fieldStyle={styles.field}
+                value={donnees.dureeNuit}
                 label={'Durée d\'une nuit en minutes'} />
             <Field
                 editable={false}
-                style={styles.input}
-                value={contamination}
+                inputStyle={styles.input}
+                fieldStyle={styles.field}
+                value={donnees.probaC}
                 label='Proba de contamination' />
             <Field
                 editable={false}
-                style={styles.input}
-                value={insomnie}
+                inputStyle={styles.input}
+                fieldStyle={styles.field}
+                value={donnees.probaI}
                 label={'Proba d\'insomnie'} />
             <Field
                 editable={false}
-                style={styles.input}
-                value={voyance}
+                inputStyle={styles.input}
+                fieldStyle={styles.field}
+                value={donnees.probaV}
                 label={'Proba de voyance'} />
             <Field
                 editable={false}
-                style={styles.input}
-                value={spiritisme}
+                inputStyle={styles.input}
+                fieldStyle={styles.field}
+                value={donnees.probaS}
                 label='Proba de spiritisme' />
             <Field
                 editable={false}
-                style={styles.input}
+                inputStyle={styles.input}
+                fieldStyle={styles.field}
                 label={'Ratio de loups-garous'}
-                value={loupGarous} />
+                value={donnees.probaLG} />
             <Field
                 editable={false}
-                style={styles.input}
+                inputStyle={styles.input}
+                fieldStyle={styles.field}
                 label={'Date de début'}
-                value={startDate} />
+                value={donnees.debutPartie} />
 
-
-            <SizedText label={'Voici l\'identifiant de la session à partager :'} />
-            <SizedText label={idSession} size={30} />
+            <SizedText size={20} label={'Voici l\'identifiant de la session à partager: #' + idSession} />
         </View>
     );
 }
 
 // ------------------------ Style --------------------------------------
 const styles = StyleSheet.create({
-    container: { display: 'flex', justifyContent: 'space-between' }, // TODO alignItems fait de la merde
-    input: { height: 35, width: 60 },
-    bouton: { marginTop: 10, height: 50 },
+    container: {
+        display: 'flex',
+        justifyContent: 'space-between'
+    },
+    input: {
+        height: 35,
+        width: 60,
+    },
+    field: {
+        justifyContent: 'space-between',
+        paddingHorizontal: '15%'
+    },
+    bouton: {
+        marginTop: 10,
+        height: 50
+    },
 });

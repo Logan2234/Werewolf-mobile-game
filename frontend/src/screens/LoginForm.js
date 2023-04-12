@@ -1,24 +1,30 @@
-import { View, Pressable } from 'react-native';
+import { View, Pressable, Alert } from 'react-native';
 import { loginAndRegisterStyle as styles } from '../constants/constants';
 import { commonStyles } from '../constants/style';
+import { BACKEND } from '../constants/backend';
+import { vues } from '../constants/screens';
 import Bouton from '../components/Bouton';
 import Title from '../components/Title';
 import SizedText from '../components/SizedText';
-import { BACKEND } from '../constants/backend';
 import Field from '../components/Field';
+import { errorCodes } from '../constants/errorCode';
 
-export default function LoginForm({ changeView, setToken, pseudo, setPseudo, password, setPassword }) {
-    function connect(pseudo, password) {
+export default function LoginForm({ changeView, setToken, pseudo, setPseudo, password, setPassword }) {        
+    function connect() {
         fetch(`${BACKEND}/login`, {
             method: 'POST',
-            body: new URLSearchParams({'data': '{"username": "' + pseudo + '","password": "'+ password+'"}'})
+            body: new URLSearchParams({ 'data': '{"username": "' + pseudo + '","password": "' + password + '"}' })
 
         })
             .then(response => response.json())
             .then(data => {
                 if (data.token) {
                     setToken(data.token);
-                } else { alert('Pseudo ou mot de passe incorrect'); }
+                    changeView(vues.CREATE_OR_JOIN);
+                } else {
+                    Alert.alert(errorCodes.UNABLE_TO_CONNECT, data.message);
+                    alert(data.message);
+                }
             })
             .catch(error => alert('Server error: ' + error));
     }
@@ -35,7 +41,7 @@ export default function LoginForm({ changeView, setToken, pseudo, setPseudo, pas
 
             <View style={styles.footer}>
                 <SizedText label='Pas encore inscrit ? ' size={17} />
-                <Pressable onPress={() => changeView(1)}>
+                <Pressable onPress={() => changeView(vues.REGISTER)}>
                     <SizedText style={commonStyles.link} size={17} label='Inscrivez-vous!' />
                 </Pressable>
             </View>

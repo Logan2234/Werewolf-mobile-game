@@ -44,5 +44,11 @@ export default function SelectDateHeure({ startDate, setStartDate, label }) {
 }
 
 const styles = StyleSheet.create({
-    dateDiv: { display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center', gap: 15 },
+    dateDiv: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 15
+    },
 });

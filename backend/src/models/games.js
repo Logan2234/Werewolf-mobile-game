@@ -10,39 +10,53 @@ const session = db.define('Games', {
     },
     nbMinJoueurs: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         defaultValue: 5
     },
     nbMaxJoueurs: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         defaultValue: 10
     },
-    debutJour: {
+    dureeJour: {
         type: Sequelize.INTEGER,
-        defaultValue: 480
+        allowNull: false,
+        defaultValue: 840
     },
-    finJour: {
+    dureeNuit: {
         type: Sequelize.INTEGER,
-        defaultValue: 1320
+        allowNull: false,
+        defaultValue: 600
     },
     probaLG: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         defaultValue: 33
     },
     probaV: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         defaultValue: 0
     },
     probaS: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         defaultValue: 0
     },
     probaI: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         defaultValue: 0
     },
     probaC: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         defaultValue: 0
+    },
+    debutPartie: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 180
     }
 }, { timestamps: false })
 

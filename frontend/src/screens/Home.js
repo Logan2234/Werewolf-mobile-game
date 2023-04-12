@@ -7,6 +7,7 @@ import CreateSessionForm from './CreateSessionForm';
 import JoinSession from './JoinSession';
 import CreateOrJoin from './CreateOrJoin';
 import { commonStyles } from '../constants/style';
+import RecapSession from './ShareSession';
 
 export default function Home() {
     const [token, setToken] = useState(null);
@@ -14,6 +15,7 @@ export default function Home() {
     const [password, setPassword] = useState('');
     const [loginOrRegister, setLoginOrRegister] = useState(1);
     const [createOrJoin, setCreateOrJoin] = useState(null);
+    const [createdSession, setCreatedSession] = useState(false);
 
     useEffect(() => {
         const backActionHandler = () => {
@@ -55,7 +57,9 @@ export default function Home() {
                     ? <CreateOrJoin onClick={setCreateOrJoin} />
                     : (createOrJoin)
                         ? <JoinSession changeView={setCreateOrJoin} />
-                        : <CreateSessionForm changeView={setCreateOrJoin} />
+                        : (!createdSession)
+                            ? <CreateSessionForm changeView={setCreateOrJoin} token={token} />
+                            : <RecapSession changeView={setCreatedSession} />
         }
         <StatusBar style="auto" />
     </View>);

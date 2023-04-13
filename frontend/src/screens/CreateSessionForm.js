@@ -63,10 +63,12 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
 
         fetch(`${BACKEND}/createSession`, {
             method: 'POST',
-            headers: { 'x-access-token': token },
-            body: new URLSearchParams({
-                'data':
-                    '{"nbMinJoueurs": ' + minPlayer + ', "nbMaxJoueurs": ' + maxPlayer + ', "dureeJour": ' + lengthDay + ', "dureeNuit": ' + lengthNight + ', "probaLG": ' + probaLG + ', "probaV": ' + probaVo + ', "probaS": ' + probaSp + ', "probaI": ' + probaIn + ', "probaC": ' + probaC + ', "debutPartie":  ' + timer + '}'
+            headers: {
+                'x-access-token': token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                data: '{"nbMinJoueurs": ' + minPlayer + ', "nbMaxJoueurs": ' + maxPlayer + ', "dureeJour": ' + lengthDay + ', "dureeNuit": ' + lengthNight + ', "probaLG": ' + probaLG + ', "probaV": ' + probaVo + ', "probaS": ' + probaSp + ', "probaI": ' + probaIn + ', "probaC": ' + probaC + ', "debutPartie":  ' + timer + '}'
             })
         })
             .then(response => response.json())

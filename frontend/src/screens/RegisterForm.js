@@ -60,7 +60,7 @@ export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, 
         setAfficheMotDePasseDiffere(() => password.length > 0 && password.length == passwordConfirmation.length && passwordConfirmation !== password);
     }, [passwordConfirmation, password]);
 
-    //TODO : mettre le bouton "se connecter" en onPress quadn on appuie sur entrée
+    // TODO: Enter on first and second field goes to the second one
     return (
         <View style={[styles.form, commonStyles.container]}>
             <Title style={styles.header} label='Inscription' />
@@ -68,7 +68,7 @@ export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, 
             <View style={styles.fields}>
                 <Field nativeID='pseudoInput' value={pseudo} setFunction={setPseudo} placeholder='Pseudo' />
                 <Field nativeID='passwordInput' value={password} setFunction={setPassword} placeholder='Mot de passe' secureTextEntry={true} />
-                <Field nativeID='passwordInputConfirmation' value={passwordConfirmation} setFunction={setPasswordConfirmation} placeholder='Confirmation du mot de passe' secureTextEntry={true} />
+                <Field nativeID='passwordInputConfirmation' value={passwordConfirmation} setFunction={setPasswordConfirmation} placeholder='Confirmation du mot de passe' secureTextEntry={true} onSubmitEditing={() => register()} />
                 {
                     (afficheMotDePasseDiffere == true) ?
                         <SizedText style={styles.error} label='Les mots de passe ne correspondent pas' />

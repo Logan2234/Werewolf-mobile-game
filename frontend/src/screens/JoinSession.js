@@ -47,7 +47,7 @@ export default function JoinSession({ changeView, setIdSession, idSession }) {
     return (
         <View style={[commonStyles.container, styles.container]}>
             <Title label='Rejoindre une session' />
-            <Field label='ID de la session' value={value} placeholder='#XXXXXX' fieldStyle={styles.field} labelSize={30} setFunction={formatInput} inputStyle={[styles.input, { borderColor: borderColor }]} pad='number-pad' />
+            <Field label='ID de la session' value={value} placeholder='#XXXXXX' fieldStyle={styles.field} labelSize={30} setFunction={formatInput} inputStyle={[styles.input, { borderColor: borderColor }]} pad='number-pad' onSubmitEditing={verifyData}/>
             <Bouton label='Rejoindre la session' labelSize={25} style={styles.bouton} onPress={verifyData} />
         </View>
     );

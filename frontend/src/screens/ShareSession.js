@@ -32,68 +32,52 @@ export default function ShareSession({ idSession, token }) {
     return (
         <View style={[styles.container, commonStyles.container]}>
             <Title label='Récapitulatif de la session' />
-            <Field
-                editable={false}
-                inputStyle={styles.input}
-                fieldStyle={styles.field}
-                value={donnees.nbMinJoueurs}
-                label={'Nombre minimal de joueurs'} />
-            <Field
-                editable={false}
-                inputStyle={styles.input}
-                fieldStyle={styles.field}
-                value={donnees.nbMaxJoueurs}
-                label='Nombre maximal de joueurs' />
-            <Field
-                editable={false}
-                inputStyle={styles.input}
-                fieldStyle={styles.field}
-                value={donnees.dureeJour}
-                label={'Durée d\'une journée en minutes'} />
-            <Field
-                editable={false}
-                inputStyle={styles.input}
-                fieldStyle={styles.field}
-                value={donnees.dureeNuit}
-                label={'Durée d\'une nuit en minutes'} />
-            <Field
-                editable={false}
-                inputStyle={styles.input}
-                fieldStyle={styles.field}
-                value={donnees.probaC}
-                label='Proba de contamination' />
-            <Field
-                editable={false}
-                inputStyle={styles.input}
-                fieldStyle={styles.field}
-                value={donnees.probaI}
-                label={'Proba d\'insomnie'} />
-            <Field
-                editable={false}
-                inputStyle={styles.input}
-                fieldStyle={styles.field}
-                value={donnees.probaV}
-                label={'Proba de voyance'} />
-            <Field
-                editable={false}
-                inputStyle={styles.input}
-                fieldStyle={styles.field}
-                value={donnees.probaS}
-                label='Proba de spiritisme' />
-            <Field
-                editable={false}
-                inputStyle={styles.input}
-                fieldStyle={styles.field}
-                label={'Ratio de loups-garous'}
-                value={donnees.probaLG} />
-            <Field
-                editable={false}
-                inputStyle={styles.input}
-                fieldStyle={styles.field}
-                label={'Date de début'}
-                value={donnees.debutPartie} />
+            <View style={styles.res}>
+                <SizedText label={'Nombre minimal de joueurs:'} />
+                <SizedText label={donnees.nbMinJoueurs} />
+            </View>
+            <View style={styles.res}>
+                <SizedText label={'Nombre maximal de joueurs:'} />
+                <SizedText label={donnees.nbMaxJoueurs} />
+            </View>
+            <View style={styles.res}>
+                <SizedText label={'Durée d\'une journée en minutes:'} />
+                <SizedText label={donnees.dureeJour} />
+            </View>
+            <View style={styles.res}>
+                <SizedText label={'Durée d\'une nuit en minutes:'} />
+                <SizedText label={donnees.dureeNuit} />
+            </View>
+            <View style={styles.res}>
+                <SizedText label={'Probabilité de contamination:'} />
+                <SizedText label={donnees.probaC} />
+            </View>
+            <View style={styles.res}>
+                <SizedText label={'Probabilité d\'insomnie:'} />
+                <SizedText label={donnees.probaI} />
+            </View>
+            <View style={styles.res}>
+                <SizedText label={'Probabilité de voyance:'} />
+                <SizedText label={donnees.probaV} />
+            </View>
+            <View style={styles.res}>
+                <SizedText label={'Probabilité de spiritisme:'} />
+                <SizedText label={donnees.probaS} />
+            </View>
+            <View style={styles.res}>
+                <SizedText label={'Ratio de loups-garou:'} />
+                <SizedText label={donnees.probaLG} />
+            </View>
+            <View style={styles.res}>
+                <SizedText label={'Date de début:'} />
+                <SizedText label={donnees.debutPartie} />
+            </View>
 
-            <SizedText size={20} label={'Voici l\'identifiant de la session à partager: #' + idSession} />
+            <View style={styles.idSection}>
+                <SizedText size={20} label={'ID session: #'} />
+                <SizedText style={styles.id} size={20} label={idSession} />
+            </View>
+
         </View>
     );
 }
@@ -116,4 +100,19 @@ const styles = StyleSheet.create({
         marginTop: 10,
         height: 50
     },
+    res: {
+        display: 'flex',
+        justifyContent:'space-between',
+        paddingHorizontal: '25%',
+        flexDirection: 'row'        
+    },
+    idSection: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginBottom: 20
+    },
+    id: {
+        fontWeight: 'bold'
+    }
 });

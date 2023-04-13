@@ -3,20 +3,20 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import SizedText from './SizedText';
 import { placeholderColor, secondaryColor, textColor } from '../constants/colors';
 
-export default function Field({ inputStyle, fieldStyle, label, setFunction, value, pad, placeholder, secureTextEntry, editable, labelSize }) {
+export default function Field({ inputStyle, onSubmitEditing, fieldStyle, label, setFunction, value, pad, placeholder, secureTextEntry, editable, labelSize }) {
     return (
         <View style={[styles.textAndInput, fieldStyle]}>
             <SizedText label={label} size={labelSize} />
             <TextInput
                 style={[styles.input, inputStyle]}
+                onSubmitEditing={onSubmitEditing}
                 onChangeText={setFunction}
                 value={value}
                 secureTextEntry={secureTextEntry}
                 keyboardType={pad}
                 placeholderTextColor={placeholderColor}
                 placeholder={placeholder}
-                editable={editable}
-            />
+                editable={editable} />
         </View>
     );
 }

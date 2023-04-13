@@ -76,7 +76,7 @@ module.exports = {
         
         //setTimeout(createGame, idGame, 60000 * debutPartie)
 
-        idGame = "0".repeat(6 - idGame.length) + idGame.toString()  // On renvoit l'id sous forme de string de 6 caractères
+        idGame = "0".repeat(6 - idGame.toString().length) + idGame.toString()  // On renvoit l'id sous forme de string de 6 caractères
         res.json({status: true, message: 'Session created', idGame})
     },
 

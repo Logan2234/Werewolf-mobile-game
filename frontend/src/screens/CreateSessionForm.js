@@ -6,8 +6,7 @@ import Bouton from '../components/Bouton';
 import Title from '../components/Title';
 import Field from '../components/Field';
 import SelectDateHeure from '../components/SelectDateHeure';
-// Pour les dates
-import moment from 'moment';
+import { tomorrowDate } from '../utils/Dates';
 
 // Pour l'envoi au backend
 import checkProba from '../utils/Probability';
@@ -27,12 +26,8 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
     const [lengthDayMin, setLengthDayMin] = useState('0');
     const [lengthNightMin, setLengthNightMin] = useState('0');
 
-    const [startDate, setStartDate] = useState(new Date()); //TODO : faire une fonction dans utils pour avoir le jour de demain 8h
-    // () => {
-    // const date = new Date();
-    // return Date(moment(date).add(1,'day'));
-    // }
-
+    const [startDate, setStartDate] = useState(tomorrowDate); //TODO : faire une fonction dans utils pour avoir le jour de demain 8h
+    console.log(startDate);
     const [contamination, setContamination] = useState('0');
     const [insomnie, setInsomnie] = useState('0');
     const [voyance, setVoyance] = useState('0');
@@ -67,7 +62,6 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
     }
 
     function sendData(lengthDay, lengthNight, timer, probaLG, probaVo, probaSp, probaIn, probaC) {
-    // TODO : fix la relation front/back 
 
         fetch(`${BACKEND}/createSession`, {
             method: 'POST',

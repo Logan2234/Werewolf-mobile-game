@@ -5,15 +5,9 @@ const db = require('./database.js');
 const game = db.define('InGames', {
     id: {
         primaryKey: true,
-        type: Sequelize.INTEGER,
-        autoIncrement: true
+        type: Sequelize.INTEGER
     },
-    nbMinJoueurs: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 5
-    },
-    nbMaxJoueurs: {
+    nbJoueurs: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 10

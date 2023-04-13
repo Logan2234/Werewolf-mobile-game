@@ -13,6 +13,7 @@ export default function LoginForm({ changeView, setToken, setIdSession, pseudo, 
     function connect() {
         fetch(`${BACKEND}/login`, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: new URLSearchParams({ 'data': '{"username": "' + pseudo + '","password": "' + password + '"}' })
         })
             .then(response => response.json())

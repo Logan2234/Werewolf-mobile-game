@@ -46,6 +46,7 @@ export default function Home() {
 
     }, [currentVue]);
 
+    // TODO : faire attention au cas où une session lui est déjà attribuée pour un token donné
     return (<View style={commonStyles.container}>
         {
             (currentVue === vues.LOGIN)

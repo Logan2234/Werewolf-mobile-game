@@ -22,6 +22,7 @@ export default function ShareSession({ idSession, token }) {
             .catch(error => alert('Server error: ' + error));
     }, [token, idSession]);
 
+    // TODO : remettre en forme le texte en bas
     return (
         <View style={[styles.container, commonStyles.container]}>
             <Title label='Récapitulatif de la session' />

@@ -67,8 +67,8 @@ module.exports = {
         let idGame = Math.trunc(Math.random()*1000000)
 
         while (true){
-            const game = await gameModel.findOne({where: {id: idGame}})
-            const inGame = await inGameModel.findOne({where: {id: idGame}})
+            const game = await gameModel.findOne({where: {"id": idGame}})
+            const inGame = await inGameModel.findOne({where: {"id": idGame}})
             if (game == null && inGame == null)
                 break
             idGame = Math.trunc(Math.random()*1000000)
@@ -76,8 +76,7 @@ module.exports = {
 
         const gameData = await gameModel.create({"id": idGame, "nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "debutPartie": debutPartie});
         
-        timers[idGame] = setTimeout(createGame, 60000 * debutPartie, idGame)
-        timers[idGame] = setInterval(() => {console.log(Math.random().toString())},1000)
+        //timers[idGame] = setTimeout(createGame, 60000 * debutPartie, idGame)
 
         idGame = "0".repeat(6 - idGame.toString().length) + idGame.toString()  // On renvoit l'id sous forme de string de 6 caractères
         res.json({status: true, message: 'Session created', idGame})

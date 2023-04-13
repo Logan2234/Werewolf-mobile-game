@@ -8,7 +8,7 @@ import { BACKEND } from '../constants/backend';
 import { loginAndRegisterStyle as styles } from '../constants/constants';
 import { vues } from '../constants/screens';
 import { commonStyles } from '../constants/style';
-import { verifyPassword, verifyString } from '../utils/verifyData';
+import { verifyString } from '../utils/verifyData';
 import { errorCodes } from '../constants/errorCode';
 
 export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, password, setPassword }) {
@@ -16,16 +16,16 @@ export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, 
     const [afficheMotDePasseDiffere, setAfficheMotDePasseDiffere] = useState(false);
 
     function verifyData() {
-        const pseudoVerification = verifyString(pseudo, 5, 32);
-        const passwordVerification = verifyPassword(password, 8, 32);
-        const passwordCVerification = verifyPassword(passwordConfirmation, 8, 32);
+        const pseudoVerification = verifyString(pseudo, 5, 32, /[^0-9a-zA-Z]/g);
+        const passwordVerification = verifyString(password, 8, 32);
+        const passwordCVerification = verifyString(passwordConfirmation, 8, 32);
 
         if (pseudoVerification == errorCodes.EMPTY)
             Alert.alert(errorCodes.EMPTY, 'Please enter a username.');
         else if (pseudoVerification == errorCodes.NOT_COMPLIANT)
             Alert.alert(errorCodes.NOT_COMPLIANT, 'Please enter a 5 to 32 characters username.');
         else if (pseudoVerification == errorCodes.INVALID_FORMAT)
-            Alert.alert(errorCodes.INVALID_FORMAT, 'Please only use letters and numbers for your username.');
+            Alert.alert(errorCodes.INVALID_FORMAT, 'The username must contain only letters and numbers.');
         else if (passwordVerification == errorCodes.EMPTY)
             Alert.alert(errorCodes.EMPTY, 'Please enter a password.');
         else if (passwordVerification == errorCodes.NOT_COMPLIANT)

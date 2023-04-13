@@ -12,6 +12,12 @@ export default function ShareSession({ idSession, token }) {
 
     useEffect(() => {
         fetch(`${BACKEND}/joinSession/${idSession}`, {
+            method: 'POST',
+            headers: { 'x-access-token': token },
+        })
+            .then(response => response.json())
+            .catch(error => alert('Server error: ' + error));
+        fetch(`${BACKEND}/joinSession/${idSession}`, {
             method: 'GET',
             headers: { 'x-access-token': token },
         })

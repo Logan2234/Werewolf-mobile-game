@@ -9,10 +9,9 @@ import SelectDateHeure from '../components/SelectDateHeure';
 import { tomorrowDate } from '../utils/dates';
 
 // Pour l'envoi au backend
-import verifyProba from '../utils/verifyData';
 import subDates from '../utils/dates';
 import { vues } from '../constants/screens';
-
+import { verifyProba } from '../utils/verifyData';
 
 export default function CreateSessionForm({ token, changeView, setIdSession }) {
 

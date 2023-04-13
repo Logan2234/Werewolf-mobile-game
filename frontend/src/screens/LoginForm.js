@@ -11,6 +11,7 @@ import { errorCodes } from '../constants/errorCode';
 
 export default function LoginForm({ changeView, setToken, pseudo, setPseudo, password, setPassword }) {        
     function connect() {
+        console.log('Connect');
         fetch(`${BACKEND}/login`, {
             method: 'POST',
             body: new URLSearchParams({ 'data': '{"username": "' + pseudo + '","password": "' + password + '"}' })
@@ -19,8 +20,9 @@ export default function LoginForm({ changeView, setToken, pseudo, setPseudo, pas
             .then(response => response.json())
             .then(data => {
                 if (data.token) {
+                    console.log(data.token);
                     setToken(data.token);
-                    changeView(vues.CREATE_OR_JOIN);
+                    changeView(vues.CREATE_OR_JOIN); // TODO ne pas renvoyer la si la personne est déjà en session / game
                 } else {
                     Alert.alert(errorCodes.UNABLE_TO_CONNECT, data.message);
                     alert(data.message);

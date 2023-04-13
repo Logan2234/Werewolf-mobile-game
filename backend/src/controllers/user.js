@@ -1,6 +1,8 @@
 const status = require('http-status');
 
 const userModel = require('../models/users.js');
+const usersInQModel = require('../models/usersInQs.js');
+const usersInGameModel = require('../models/usersInGames.js');
 const jws = require('jws')
 const bcrypt = require('bcrypt') // eslint-disable-line no-unused-vars 
 const CodeError = require('../util/CodeError.js')
@@ -47,6 +49,25 @@ module.exports = {
         }
         res.status(status.FORBIDDEN).json({ status: false, message: 'Wrong username or password' })
     },
+
+    async checkWhereIAm (req, res) {
+        const username = req.login
+        const userId = (await userModel.findOne({where: {username}})).id
+        const inSession = await usersInQModel.findOne({where: {"idUser": userId}})
+        if (inSession) {
+            const idSession = inSession.idGame
+            res.json({status: true, message: 'User is in a session', idSession})
+            return
+        }
+        const inGame = await usersInGameModel.findOne({where: {"idUser": userId}})
+        if (inGame) {
+            const idGame = inGame.idGame
+            res.json({status: true, message: 'User is in a game', idGame})
+            return
+        }
+        throw new CodeError('User is not in game or in a session', status.NOT_FOUND)
+    },
+
     // async updateUser(req, res){
     //     if(!has(req.body, ['id', 'name', 'email']))
     //         throw {code: status.BAD_REQUEST, message: 'You must specify the id, name and email'};

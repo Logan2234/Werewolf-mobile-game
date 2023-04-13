@@ -14,4 +14,6 @@ router.get('/joinSession/:idSession', user.verificationUser, games.getSessionPar
 
 router.post('/joinSession/:idSession', user.verificationUser, games.joinSession);
 
+router.get('/joinSession/:idSession/users', games.getUsersSession);
+
 module.exports = router;

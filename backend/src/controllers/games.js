@@ -86,14 +86,14 @@ module.exports = {
         idSession = parseInt(idSession)
         const session = await gameModel.findOne({where: {"id": idSession}})
         res.json({status: true, message: 'Session found', session})
-    },
-
-    async destroySession (idSession){ //TODO
-        if (!has(req.params, 'idSession')) throw new CodeError('You must specify the id of the session', status.BAD_REQUEST)
-        let {idSession} = req.params
-        idSession = parseInt(idSession)
-        await gameModel.destroy({where: {"id": idSession}})
-        await usersInQModel.destroy({where: {"idGame": idSession}})
-        res.json({status: true, message: 'Session destroyed' })
     }
+
+    // async destroySession (idSession){ //TODO
+    //     if (!has(req.params, 'idSession')) throw new CodeError('You must specify the id of the session', status.BAD_REQUEST)
+    //     let {idSession} = req.params
+    //     idSession = parseInt(idSession)
+    //     await gameModel.destroy({where: {"id": idSession}})
+    //     await usersInQModel.destroy({where: {"idGame": idSession}})
+    //     res.json({status: true, message: 'Session destroyed' })
+    // }
 }

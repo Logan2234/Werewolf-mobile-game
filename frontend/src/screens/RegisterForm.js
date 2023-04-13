@@ -60,6 +60,7 @@ export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, 
         setAfficheMotDePasseDiffere(() => password.length > 0 && password.length == passwordConfirmation.length && passwordConfirmation !== password);
     }, [passwordConfirmation, password]);
 
+    //TODO : mettre le bouton "se connecter" en onPress quadn on appuie sur entrée
     return (
         <View style={[styles.form, commonStyles.container]}>
             <Title style={styles.header} label='Inscription' />

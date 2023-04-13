@@ -29,6 +29,7 @@ export default function LoginForm({ changeView, setToken, pseudo, setPseudo, pas
             .catch(error => alert('Server error: ' + error));
     }
 
+    //TODO : mettre le bouton "Se connecter" en onPress quadn on appuie sur entrée
     return (
         <View style={[styles.form, commonStyles.container]}>
             <Title style={styles.header} label='Connexion' />

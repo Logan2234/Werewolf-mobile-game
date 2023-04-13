@@ -67,6 +67,8 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
     }
 
     function sendData(lengthDay, lengthNight, timer, probaLG, probaVo, probaSp, probaIn, probaC) {
+    // TODO : fix la relation front/back 
+
         fetch(`${BACKEND}/createSession`, {
             method: 'POST',
             headers: { 'x-access-token': token },

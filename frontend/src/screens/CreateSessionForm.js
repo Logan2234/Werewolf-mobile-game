@@ -26,7 +26,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
     const [lengthDayMin, setLengthDayMin] = useState('0');
     const [lengthNightMin, setLengthNightMin] = useState('0');
 
-    const [startDate, setStartDate] = useState(tomorrowDate); //TODO : faire une fonction dans utils pour avoir le jour de demain 8h
+    const [startDate, setStartDate] = useState(tomorrowDate);
     console.log(startDate);
     const [contamination, setContamination] = useState('0');
     const [insomnie, setInsomnie] = useState('0');
@@ -80,7 +80,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
             })
             .catch(error => alert('Server error: ' + error));
 
-        // TODO: Après l'envoi des données faut changer de vue
+        // TODO: Après l'envoi des données faut changer de vue => ok ?
     }
 
     // ------------------------ Affichage --------------------------------------

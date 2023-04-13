@@ -31,9 +31,10 @@ module.exports = {
         res.json({status: true, message: 'User Added', token});
     },
     async logIn(req, res){
-        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'username') || !has(JSON.parse(req.body.data), 'password'))
-            throw {code: status.BAD_REQUEST, message: 'You must specify the username and password'};
-
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'username') || !has(JSON.parse(req.body.data), 'password')) {
+                console.log(req);
+                throw {code: status.BAD_REQUEST, message: 'You must specify the username and password'};
+            }
         const username = JSON.parse(req.body.data).username;
         if (username == '') throw new CodeError('You must set an username !', status.BAD_REQUEST);
 

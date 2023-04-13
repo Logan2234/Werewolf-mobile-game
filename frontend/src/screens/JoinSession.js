@@ -13,7 +13,7 @@ export default function JoinSession({ changeView, setIdSession, idSession }) {
     const [borderColor, setBorderColor] = useState(secondaryColor);
 
     function verifyData() {
-        const idSessionVerification = verifyNumber(idSession, 0, 999999);
+        const idSessionVerification = verifyNumber(idSession, 0, 999999, 6);
         if (idSessionVerification == errorCodes.EMPTY)
             Alert.alert(errorCodes.EMPTY, 'Please enter a session ID.');
         else if (idSessionVerification == errorCodes.NOT_COMPLIANT)

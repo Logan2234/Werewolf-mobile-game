@@ -17,6 +17,7 @@ lintjs: # Vérification de la qualité du code JS
         - npm install eslint-plugin-react
         - npm install eslint-plugin-jest
         - npm install eslint-plugin-react-hooks
+        - npm install eslint-plugin-react-native
         - npx eslint --config frontend/.eslintrc `find ./frontend/ -name "*.js" -not -path "./frontend/node_modules/*"` > eslint_frontend_report.txt
         - npx eslint --config backend/.eslintrc `find ./backend/ -name "*.js" -not -path "./backend/node_modules/*"` > eslint_backend_report.txt
     artifacts:

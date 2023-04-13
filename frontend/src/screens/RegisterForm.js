@@ -48,10 +48,8 @@ export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, 
                 if (data.token) {
                     setToken(data.token);
                     changeView(vues.CREATE_OR_JOIN);
-                } else {
+                } else
                     Alert.alert('Enregistrement impossible', data.message);
-                    alert(data.message);
-                }
             })
             .catch(error => alert('Server error: ' + error));
     }

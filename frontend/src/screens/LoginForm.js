@@ -35,10 +35,8 @@ export default function LoginForm({ changeView, setToken, setIdSession, pseudo, 
                                 changeView(vues.CREATE_OR_JOIN);
                             }
                         });
-                } else {
+                } else
                     Alert.alert(errorCodes.UNABLE_TO_CONNECT, data.message);
-                    alert(data.message);
-                }
             })
             .catch(error => alert('Server error: ' + error));
     }

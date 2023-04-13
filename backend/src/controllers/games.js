@@ -105,10 +105,10 @@ module.exports = {
         const session = await gameModel.findOne({where: {"id": idSession}})
         const users = await usersInQModel.findAll({where: {"idGame": idSession}})
         const nbUsers = users.length
+        const nbMinJoueurs = session.nbMinJoueurs
 
         // Si on a assez de joeurs, on crée la partie
         if (nbUsers >= nbMinJoueurs) {
-            const nbMinJoueurs = session.nbMinJoueurs
             const dureeJour = session.dureeJour
             const dureeNuit = session.dureeNuit
             const probaLG = session.probaLG

@@ -59,6 +59,23 @@
         }
       }
     },
+    "/user/game": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/createSession": {
       "post": {
         "description": "",
@@ -122,6 +139,24 @@
           {
             "name": "x-access-token",
             "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/joinSession/{idSession}/users": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idSession",
+            "in": "path",
+            "required": true,
             "type": "string"
           }
         ],

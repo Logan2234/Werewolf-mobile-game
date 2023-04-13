@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { commonStyles } from '../constants/style';
 import Title from '../components/Title';
 import SizedText from '../components/SizedText';
-import Field from '../components/Field';
 import { BACKEND } from '../constants/backend';
 import { useEffect, useState } from 'react';
 

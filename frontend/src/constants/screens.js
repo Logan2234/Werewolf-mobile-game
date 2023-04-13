@@ -5,5 +5,6 @@ export const vues = {
     JOIN_SESSION: 3,
     CREATE_SESSION: 4,
     SHARE_SESSION: 5,
+    IN_GAME:6 
     // TODO: Ne pas oublier de rajouter les autres
 };

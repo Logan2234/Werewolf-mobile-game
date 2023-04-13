@@ -19,7 +19,21 @@ export default function LoginForm({ changeView, setToken, pseudo, setPseudo, pas
             .then(data => {
                 if (data.token) {
                     setToken(data.token);
-                    changeView(vues.CREATE_OR_JOIN); // TODO: ne pas renvoyer la si la personne est déjà en session / game
+                    // On regarde si on est déjà dans une session
+                    fetch(`${BACKEND}/user/game`, {
+                        method: 'GET',
+                        headers: { 'x-access-token': data.token }
+                    })
+                        .then(response1 => response1.json())
+                        .then(datas => {
+                            if (datas.idSession) {
+                                changeView(vues.SHARE_SESSION);
+                            } else if (datas.idGame) {
+                                changeView(vues.IN_GAME);
+                            } else {
+                                changeView(vues.CREATE_OR_JOIN);
+                            }
+                        })
                 } else {
                     Alert.alert(errorCodes.UNABLE_TO_CONNECT, data.message);
                     alert(data.message);

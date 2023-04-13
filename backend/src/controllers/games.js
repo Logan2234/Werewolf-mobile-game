@@ -8,6 +8,8 @@ const CodeError = require('../util/CodeError.js')
 
 const has = require('has-keys');
 
+var timers = {}
+
 module.exports = {
     async createSession (req, res) {
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'nbMinJoueurs') || !has(JSON.parse(req.body.data), 'nbMaxJoueurs') || !has(JSON.parse(req.body.data), 'dureeJour') || !has(JSON.parse(req.body.data), 'dureeNuit') || !has(JSON.parse(req.body.data), 'probaLG') || !has(JSON.parse(req.body.data), 'probaV') || !has(JSON.parse(req.body.data), 'probaS') || !has(JSON.parse(req.body.data), 'probaI') || !has(JSON.parse(req.body.data), 'probaC') || !has(JSON.parse(req.body.data), 'debutPartie')) {
@@ -74,7 +76,8 @@ module.exports = {
 
         const gameData = await gameModel.create({"id": idGame, "nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "debutPartie": debutPartie});
         
-        //setTimeout(createGame, idGame, 60000 * debutPartie)
+        timers[idGame] = setTimeout(createGame, 60000 * debutPartie, idGame)
+        timers[idGame] = setInterval(() => {console.log(Math.random().toString())},1000)
 
         idGame = "0".repeat(6 - idGame.toString().length) + idGame.toString()  // On renvoit l'id sous forme de string de 6 caractères
         res.json({status: true, message: 'Session created', idGame})
@@ -86,10 +89,15 @@ module.exports = {
         const userId = parseInt(data.id)
         let {idSession} = req.params
         idSession = parseInt(idSession)
-        console.log(idSession)
-        console.log(data)
-        console.log(username)
         await usersInQModel.create({"idUser": userId, "idGame": idSession})
+        const session = await gameModel.findOne({where: {"id": idSession}})
+        const users = await usersInQModel.findAll({where: {"idGame": idSession}})
+        const nbUsers = users.length
+        if (nbUsers >= session.nbMaxJoueurs) {
+            createGame(idSession)
+            res.json({status: true, message: 'Session joined and game started' })
+            return
+        }
         res.json({status: true, message: 'Session joined' })
     },
     
@@ -165,7 +173,12 @@ module.exports = {
         let {idSession} = req.params
         idSession = parseInt(idSession)
         const users = await usersInQModel.findAll({where: {"idGame": idSession}, attributes: ['idUser']})
-        res.json({status: true, message: 'Users of session ' + idSession.toString(), users})
+        let usersList = []
+        for (let i = 0; i < users.length; i++) {
+            const user = await userModel.findOne({where: {"id": users[i].idUser}, attributes: ['username']})
+            usersList.push(user.username)
+        }
+        res.json({status: true, message: 'Users of session ' + idSession.toString(), usersList})
     }
 
 }

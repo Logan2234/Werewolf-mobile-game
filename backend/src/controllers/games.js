@@ -2,6 +2,7 @@ const status = require('http-status');
 
 const gameModel = require('../models/games.js');
 const userModel = require('../models/users.js');
+const inGameModel = require('../models/inGames.js');
 const usersInQModel = require('../models/usersInQs.js');
 const CodeError = require('../util/CodeError.js')
 
@@ -25,7 +26,7 @@ module.exports = {
         const probaC = parseInt(data.probaC);
         const debutPartie = parseInt(data.debutPartie);
 
-        if (isNaN(nbMinJoueurs) || isNaN(nbMaxJoueurs) || isNaN(debutJour) || isNaN(finJour) || isNaN(probaLG) || isNaN(probaV) || isNaN(probaS) || isNaN(probaI) || isNaN(probaC) || isNaN(debutPartie))
+        if (isNaN(nbMinJoueurs) || isNaN(nbMaxJoueurs) || isNaN(dureeJour) || isNaN(dureeNuit) || isNaN(probaLG) || isNaN(probaV) || isNaN(probaS) || isNaN(probaI) || isNaN(probaC) || isNaN(debutPartie))
             throw new CodeError('Your specifications must be integers', status.BAD_REQUEST)
 
         if (nbMinJoueurs < 5)
@@ -61,9 +62,11 @@ module.exports = {
         if (debutPartie < 0)
             throw new CodeError('The time of the beginning of the game must be higher than 0 minutes', status.BAD_REQUEST)
 
-        const gameData = await gameModel.create({"nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC});
+        const gameData = await gameModel.create({"nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "debutPartie": debutPartie});
         
         const idGame = gameData.id
+        
+        //setTimeout(createGame, idGame, 60000 * debutPartie)
         res.json({status: true, message: 'Session created', idGame});
     },
 
@@ -88,12 +91,70 @@ module.exports = {
         res.json({status: true, message: 'Session found', session})
     },
 
-    async destroySession (idSession){ //TODO
-        if (!has(req.params, 'idSession')) throw new CodeError('You must specify the id of the session', status.BAD_REQUEST)
-        let {idSession} = req.params
-        idSession = parseInt(idSession)
-        await gameModel.destroy({where: {"id": idSession}})
-        await usersInQModel.destroy({where: {"idGame": idSession}})
-        res.json({status: true, message: 'Session destroyed' })
-    }
+    async createGame (idSession) {
+        const session = await gameModel.findOne({where: {"id": idSession}})
+        const nbMinJoueurs = session.nbMinJoueurs
+        const nbMaxJoueurs = session.nbMaxJoueurs
+        const dureeJour = session.dureeJour
+        const dureeNuit = session.dureeNuit
+        const probaLG = session.probaLG
+        const probaV = session.probaV
+        const probaS = session.probaS
+        const probaI = session.probaI
+        const probaC = session.probaC
+        const users = await usersInQModel.findAll({where: {"idGame": idSession}})
+        const nbUsers = users.length
+        if (nbUsers < nbMinJoueurs) { // Pas de message envoyé au client
+            await gameModel.destroy({where: {"id": idSession}})
+            await usersInQModel.destroy({where: {"idGame": idSession}})
+            return
+        }
+        const nbLG = Math.floor(nbUsers * probaLG / 100)
+        _.shuffle(users)
+        let isThereAV = false
+        let isThereAS = false
+        let isThereAI = false
+        let isThereAC = false
+        let random = Math.trunc(Math.random() * 100)
+        if (random < probaV) {isthereAV = true} 
+        random = Math.trunc(Math.random() * 100)
+        if (random < probaS) {isthereAS = true}
+        random = Math.trunc(Math.random() * 100)
+        if (random < probaI) {isthereAI = true}
+        random = Math.trunc(Math.random() * 100)
+        if (random < probaC) {isthereAC = true}
+        users.sort(() => Math.random() - 0.5); // On mélange les joueurs
+        for (let i = 0; i < nbLG; i++) {
+            await usersInQModel.create({"idUser": users[i].idUser, "idGame": idSession, "role": "LG"})
+        }
+        let indicateur = nbLG
+        if (isThereAV) {
+            await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V"})
+            indicateur++
+        }
+        if (isThereAS) {
+            await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "S"})
+            indicateur++
+        }
+        if (isThereAI) {
+            await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "I"})
+            indicateur++
+        }
+        if (isThereAC) {
+            await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "C"})
+            indicateur++
+        }
+        for (let i = indicateur; i < nbUsers; i++) {
+            await usersInQModel.create({"idUser": users[i].idUser, "idGame": idSession, "role": "VI"})
+        }
+    },
+
+    // async destroySession (idSession){ //TODO
+    //     if (!has(req.params, 'idSession')) throw new CodeError('You must specify the id of the session', status.BAD_REQUEST)
+    //     let {idSession} = req.params
+    //     idSession = parseInt(idSession)
+    //     await gameModel.destroy({where: {"id": idSession}})
+    //     await usersInQModel.destroy({where: {"idGame": idSession}})
+    //     res.json({status: true, message: 'Session destroyed' })
+    // }
 }

@@ -9,7 +9,7 @@ import SizedText from '../components/SizedText';
 import Field from '../components/Field';
 import { errorCodes } from '../constants/errorCode';
 
-export default function LoginForm({ changeView, setToken, pseudo, setPseudo, password, setPassword }) {
+export default function LoginForm({ changeView, setToken, setIdSession, pseudo, setPseudo, password, setPassword }) {
     function connect() {
         fetch(`${BACKEND}/login`, {
             method: 'POST',
@@ -25,10 +25,11 @@ export default function LoginForm({ changeView, setToken, pseudo, setPseudo, pas
                         headers: { 'x-access-token': data.token }
                     })
                         .then(response1 => response1.json())
-                        .then(datas => {
-                            if (datas.idSession) {
+                        .then(data2 => {
+                            if (data2.idSession) {
+                                setIdSession(data2.idSession);
                                 changeView(vues.SHARE_SESSION);
-                            } else if (datas.idGame) {
+                            } else if (data2.idGame) {
                                 changeView(vues.IN_GAME);
                             } else {
                                 changeView(vues.CREATE_OR_JOIN);

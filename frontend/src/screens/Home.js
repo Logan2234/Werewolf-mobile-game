@@ -50,7 +50,7 @@ export default function Home() {
     return (<View style={commonStyles.container}>
         {
             (currentVue === vues.LOGIN)
-                ? <LoginForm setToken={setToken} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setCurrentVue} />
+                ? <LoginForm setToken={setToken} setIdSession={setIdSession} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setCurrentVue} />
                 : (currentVue === vues.REGISTER)
                     ? <RegisterForm setToken={setToken} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setCurrentVue} />
                     : (currentVue === vues.CREATE_OR_JOIN)

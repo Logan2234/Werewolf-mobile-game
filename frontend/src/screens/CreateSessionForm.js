@@ -6,11 +6,11 @@ import Bouton from '../components/Bouton';
 import Title from '../components/Title';
 import Field from '../components/Field';
 import SelectDateHeure from '../components/SelectDateHeure';
-import { tomorrowDate } from '../utils/Dates';
+import { tomorrowDate } from '../utils/dates';
 
 // Pour l'envoi au backend
-import checkProba from '../utils/Probability';
-import subDates from '../utils/Dates';
+import verifyProba from '../utils/verifyData';
+import subDates from '../utils/dates';
 import { vues } from '../constants/screens';
 
 
@@ -27,7 +27,6 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
     const [lengthNightMin, setLengthNightMin] = useState('0');
 
     const [startDate, setStartDate] = useState(tomorrowDate);
-    console.log(startDate);
     const [contamination, setContamination] = useState('0');
     const [insomnie, setInsomnie] = useState('0');
     const [voyance, setVoyance] = useState('0');
@@ -38,11 +37,11 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
     function verifyData() {
         const lengthDay = lengthDayHours * 60 + lengthDayMin;
         const lengthNight = lengthNightHours * 60 + lengthNightMin;
-        const probaC = checkProba(contamination);
-        const probaIn = checkProba(insomnie);
-        const probaVo = checkProba(voyance);
-        const probaSp = checkProba(spiritisme);
-        const probaLG = checkProba(loupGarous);
+        const probaC = verifyProba(contamination);
+        const probaIn = verifyProba(insomnie);
+        const probaVo = verifyProba(voyance);
+        const probaSp = verifyProba(spiritisme);
+        const probaLG = verifyProba(loupGarous);
         const timer = subDates(startDate, new Date());
 
         if (probaC == null || probaIn == null || probaVo == null || probaSp == null || probaLG == null) {
@@ -79,8 +78,6 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 }
             })
             .catch(error => alert('Server error: ' + error));
-
-        // TODO: Après l'envoi des données faut changer de vue => ok ?
     }
 
     // ------------------------ Affichage --------------------------------------

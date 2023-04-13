@@ -1,5 +1,8 @@
 import { errorCodes } from '../constants/errorCode';
 
+/** 
+ // TODO 
+ */
 export function verifyString(str, minsize, maxsize) {
     if (str === null || str === undefined || str.length == 0)
         return errorCodes.EMPTY;
@@ -8,6 +11,7 @@ export function verifyString(str, minsize, maxsize) {
     // TODO errorCodes.INVALID_FORMAT
 }
 
+
 export function verifyPassword(password, minsize, maxsize) {
     if (password === null || password === undefined || password.length == 0)
         return errorCodes.EMPTY;
@@ -15,6 +19,7 @@ export function verifyPassword(password, minsize, maxsize) {
         return errorCodes.NOT_COMPLIANT;
     // TODO errorCodes.INVALID_FORMAT
 }
+
 
 export function verifyNumber(number, minvalue, maxvalue, strSize = null) {
     number = parseFloat(number);
@@ -25,4 +30,11 @@ export function verifyNumber(number, minvalue, maxvalue, strSize = null) {
     if (strSize !== null && number.toString().length != strSize)
         return errorCodes.NOT_COMPLIANT;
     // TODO errorCodes.INVALID_FORMAT
+}
+
+
+export function verifyProba(proba) {
+    if (proba >= 0 && proba <= 1)
+        return parseInt(parseFloat(proba) * 100);
+    return null;
 }

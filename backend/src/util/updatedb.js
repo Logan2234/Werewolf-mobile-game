@@ -14,5 +14,9 @@ const bcrypt = require('bcrypt');
     username: 'lurivanj',
     password: 'test'
   })
+  await userModel.create({
+    username: 'willeml',
+    password: 'test'
+  })
   // Ajouter ici le code permettant d'initialiser par défaut la base de donnée
 })()

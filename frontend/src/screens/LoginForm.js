@@ -33,7 +33,7 @@ export default function LoginForm({ changeView, setToken, pseudo, setPseudo, pas
                             } else {
                                 changeView(vues.CREATE_OR_JOIN);
                             }
-                        })
+                        });
                 } else {
                     Alert.alert(errorCodes.UNABLE_TO_CONNECT, data.message);
                     alert(data.message);

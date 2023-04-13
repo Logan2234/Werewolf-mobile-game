@@ -76,7 +76,7 @@ module.exports = {
         
         //setTimeout(createGame, idGame, 60000 * debutPartie)
 
-        idGame = "0".repeat(6 - idGame.length) + idGame.toString()  // On renvoit l'id sous forme de string de 6 caractères
+        idGame = "0".repeat(6 - idGame.toString().length) + idGame.toString()  // On renvoit l'id sous forme de string de 6 caractères
         res.json({status: true, message: 'Session created', idGame})
     },
 
@@ -105,10 +105,10 @@ module.exports = {
         const session = await gameModel.findOne({where: {"id": idSession}})
         const users = await usersInQModel.findAll({where: {"idGame": idSession}})
         const nbUsers = users.length
+        const nbMinJoueurs = session.nbMinJoueurs
 
         // Si on a assez de joeurs, on crée la partie
         if (nbUsers >= nbMinJoueurs) {
-            const nbMinJoueurs = session.nbMinJoueurs
             const dureeJour = session.dureeJour
             const dureeNuit = session.dureeNuit
             const probaLG = session.probaLG

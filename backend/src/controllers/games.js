@@ -165,7 +165,7 @@ module.exports = {
         let {idSession} = req.params
         idSession = parseInt(idSession)
         const users = await usersInQModel.findAll({where: {"idGame": idSession}, attributes: ['idUser']})
-        res.json({status: true, message: 'Number of users found', users})
+        res.json({status: true, message: 'Users of session ' + idSession.toString(), users})
     }
 
 }

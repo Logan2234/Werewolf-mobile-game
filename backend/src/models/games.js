@@ -5,8 +5,7 @@ const db = require('./database.js');
 const session = db.define('Games', {
     id: {
         primaryKey: true,
-        type: Sequelize.INTEGER,
-        autoIncrement: true
+        type: Sequelize.INTEGER
     },
     nbMinJoueurs: {
         type: Sequelize.INTEGER,

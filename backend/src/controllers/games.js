@@ -2,6 +2,7 @@ const status = require('http-status');
 
 const gameModel = require('../models/games.js');
 const userModel = require('../models/users.js');
+const inGameModel = require('../models/inGames.js');
 const usersInQModel = require('../models/usersInQs.js');
 const CodeError = require('../util/CodeError.js')
 
@@ -25,7 +26,7 @@ module.exports = {
         const probaC = parseInt(data.probaC);
         const debutPartie = parseInt(data.debutPartie);
 
-        if (isNaN(nbMinJoueurs) || isNaN(nbMaxJoueurs) || isNaN(debutJour) || isNaN(finJour) || isNaN(probaLG) || isNaN(probaV) || isNaN(probaS) || isNaN(probaI) || isNaN(probaC) || isNaN(debutPartie))
+        if (isNaN(nbMinJoueurs) || isNaN(nbMaxJoueurs) || isNaN(dureeJour) || isNaN(dureeNuit) || isNaN(probaLG) || isNaN(probaV) || isNaN(probaS) || isNaN(probaI) || isNaN(probaC) || isNaN(debutPartie))
             throw new CodeError('Your specifications must be integers', status.BAD_REQUEST)
 
         if (nbMinJoueurs < 5)
@@ -61,19 +62,33 @@ module.exports = {
         if (debutPartie < 0)
             throw new CodeError('The time of the beginning of the game must be higher than 0 minutes', status.BAD_REQUEST)
 
-        await gameModel.create({"nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC});
-        res.json({status: true, message: 'Session created' });
+        let idGame = Math.trunc(Math.random()*1000000)
+
+        while (true){
+            const game = await gameModel.findOne({where: {id: idGame}})
+            const inGame = await inGameModel.findOne({where: {id: idGame}})
+            if (game == null && inGame == null)
+                break
+            idGame = Math.trunc(Math.random()*1000000)
+        }
+
+        const gameData = await gameModel.create({"id": idGame, "nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "debutPartie": debutPartie});
+        
+        //setTimeout(createGame, idGame, 60000 * debutPartie)
+
+        idGame = "0".repeat(6 - idGame.length) + idGame.toString()  // On renvoit l'id sous forme de string de 6 caractères
+        res.json({status: true, message: 'Session created', idGame})
     },
 
     async joinSession (req, res){
         const username = req.login
-        let data = await userModel.findOne({username})
-        userId = parseInt(data.id)
+        const data = await userModel.findOne({where: {username}})
+        const userId = parseInt(data.id)
         let {idSession} = req.params
         idSession = parseInt(idSession)
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
-        console.log(parseInt(idSession))
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
+        console.log(idSession)
+        console.log(data)
+        console.log(username)
         await usersInQModel.create({"idUser": userId, "idGame": idSession})
         res.json({status: true, message: 'Session joined' })
     },
@@ -84,5 +99,66 @@ module.exports = {
         idSession = parseInt(idSession)
         const session = await gameModel.findOne({where: {"id": idSession}})
         res.json({status: true, message: 'Session found', session})
-    }
+    },
+
+    async createGame (idSession) {
+        const session = await gameModel.findOne({where: {"id": idSession}})
+        const users = await usersInQModel.findAll({where: {"idGame": idSession}})
+        const nbUsers = users.length
+
+        // Si on a assez de joeurs, on crée la partie
+        if (nbUsers >= nbMinJoueurs) {
+            const nbMinJoueurs = session.nbMinJoueurs
+            const dureeJour = session.dureeJour
+            const dureeNuit = session.dureeNuit
+            const probaLG = session.probaLG
+            const probaV = session.probaV
+            const probaS = session.probaS
+            const probaI = session.probaI
+            const probaC = session.probaC
+            const nbLG = Math.floor(nbUsers * probaLG / 100)
+            let isThereAV = false
+            let isThereAS = false
+            let isThereAI = false
+            let isThereAC = false
+            let random = Math.trunc(Math.random() * 100)
+            if (random < probaV) {isThereAV = true} 
+            random = Math.trunc(Math.random() * 100)
+            if (random < probaS) {isThereAS = true}
+            random = Math.trunc(Math.random() * 100)
+            if (random < probaI) {isThereAI = true}
+            random = Math.trunc(Math.random() * 100)
+            if (random < probaC) {isThereAC = true}
+            users.sort(() => Math.random() - 0.5); // On mélange les joueurs
+            for (let i = 0; i < nbLG; i++) {
+                await usersInQModel.create({"idUser": users[i].idUser, "idGame": idSession, "role": "LG"})
+            }
+            let indicateur = nbLG
+            if (isThereAV) {
+                await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V"})
+                indicateur++
+            }
+            if (isThereAS) {
+                await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "S"})
+                indicateur++
+            }
+            if (isThereAI) {
+                await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "I"})
+                indicateur++
+            }
+            if (isThereAC) {
+                await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "C"})
+                indicateur++
+            }
+            for (let i = indicateur; i < nbUsers; i++) {
+                await usersInQModel.create({"idUser": users[i].idUser, "idGame": idSession, "role": "VI"})
+            }
+            await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC})
+        }
+
+        // Indépendament de si la partie a été créée ou pas, on supprime la session de la queue.
+        await gameModel.destroy({where: {"id": idSession}})
+        await usersInQModel.destroy({where: {"idGame": idSession}})
+    },
+
 }

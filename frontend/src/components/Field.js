@@ -1,28 +1,41 @@
 //Field.js
 import { StyleSheet, TextInput, View } from 'react-native';
 import SizedText from './SizedText';
-import { secondaryColor } from '../constants/colors';
+import { placeholderColor, secondaryColor, textColor } from '../constants/colors';
 
-export default function Field({ style, label, setFunction, value, pad, placeholder, secureTextEntry, editable }) {
+export default function Field({ inputStyle, onSubmitEditing, fieldStyle, label, setFunction, value, pad, placeholder, secureTextEntry, editable, labelSize }) {
     return (
-        <View style={styles.textAndInput}>
-            <SizedText style={styles.text} label={label} size={'15'} />
-            <TextInput 
-                editable={editable}
-                style={[styles.input, style]}
+        <View style={[styles.textAndInput, fieldStyle]}>
+            <SizedText label={label} size={labelSize} />
+            <TextInput
+                style={[styles.input, inputStyle]}
+                onSubmitEditing={onSubmitEditing}
                 onChangeText={setFunction}
                 value={value}
                 secureTextEntry={secureTextEntry}
                 keyboardType={pad}
-                placeholderTextColor={secondaryColor}
+                placeholderTextColor={placeholderColor}
                 placeholder={placeholder}
-            />
+                editable={editable} />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    text: { paddingTop: 10 },
-    input: { height: 40, borderWidth: 1, width: 200, paddingLeft: 5, borderRadius: 5, borderColor: secondaryColor, color: secondaryColor, fontSize: 15 },
-    textAndInput: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', width: '100%', paddingHorizontal: '15%' },
+    input: {
+        height: 40,
+        borderWidth: 1,
+        width: 200,
+        paddingLeft: 5,
+        borderRadius: 5,
+        borderColor: secondaryColor,
+        color: textColor,
+        fontSize: 15
+    },
+    textAndInput: {
+        display: 'flex',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
 });

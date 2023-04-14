@@ -160,7 +160,7 @@ module.exports = {
             for (let i = indicateur; i < nbUsers; i++) {
                 await usersInQModel.create({"idUser": users[i].idUser, "idGame": idSession, "role": "VI"})
             }
-            await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC})
+            await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "moment": "N"})
         }
 
         // Indépendament de si la partie a été créée ou pas, on supprime la session de la queue.

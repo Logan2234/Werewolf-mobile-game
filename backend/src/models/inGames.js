@@ -46,6 +46,11 @@ const game = db.define('InGames', {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0
+    },
+    moment: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "J"
     }
 }, { timestamps: false })
 

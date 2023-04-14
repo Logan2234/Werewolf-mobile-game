@@ -17,7 +17,6 @@ module.exports = {
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'nbMinJoueurs') || !has(JSON.parse(req.body.data), 'nbMaxJoueurs') || !has(JSON.parse(req.body.data), 'dureeJour') || !has(JSON.parse(req.body.data), 'dureeNuit') || !has(JSON.parse(req.body.data), 'probaLG') || !has(JSON.parse(req.body.data), 'probaV') || !has(JSON.parse(req.body.data), 'probaS') || !has(JSON.parse(req.body.data), 'probaI') || !has(JSON.parse(req.body.data), 'probaC') || !has(JSON.parse(req.body.data), 'debutPartie')) {
             throw new CodeError('You must send all the specifications of the session', status.BAD_REQUEST)
         }
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 
         const data = JSON.parse(req.body.data);
         const nbMinJoueurs = parseInt(data.nbMinJoueurs);

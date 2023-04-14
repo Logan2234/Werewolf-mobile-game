@@ -8,12 +8,13 @@ import { commonStyles } from '../constants/style';
 import { verifyNumber } from '../utils/verifyData';
 import { errorCodes } from '../constants/errorCode';
 import { vues } from '../constants/screens';
+import { BACKEND } from '../constants/backend';
 
-export default function JoinSession({ changeView, setIdSession, idSession }) {
+export default function JoinSession({ changeView, token, setIdSession, idSession }) {
     const [borderColor, setBorderColor] = useState(secondaryColor);
 
     function verifyData() {
-        const idSessionVerification = verifyNumber(idSession, 0, 999999, 6);
+        const idSessionVerification = verifyNumber(idSession, 0, 999999, 6); // TODO: not working with 0XXXXX
         if (idSessionVerification == errorCodes.EMPTY)
             Alert.alert(errorCodes.EMPTY, 'Please enter a session ID.');
         else if (idSessionVerification == errorCodes.NOT_COMPLIANT)
@@ -21,8 +22,23 @@ export default function JoinSession({ changeView, setIdSession, idSession }) {
         else if (idSessionVerification == errorCodes.INVALID_FORMAT)
             Alert.alert(errorCodes.INVALID_FORMAT, 'The session ID must only contain numbers.');
         else {
-            setIdSession(idSession);
-            changeView(vues.SHARE_SESSION);
+            console.log(idSession);
+            console.log(token);
+            fetch(`${BACKEND}/joinSession/${idSession}`, {
+                method: 'GET',
+                headers: { 'x-access-token': token, 'Content-Type': 'application/json' },
+            })
+                .then(response => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if (data.session){
+                        setIdSession(idSession);
+                        changeView(vues.SHARE_SESSION);
+                    } else {
+                        Alert.alert(errorCodes.UNABLE_TO_CONNECT, 'This session does not exist.');
+                    }
+                })
+                .catch(error => alert('Server error: ' + error));
         }
     }
 
@@ -30,7 +46,7 @@ export default function JoinSession({ changeView, setIdSession, idSession }) {
         if (idSession === '')
             setIdSession(code);
         else
-            setIdSession(code.replaceAll(/[#,.\- ]/g, '').substring(0, 6));
+            setIdSession(code.replaceAll(/[^0-9]/g, '').substring(0, 6));
     }
 
     let value = (idSession === '') ? '' : '#' + idSession;
@@ -47,7 +63,7 @@ export default function JoinSession({ changeView, setIdSession, idSession }) {
     return (
         <View style={[commonStyles.container, styles.container]}>
             <Title label='Rejoindre une session' />
-            <Field label='ID de la session' value={value} placeholder='#XXXXXX' fieldStyle={styles.field} labelSize={30} setFunction={formatInput} inputStyle={[styles.input, { borderColor: borderColor }]} pad='number-pad' onSubmitEditing={verifyData}/>
+            <Field label='ID de la session' value={value} placeholder='#XXXXXX' fieldStyle={styles.field} labelSize={30} setFunction={formatInput} inputStyle={[styles.input, { borderColor: borderColor }]} pad='default' onSubmitEditing={verifyData} />
             <Bouton label='Rejoindre la session' labelSize={25} style={styles.bouton} onPress={verifyData} />
         </View>
     );

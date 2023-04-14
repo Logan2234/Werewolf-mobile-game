@@ -10,34 +10,43 @@ import Field from '../components/Field';
 import { errorCodes } from '../constants/errorCode';
 
 export default function LoginForm({ changeView, setToken, setIdSession, pseudo, setPseudo, password, setPassword }) {
-    function connect() {
-        fetch(`${BACKEND}/login`, {
+    async function selectCorrectView(token) {
+        await fetch(`${BACKEND}/user/game`, {
+            method: 'GET',
+            headers: {
+                'x-access-token': token,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response1 => response1.json())
+            .then(data2 => {
+                if (data2.idSession) {
+                    setIdSession(data2.idSession);
+                    changeView(vues.SHARE_SESSION);
+                } else if (data2.idGame) {
+                    changeView(vues.IN_GAME);
+                } else {
+                    changeView(vues.CREATE_OR_JOIN);
+                }
+            })
+            .catch(error => alert('Server error: ' + error));
+    }
+
+    async function connect() {
+        await fetch(`${BACKEND}/login`, {
             method: 'POST',
-            body: new URLSearchParams({ 'data': '{"username": "' + pseudo + '","password": "' + password + '"}' })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: '{"username": "' + pseudo + '","password": "' + password + '"}' })
         })
             .then(response => response.json())
             .then(data => {
                 if (data.token) {
                     setToken(data.token);
-                    // On regarde si on est déjà dans une session
-                    fetch(`${BACKEND}/user/game`, {
-                        method: 'GET',
-                        headers: { 'x-access-token': data.token }
-                    })
-                        .then(response1 => response1.json())
-                        .then(data2 => {
-                            if (data2.idSession) {
-                                setIdSession(data2.idSession);
-                                changeView(vues.SHARE_SESSION);
-                            } else if (data2.idGame) {
-                                changeView(vues.IN_GAME);
-                            } else {
-                                changeView(vues.CREATE_OR_JOIN);
-                            }
-                        });
+                    console.log(data.token);
                 } else
                     Alert.alert(errorCodes.UNABLE_TO_CONNECT, data.message);
-            })
+                return data.token;
+            }).then((token) => { if (token) selectCorrectView(token); })
             .catch(error => alert('Server error: ' + error));
     }
 
@@ -48,7 +57,7 @@ export default function LoginForm({ changeView, setToken, setIdSession, pseudo, 
 
             <View style={styles.fields}>
                 <Field nativeID='pseudoInput' value={pseudo} setFunction={setPseudo} placeholder='Pseudo' />
-                <Field nativeID='passwordInput' value={password} setFunction={setPassword} placeholder='Mot de passe' secureTextEntry={true} onSubmitEditing={() => connect()} />
+                <Field nativeID='passwordInput' value={password} setFunction={setPassword} placeholder='Mot de passe' secureTextEntry={true} onSubmitEditing={connect} />
                 <Bouton nativeID='connect' label='Se connecter' onPress={connect} />
             </View>
 

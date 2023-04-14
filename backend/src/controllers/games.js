@@ -160,7 +160,7 @@ module.exports = {
             for (let i = indicateur; i < nbUsers; i++) {
                 await usersInQModel.create({"idUser": users[i].idUser, "idGame": idSession, "role": "VI"})
             }
-            await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC})
+            await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "moment": "N"})
         }
 
         // Indépendament de si la partie a été créée ou pas, on supprime la session de la queue.
@@ -178,6 +178,25 @@ module.exports = {
             usersList.push(user.username)
         }
         res.json({status: true, message: 'Users of session ' + idSession.toString(), usersList})
+    },
+
+    async returnTimeLeft(req, res) {
+        let {idSession} = req.params
+        if (await gameModel.findOne({where: {"id": idSession}})) {
+            let timeLeft = getTimeLeft(timers[idSession])
+            res.json({status: true, message: 'Time left in seconds' + idSession.toString(), usersList})
+            return
+        }
+
+        if (await inGameModel.findOne({where: {"id": idSession}}))
+            throw new CodeError('Game has started already !', status.BAD_REQUEST)
+
+        throw new CodeError("Game doesn't exist", status.BAD_REQUEST)
     }
 
+    
+}
+
+function getTimeLeft(timeout) {
+    return Math.ceil((timeout._idleStart + timeout._idleTimeout - Date.now()) / 1000);
 }

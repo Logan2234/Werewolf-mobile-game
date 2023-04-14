@@ -56,7 +56,7 @@ export default function Home() {
                     : (currentVue === vues.CREATE_OR_JOIN)
                         ? <CreateOrJoin changeView={setCurrentVue} />
                         : (currentVue === vues.JOIN_SESSION)
-                            ? <JoinSession idSession={idSession} setIdSession={setIdSession} changeView={setCurrentVue} />
+                            ? <JoinSession idSession={idSession} token={token} setIdSession={setIdSession} changeView={setCurrentVue} />
                             : (currentVue === vues.CREATE_SESSION)
                                 ? <CreateSessionForm setIdSession={setIdSession} changeView={setCurrentVue} token={token} />
                                 : <ShareSession idSession={idSession} token={token} />

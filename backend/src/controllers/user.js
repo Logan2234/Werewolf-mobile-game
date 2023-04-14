@@ -24,31 +24,36 @@ module.exports = {
 
         const password = JSON.parse(req.body.data).password;
         if (password == '') throw new CodeError('You must set a password !', status.BAD_REQUEST);
-    
-        await userModel.create({username, password});
+        const hash = await bcrypt.hash(password, 10)
+        await userModel.create({"username": username, "password": hash});
         const token = jws.sign({ header: { alg: 'HS256' }, payload: username, secret: TOKENSECRET })
 
         res.json({status: true, message: 'User Added', token});
     },
     async logIn(req, res){
-        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'username') || !has(JSON.parse(req.body.data), 'password')) {
-                console.log(req);
-                throw {code: status.BAD_REQUEST, message: 'You must specify the username and password'};
-            }
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'username') || !has(JSON.parse(req.body.data), 'password'))
+            throw {code: status.BAD_REQUEST, message: 'You must specify the username and password'};
+
         const username = JSON.parse(req.body.data).username;
         if (username == '') throw new CodeError('You must set an username !', status.BAD_REQUEST);
-
-        const password = JSON.parse(req.body.data).password;
-        if (password == '') throw new CodeError('You must set a password !', status.BAD_REQUEST);
         
-        const user = await userModel.findOne({where: {username, password}});
-
+        const user = await userModel.findOne({where: {"username": username}});
         if (user){
-            const token = jws.sign({ header: { alg: 'HS256' }, payload: username, secret: TOKENSECRET })
-            res.json({ status: true, message: 'Login success', token })
-            return
-        }
-        res.status(status.FORBIDDEN).json({ status: false, message: 'Wrong username or password' })
+            const password = JSON.parse(req.body.data).password;
+            if (password == '') throw new CodeError('You must set a password !', status.BAD_REQUEST);
+
+            bcrypt.compare(password, user.password, function(err, result) {
+                if (result) {
+                    const token = jws.sign({ header: { alg: 'HS256' }, payload: username, secret: TOKENSECRET })
+                    res.json({ status: true, message: 'Login success', token })
+                    return
+                } else {
+                    res.status(status.FORBIDDEN).json({ status: false, message: 'Wrong password' })
+                    return
+                }
+            });
+        } else 
+            res.status(status.FORBIDDEN).json({ status: false, message: 'Wrong username' })
     },
 
     async checkWhereIAm (req, res) {
@@ -106,5 +111,6 @@ module.exports = {
     
         next()
         
-    }
+    },
+
 }

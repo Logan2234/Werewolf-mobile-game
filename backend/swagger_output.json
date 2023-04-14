@@ -166,6 +166,24 @@
           }
         }
       }
+    },
+    "/joinSession/{idSession}/time": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idSession",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   }
 }

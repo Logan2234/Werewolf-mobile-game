@@ -16,14 +16,14 @@ export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, 
     const [afficheMotDePasseDiffere, setAfficheMotDePasseDiffere] = useState(false);
 
     function verifyData() {
-        const pseudoVerification = verifyString(pseudo, 5, 32, /[^0-9a-zA-Z]/g);
+        const pseudoVerification = verifyString(pseudo, 5, 16, /[^0-9a-zA-Z]/g);
         const passwordVerification = verifyString(password, 8, 32);
         const passwordCVerification = verifyString(passwordConfirmation, 8, 32);
 
         if (pseudoVerification == errorCodes.EMPTY)
             Alert.alert(errorCodes.EMPTY, 'Please enter a username.');
         else if (pseudoVerification == errorCodes.NOT_COMPLIANT)
-            Alert.alert(errorCodes.NOT_COMPLIANT, 'Please enter a 5 to 32 characters username.');
+            Alert.alert(errorCodes.NOT_COMPLIANT, 'Please enter a 5 to 16 characters username.');
         else if (pseudoVerification == errorCodes.INVALID_FORMAT)
             Alert.alert(errorCodes.INVALID_FORMAT, 'The username must contain only letters and numbers.');
         else if (passwordVerification == errorCodes.EMPTY)

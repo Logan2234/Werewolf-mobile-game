@@ -4,6 +4,7 @@ const gameModel = require('../models/games.js');
 const userModel = require('../models/users.js');
 const inGameModel = require('../models/inGames.js');
 const usersInQModel = require('../models/usersInQs.js');
+const lieuModel = require('../models/lieux.js');
 const CodeError = require('../util/CodeError.js')
 
 const has = require('has-keys');
@@ -161,6 +162,9 @@ module.exports = {
                 await usersInQModel.create({"idUser": users[i].idUser, "idGame": idSession, "role": "VI"})
             }
             await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "moment": "N"})
+            await lieuModel.create({"idPartie": idSession, "typeLieu": "P"})
+            await lieuModel.create({"idPartie": idSession, "typeLieu": "R"})
+            await lieuModel.create({"idPartie": idSession, "typeLieu": "E"})
         }
 
         // Indépendament de si la partie a été créée ou pas, on supprime la session de la queue.

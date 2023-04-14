@@ -50,7 +50,7 @@ const game = db.define('InGames', {
     moment: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: "J"
+        defaultValue: "N"
     }
 }, { timestamps: false })
 

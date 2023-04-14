@@ -16,6 +16,11 @@ const usersInGames = db.define('UsersInGames', {
     role: { 
         type: Sequelize.STRING,
         allowNull: false,
+    },
+    vie: {
+    // ! Attention ! La vie ne peut être que : V ou M
+        type: Sequelize.STRING,
+        allowNull: false,
     }
 
 }, { timestamps: false })

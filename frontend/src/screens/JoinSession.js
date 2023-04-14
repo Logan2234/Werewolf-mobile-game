@@ -1,17 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import Bouton from '../components/Bouton';
 import Field from '../components/Field';
 import Title from '../components/Title';
+import { BACKEND } from '../constants/backend';
 import { errorColor, primaryColor, secondaryColor } from '../constants/colors';
+import { errorCodes } from '../constants/errorCode';
+import { ScreenContext, TokenContext } from '../constants/hooks';
+import { vues } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 import { verifyNumber } from '../utils/verifyData';
-import { errorCodes } from '../constants/errorCode';
-import { vues } from '../constants/screens';
-import { BACKEND } from '../constants/backend';
 
-export default function JoinSession({ changeView, token, setIdSession, idSession }) {
+export default function JoinSession({ setIdSession, idSession }) {
     const [borderColor, setBorderColor] = useState(secondaryColor);
+
+    const changeView = useContext(ScreenContext);
+    const token = useContext(TokenContext).token;
 
     function verifyData() {
         const idSessionVerification = verifyNumber(idSession, 0, 999999, 6);
@@ -28,7 +32,6 @@ export default function JoinSession({ changeView, token, setIdSession, idSession
             })
                 .then(response => response.json())
                 .then((data) => {
-                    console.log(data);
                     if (data.session){
                         setIdSession(idSession);
                         changeView(vues.SHARE_SESSION);
@@ -61,7 +64,7 @@ export default function JoinSession({ changeView, token, setIdSession, idSession
     return (
         <View style={[commonStyles.container, styles.container]}>
             <Title label='Rejoindre une session' />
-            <Field label='ID de la session' value={value} placeholder='#XXXXXX' fieldStyle={styles.field} labelSize={30} setFunction={formatInput} inputStyle={[styles.input, { borderColor: borderColor }]} pad='default' onSubmitEditing={verifyData} />
+            <Field label='ID de la session' value={value} placeholder='#XXXXXX' fieldStyle={styles.field} labelSize={30} onChangeText={formatInput} inputStyle={[styles.input, { borderColor: borderColor }]} pad='default' onSubmitEditing={verifyData} />
             <Bouton label='Rejoindre la session' labelSize={25} style={styles.bouton} onPress={verifyData} />
         </View>
     );

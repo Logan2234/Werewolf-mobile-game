@@ -1,34 +1,36 @@
-import { View } from 'react-native';
-import { commonStyles, fontSize } from '../constants/style';
 import { Tab, TabView } from '@rneui/base';
-import { createContext, useEffect, useState } from 'react';
-import { textColor } from '../constants/colors';
-import InfoView from './InfoView';
-import ChatView from './ChatView';
-import VoteView from './VoteView';
+import { useContext, useEffect, useState } from 'react';
+import { View } from 'react-native';
 import { BACKEND } from '../constants/backend';
-
-export const DataContext = createContext(null);
+import { textColor } from '../constants/colors';
+import { InGameUserDataContext, ScreenContext, TokenContext } from '../constants/hooks';
+import { commonStyles, fontSize } from '../constants/style';
+import ChatView from './ChatView';
+import InfoView from './InfoView';
+import VoteView from './VoteView';
 
 export default function GameView() {
     const [index, setIndex] = useState(0);
     const [donneesUser, setDonneesUser] = useState({});
 
-    async function fetchData() {
-        await fetch(`${BACKEND}/user/status`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.json())
-            .then(data => { setDonneesUser(data.donnees); })
-            .catch(error => alert(error.message));
-    }
+    const changeView = useContext(ScreenContext);
+    const token = useContext(TokenContext).token;
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        async function fetchUserData() {
+            await fetch(`${BACKEND}/user/status`, {
+                method: 'GET',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => { console.log(data); setDonneesUser(data); })
+                .catch(error => alert(error.message));
+        }
+        fetchUserData();
+    }, [token]);
 
     return (
         <View style={commonStyles.container}>
@@ -53,7 +55,7 @@ export default function GameView() {
                     icon={{ name: 'how-to-vote', type: 'material', color: textColor }}
                 />
             </Tab>
-            <DataContext.Provider value={donneesUser}>
+            <InGameUserDataContext.Provider value={donneesUser}>
                 <TabView value={index} onChange={setIndex} animationType="spring">
                     <TabView.Item style={{ width: '100%' }}>
                         <InfoView />
@@ -65,6 +67,6 @@ export default function GameView() {
                         <VoteView />
                     </TabView.Item>
                 </TabView>
-            </DataContext.Provider>
+            </InGameUserDataContext.Provider>
         </View >);
 }

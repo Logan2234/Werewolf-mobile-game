@@ -1,9 +1,13 @@
+import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { commonStyles } from '../constants/style';
-import { vues } from '../constants/screens';
 import Bouton from '../components/Bouton';
+import { ScreenContext } from '../constants/hooks';
+import { vues } from '../constants/screens';
+import { commonStyles } from '../constants/style';
 
-export default function JoinSession({ changeView }) {
+export default function JoinSession() {
+    const changeView = useContext(ScreenContext);
+
     return (
         <View style={[commonStyles.container, styles.container]}>
             <Bouton onPress={() => changeView(vues.CREATE_SESSION)} style={styles.bouton} label='Créer une partie' labelSize={30} />

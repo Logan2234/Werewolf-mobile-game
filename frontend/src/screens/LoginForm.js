@@ -1,15 +1,23 @@
-import { View, Pressable, Alert } from 'react-native';
-import { loginAndRegisterStyle as styles } from '../constants/constants';
-import { commonStyles } from '../constants/style';
-import { BACKEND } from '../constants/backend';
-import { vues } from '../constants/screens';
+import { useContext, useState } from 'react';
+import { Alert, Pressable, View } from 'react-native';
 import Bouton from '../components/Bouton';
-import Title from '../components/Title';
-import SizedText from '../components/SizedText';
 import Field from '../components/Field';
+import SizedText from '../components/SizedText';
+import Title from '../components/Title';
+import { BACKEND } from '../constants/backend';
+import { loginAndRegisterStyle as styles } from '../constants/constants';
 import { errorCodes } from '../constants/errorCode';
+import { ScreenContext, TokenContext } from '../constants/hooks';
+import { vues } from '../constants/screens';
+import { commonStyles } from '../constants/style';
 
-export default function LoginForm({ changeView, setToken, setIdSession, pseudo, setPseudo, password, setPassword }) {
+export default function LoginForm({ setIdSession }) {
+    const [pseudo, setPseudo] = useState('');
+    const [password, setPassword] = useState('');
+    
+    const changeView = useContext(ScreenContext);
+    const setToken = useContext(TokenContext).setToken;
+
     async function selectCorrectView(token) {
         await fetch(`${BACKEND}/user/game`, {
             method: 'GET',
@@ -56,8 +64,8 @@ export default function LoginForm({ changeView, setToken, setIdSession, pseudo, 
             <Title style={styles.header} label='Connexion' />
 
             <View style={styles.fields}>
-                <Field nativeID='pseudoInput' value={pseudo} setFunction={setPseudo} placeholder='Pseudo' />
-                <Field nativeID='passwordInput' value={password} setFunction={setPassword} placeholder='Mot de passe' secureTextEntry={true} onSubmitEditing={connect} />
+                <Field nativeID='pseudoInput' value={pseudo} onChangeText={setPseudo} placeholder='Pseudo' />
+                <Field nativeID='passwordInput' value={password} onChangeText={setPassword} placeholder='Mot de passe' secureTextEntry={true} onSubmitEditing={connect} />
                 <Bouton nativeID='connect' label='Se connecter' onPress={connect} />
             </View>
 

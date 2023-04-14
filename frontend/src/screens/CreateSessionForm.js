@@ -1,20 +1,17 @@
+import { useContext, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
-import { commonStyles } from '../constants/style';
-import { BACKEND } from '../constants/backend';
-import { useState } from 'react';
 import Bouton from '../components/Bouton';
-import Title from '../components/Title';
 import Field from '../components/Field';
 import SelectDateHeure from '../components/SelectDateHeure';
-import { tomorrowDate } from '../utils/dates';
-
-// Pour l'envoi au backend
-import subDates from '../utils/dates';
+import Title from '../components/Title';
+import { BACKEND } from '../constants/backend';
+import { ScreenContext, TokenContext } from '../constants/hooks';
 import { vues } from '../constants/screens';
+import { commonStyles } from '../constants/style';
+import subDates, { tomorrowDate } from '../utils/dates';
 import { verifyProba } from '../utils/verifyData';
 
-export default function CreateSessionForm({ token, changeView, setIdSession }) {
-
+export default function CreateSessionForm({ setIdSession }) {
     // ------------------------ Constantes --------------------------------------
     const [minPlayer, setMinPlayer] = useState('5');
     const [maxPlayer, setMaxPlayer] = useState('20');
@@ -31,6 +28,9 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
     const [voyance, setVoyance] = useState('0');
     const [spiritisme, setSpiritisme] = useState('0');
     const [loupGarous, setLoupGarous] = useState('0.3');
+
+    const changeView = useContext(ScreenContext);
+    const token = useContext(TokenContext).token;
 
     // ------------------------ Création de la session --------------------------------------
     function verifyData() {
@@ -89,7 +89,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 nativeID='minInput'
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
-                setFunction={setMinPlayer}
+                onChangeText={setMinPlayer}
                 value={minPlayer}
                 label='Nombre minimal de joueurs'
                 pad='number-pad'
@@ -98,7 +98,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 nativeID='maxInput'
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
-                setFunction={setMaxPlayer}
+                onChangeText={setMaxPlayer}
                 value={maxPlayer}
                 label='Nombre maximal de joueurs'
                 pad='number-pad' />
@@ -106,7 +106,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 nativeID='lengthDayHours'
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
-                setFunction={setLengthDayHours}
+                onChangeText={setLengthDayHours}
                 value={lengthDayHours}
                 label={'Durée d\'une journée en heures'}
                 pad='number-pad' />
@@ -114,7 +114,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 nativeID='lengthDayMin'
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
-                setFunction={setLengthDayMin}
+                onChangeText={setLengthDayMin}
                 value={lengthDayMin}
                 label={'Durée d\'une journée en minutes'}
                 pad='number-pad' />
@@ -122,7 +122,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 nativeID='lengthNightHours'
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
-                setFunction={setLengthNightHours}
+                onChangeText={setLengthNightHours}
                 value={lengthNightHours}
                 label={'Durée d\'une nuit en heures'}
                 pad='number-pad'
@@ -131,7 +131,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 nativeID='lengthNightMin'
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
-                setFunction={setLengthNightMin}
+                onChangeText={setLengthNightMin}
                 value={lengthNightMin}
                 label={'Durée d\'une nuit en minutes'}
                 pad='number-pad' />
@@ -139,7 +139,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 nativeID='contaminationProba'
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
-                setFunction={setContamination}
+                onChangeText={setContamination}
                 value={contamination}
                 label='Proba de contamination'
                 pad='number-pad' />
@@ -147,7 +147,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 nativeID='insomnieProba'
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
-                setFunction={setInsomnie}
+                onChangeText={setInsomnie}
                 value={insomnie}
                 label={'Proba d\'insomnie'}
                 pad='number-pad' />
@@ -155,7 +155,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 nativeID='voyanceProba'
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
-                setFunction={setVoyance}
+                onChangeText={setVoyance}
                 value={voyance}
                 label='Proba de voyance'
                 pad='number-pad' />
@@ -163,7 +163,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 nativeID='spiritismeProba'
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
-                setFunction={setSpiritisme}
+                onChangeText={setSpiritisme}
                 value={spiritisme}
                 label='Proba de spiritisme'
                 pad='number-pad' />
@@ -172,7 +172,7 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
                 inputStyle={styles.input}
                 fieldStyle={styles.field}
                 label='Ratio de loups-garous'
-                setFunction={setLoupGarous}
+                onChangeText={setLoupGarous}
                 value={loupGarous}
                 pad='number-pad' />
             <SelectDateHeure label='Début de la partie' startDate={startDate} setStartDate={setStartDate} />

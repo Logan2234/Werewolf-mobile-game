@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const db = require('./database.js');
 
 const urne = db.define('urnes', {
-    idPartie: {
+    idGame: {
         primaryKey: true,
         type: Sequelize.INTEGER,
         allowNull: false

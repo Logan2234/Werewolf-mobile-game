@@ -76,6 +76,7 @@ module.exports = {
 
     async verificationUser (req, res, next) {
         // Code vérifiant qu'il y a bien un token dans l'entête
+        console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
         if (!req.headers || !req.headers.hasOwnProperty('x-access-token'))
           { throw { code: 403, message: 'Token missing' } }
         // Code vérifiant la validité du token 
@@ -85,10 +86,13 @@ module.exports = {
         // On modifie l'objet requête pour mettre le login à disposition pour les middleware suivants
         req.login=jws.decode(req.headers['x-access-token']).payload
         const username = req.login
+        console.log("CCCCCCCCCCCCCCCCCCCCCCCCCC")
         const data = await userModel.findOne({ where: { username }, attributes: ['id', 'username'] })
+        console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
         if (!data) throw new CodeError('User not found', status.NOT_FOUND)
-    
+        console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
         next()
+        console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
         
     },
 

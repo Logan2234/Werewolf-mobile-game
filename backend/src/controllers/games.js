@@ -92,6 +92,9 @@ module.exports = {
         idSession = parseInt(idSession)
         await usersInQModel.create({"idUser": userId, "idGame": idSession})
         const session = await gameModel.findOne({where: {"id": idSession}})
+        if (!(session)){
+            throw new CodeError('No session found', status.NOT_FOUND)
+        }
         const users = await usersInQModel.findAll({where: {"idGame": idSession}})
         const nbUsers = users.length
         if (nbUsers >= session.nbMaxJoueurs) {
@@ -107,6 +110,9 @@ module.exports = {
         let {idSession} = req.params
         idSession = parseInt(idSession)
         const session = await gameModel.findOne({where: {"id": idSession}})
+        if (!(session)){
+            throw new CodeError('No session found', status.NOT_FOUND)
+        }
         res.json({status: true, message: 'Session found', session})
     },
 
@@ -183,7 +189,7 @@ module.exports = {
             await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "moment": "N"})
             await lieuModel.create({"idPartie": idSession, "typeLieu": "P"})
             await lieuModel.create({"idPartie": idSession, "typeLieu": "R"})
-            await lieuModel.create({"idPartie": idSession, "typeLieu": "E"})
+            if (isThereAS) await lieuModel.create({"idPartie": idSession, "typeLieu": "E"})
         }
 
         // Indépendament de si la partie a été créée ou pas, on supprime la session de la queue.

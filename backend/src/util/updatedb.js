@@ -12,11 +12,11 @@ const bcrypt = require('bcrypt');
   console.log(passhash)
   await userModel.create({
     username: 'lurivanj',
-    password: 'test'
+    password: await bcrypt.hash('test', 10)
   })
   await userModel.create({
     username: 'willeml',
-    password: 'test'
+    password: await bcrypt.hash('test', 10)
   })
   // Ajouter ici le code permettant d'initialiser par défaut la base de donnée
 })()

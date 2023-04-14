@@ -5,6 +5,7 @@ const router = require('express').Router();
 
 router.use(require('./user'));
 router.use(require('./games'));
+router.use(require('./inGames'));
 
 
 module.exports = router;

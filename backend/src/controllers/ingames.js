@@ -33,11 +33,32 @@ module.exports = {
             return
         } else {
             const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}})
-            res.json({status: true, message: 'Messages of the Central Place from the beginning', messages})
+            res.json({status: true, message: 'Messages of the Central Place', messages})
             return
+        }
+    },
+
+    async getMessagesFromRepere (req, res) {
+        const username = req.login
+        let {idSession} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await inGameModel.findOne({where: {"idUser": userId, "idGame": parseInt(idSession)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idSession, status.FORBIDDEN)
+        const idLieu = await lieuModel.findOne({where: {"id": idSession, "typeLieu": "R"}})
+        if (userInGame.vie == "M") {
+            const messages = await messageModel.findAll({where: {"idLieu": idLieu}})
+            res.json({status: true, message: 'Messages of the lair of werewolves from the beginning', messages})
+            return
+        } else {
+            if (userInGame.role == "LG" || userInGame.pouvoir == "I") {
+                const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}})
+                res.json({status: true, message: 'Messages of the lair of werewolves', messages})
+                return
+            } else {
+                throw new CodeError(username + ' have no access to the messages of the lair of werewolves ' + idSession, status.FORBIDDEN)
+            }
         }
     }
 
 
 }
-

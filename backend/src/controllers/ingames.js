@@ -16,12 +16,8 @@ var timers = {}
 module.exports = {
     async startNight(idGame) {
         await inGameModel.update({"moment": "N"}, {where: {"id": idGame}})
-        await urneModel.update({"idVictime": 0, "nbUsersVote": 0, "votesPour": 0, "votesContres": 0}, {where: {"id": idGame}})
-    },
-
-    async startDay(idGame) {
-        await inGameModel.update({"moment": "D"}, {where: {"id": idGame}})
-        const urne = await urneModel.findOne({where: {"id": idGame}})
+        const currentUrne = await urneModel.findOne({where: {"id": idGame}})
+        // Hurne
     },
 
     async getMessagesFromPlace (req, res) {
@@ -30,7 +26,7 @@ module.exports = {
         const userId = (await userModel.findOne({where: {username}})).id
         const userInGame = await inGameModel.findOne({where: {"idUser": userId, "idGame": parseInt(idSession)}})
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idSession, status.FORBIDDEN)
-        const idLieu = await lieuModel.findOne({where: {"id": idSession, "typeLieu": "P"}})
+        const idLieu = (await lieuModel.findOne({where: {"idPartie": idSession, "typeLieu": "P"}})).idLieu
         if (userInGame.vie == "M") {
             const messages = await messageModel.findAll({where: {"idLieu": idLieu}})
             res.json({status: true, message: 'Messages of the Central Place from the beginning', messages})
@@ -48,7 +44,7 @@ module.exports = {
         const userId = (await userModel.findOne({where: {username}})).id
         const userInGame = await inGameModel.findOne({where: {"idUser": userId, "idGame": parseInt(idSession)}})
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idSession, status.FORBIDDEN)
-        const idLieu = await lieuModel.findOne({where: {"id": idSession, "typeLieu": "R"}})
+        const idLieu = (await lieuModel.findOne({where: {"idPartie": idSession, "typeLieu": "R"}})).idLieu
         if (userInGame.vie == "M") {
             const messages = await messageModel.findAll({where: {"idLieu": idLieu}})
             res.json({status: true, message: 'Messages of the lair of werewolves from the beginning', messages})
@@ -62,7 +58,30 @@ module.exports = {
                 throw new CodeError(username + ' have no access to the messages of the lair of werewolves ' + idSession, status.FORBIDDEN)
             }
         }
+    },
+
+    async getMessagesFromSpiritismRoom (req, res) {
+        const username = req.login
+        let {idSession} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await inGameModel.findOne({where: {"idUser": userId, "idGame": parseInt(idSession)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idSession, status.FORBIDDEN)
+        const Lieu = await lieuModel.findOne({where: {"idPartie": idSession, "typeLieu": "E"}})
+        if (!Lieu) throw new CodeError('No spiritism room in game ' + idSession, status.NOT_FOUND)
+        const idLieu = Lieu.idLieu
+
+        if (userInGame.vie == "M") {
+            const messages = await messageModel.findAll({where: {"idLieu": idLieu}})
+            res.json({status: true, message: 'Messages of the spiritist room from the beginning', messages})
+            return
+        } else {
+            if (userInGame.role == "S") {
+                const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}})
+                res.json({status: true, message: 'Messages of the spiritism room', messages})
+                return
+            } else {
+                throw new CodeError(username + ' have no access to the messages of the spiritism room ' + idSession, status.FORBIDDEN)
+            }
+        }
     }
-
-
 }

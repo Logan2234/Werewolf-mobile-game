@@ -12,8 +12,13 @@ const usersInGames = db.define('UsersInGames', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    // ! Attention ! Le rôle ne peut être que : V, S, I, C, VI ou LG
+    // ! Attention ! Le rôle ne peut être que : V ou LG
     role: { 
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    pouvoir: {
+        // ! Attention ! Le pouvoir ne peut être que : V, S, I, C ou R (pour rien)
         type: Sequelize.STRING,
         allowNull: false,
     },

@@ -74,27 +74,6 @@ module.exports = {
         throw new CodeError('User is not in game or in a session', status.NOT_FOUND)
     },
 
-    // async updateUser(req, res){
-    //     if(!has(req.body, ['id', 'name', 'email']))
-    //         throw {code: status.BAD_REQUEST, message: 'You must specify the id, name and email'};
-
-    //     let { id, name, email } = req.body;
-    
-    //     await userModel.updateUser({name, email}, {where:{id}});
-
-    //     res.json({status: true, message: 'User updated'});
-    // },
-    // async deleteUser(req, res){
-    //     if(!has(req.params, 'id'))
-    //         throw {code: status.BAD_REQUEST, message: 'You must specify the id'};
-
-    //     let { id } = req.params;
-
-    //     await userModel.destroy({where: {id}});
-
-    //    res.json({status: true, message: 'User deleted'});
-    //},
-
     async verificationUser (req, res, next) {
         // Code vérifiant qu'il y a bien un token dans l'entête
         if (!req.headers || !req.headers.hasOwnProperty('x-access-token'))

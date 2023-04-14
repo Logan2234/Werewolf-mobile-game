@@ -8,6 +8,7 @@ const lieuModel = require('../models/lieux.js');
 const CodeError = require('../util/CodeError.js')
 
 const has = require('has-keys');
+const usersInGames = require('../models/usersInGames.js');
 
 var timers = {}
 
@@ -117,6 +118,8 @@ module.exports = {
 
         // Si on a assez de joeurs, on crée la partie
         if (nbUsers >= nbMinJoueurs) {
+
+            // On initialise les variables
             const dureeJour = session.dureeJour
             const dureeNuit = session.dureeNuit
             const probaLG = session.probaLG
@@ -124,11 +127,15 @@ module.exports = {
             const probaS = session.probaS
             const probaI = session.probaI
             const probaC = session.probaC
-            const nbLG = Math.floor(nbUsers * probaLG / 100)
+            const nbLG = Math.floor(nbUsers * probaLG / 100) // On détermine le nombre de loups garous
             let isThereAV = false
             let isThereAS = false
             let isThereAI = false
             let isThereAC = false
+            let VisLG = false
+            let SisLG = false
+
+            // On détermine si il y a un voyant, un spiritiste, un insomniac et un contaminator
             let random = Math.trunc(Math.random() * 100)
             if (random < probaV) {isThereAV = true} 
             random = Math.trunc(Math.random() * 100)
@@ -137,29 +144,41 @@ module.exports = {
             if (random < probaI) {isThereAI = true}
             random = Math.trunc(Math.random() * 100)
             if (random < probaC) {isThereAC = true}
-            users.sort(() => Math.random() - 0.5); // On mélange les joueurs
-            for (let i = 0; i < nbLG; i++) {
-                await usersInQModel.create({"idUser": users[i].idUser, "idGame": idSession, "role": "LG"})
-            }
-            let indicateur = nbLG
-            if (isThereAV) {
-                await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V"})
+            if (Math.random() < 0.5) {VisLG = true} // On détermine si le voyant est un loup garou
+            if (Math.random() < 0.5) {SisLG = true} // On détermine si le spiritiste est un loup garou
+            users.sort(() => Math.random() - 0.5); // On mélange les joueurs pour attribuer les rôles aléatoirement
+            
+            let indicateur = 0
+            if (isThereAC) {
+                await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "C", "vie": "V"})
                 indicateur++
             }
-            if (isThereAS) {
-                await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "S"})
+            if (isThereAV && VisLG) {
+                await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "V", "vie": "V"})
+                indicateur++
+            }
+            if (isThereAS && SisLG) {
+                await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "S", "vie": "V"})
+                indicateur++
+            }
+            for (let i = indicateur; i < nbLG; i++) {
+                await usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "LG", "pouvoir": "R", "vie": "V"})
+            }
+            indicateur = nbLG
+            if (isThereAV && !VisLG) {
+                await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "V", "vie": "V"})
+                indicateur++
+            }
+            if (isThereAS && !SisLG) {
+                await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "S", "vie": "V"})
                 indicateur++
             }
             if (isThereAI) {
-                await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "I"})
-                indicateur++
-            }
-            if (isThereAC) {
-                await usersInQModel.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "C"})
+                await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "I", "vie": "V"})
                 indicateur++
             }
             for (let i = indicateur; i < nbUsers; i++) {
-                await usersInQModel.create({"idUser": users[i].idUser, "idGame": idSession, "role": "VI"})
+                await usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "V", "pouvoir": "R", "vie": "V"})
             }
             await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "moment": "N"})
             await lieuModel.create({"idPartie": idSession, "typeLieu": "P"})

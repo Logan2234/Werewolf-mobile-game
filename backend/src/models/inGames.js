@@ -51,6 +51,10 @@ const game = db.define('InGames', {
         type: Sequelize.STRING,
         allowNull: false,
         defaultValue: "N"
+    },
+    finTimer: {
+        type: Sequelize.INTEGER,
+        defaultValue: new Date().getTime()
     }
 }, { timestamps: false })
 

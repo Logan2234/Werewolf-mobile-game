@@ -1,11 +1,12 @@
 //Message.js
 import { View, StyleSheet } from 'react-native';
+import SizedText from './SizedText';
 
 export default function Message({pseudo, text}) {
     return (
         <View style={styles.res}>
-            <SizedText style={pseudo} label={pseudo} />
-            <SizedText label={text} />
+            <SizedText style={styles.pseudo} label={pseudo} />
+            <SizedText style={styles.text} label={text} />
         </View>
     )
 }
@@ -13,12 +14,14 @@ export default function Message({pseudo, text}) {
 const styles = StyleSheet.create({
     res: {
         display: 'flex',
-        justifyContent:'space-between',
-        paddingHorizontal: '25%',
-        flexDirection: 'row'    
+        justifyContent:'flex-start',
+        flexDirection: 'column',
+        margin : 10,
     },
 
     pseudo: {
-        fontWeight: 'bold'
-    }
+        fontWeight: 'bold',
+        paddingLeft: 0
+    },
+
 })

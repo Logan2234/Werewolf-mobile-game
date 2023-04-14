@@ -41,7 +41,6 @@ export function verifyNumber(number, minvalue, maxvalue, strSize = null, regexp 
         return errorCodes.INVALID_FORMAT;
 }
 
-
 export function verifyProba(proba) {
     if (proba >= 0 && proba <= 1)
         return parseInt(parseFloat(proba) * 100);

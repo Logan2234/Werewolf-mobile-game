@@ -34,8 +34,8 @@ export default function CreateSessionForm({ token, changeView, setIdSession }) {
 
     // ------------------------ Création de la session --------------------------------------
     function verifyData() {
-        const lengthDay = lengthDayHours * 60 + lengthDayMin;
-        const lengthNight = lengthNightHours * 60 + lengthNightMin;
+        const lengthDay = lengthDayHours * 60 + parseInt(lengthDayMin);
+        const lengthNight = lengthNightHours * 60 + parseInt(lengthNightMin);
         const probaC = verifyProba(contamination);
         const probaIn = verifyProba(insomnie);
         const probaVo = verifyProba(voyance);

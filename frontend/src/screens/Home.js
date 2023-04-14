@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-// import { StatusBar } from 'expo-status-bar';
 import { View, BackHandler, Alert, StatusBar, Vibration } from 'react-native';
 import { commonStyles } from '../constants/style';
 import { vues } from '../constants/screens';
@@ -10,6 +9,7 @@ import JoinSession from './JoinSession';
 import CreateOrJoin from './CreateOrJoin';
 import ShareSession from './ShareSession';
 import { backgroundColor } from '../constants/colors';
+import GameView from './GameView';
 
 export default function Home() {
     const [token, setToken] = useState(null);
@@ -49,6 +49,7 @@ export default function Home() {
     // TODO : faire attention au cas où une session lui est déjà attribuée pour un token donné
     return (<View style={commonStyles.container}>
         {
+
             (currentVue === vues.LOGIN)
                 ? <LoginForm setToken={setToken} setIdSession={setIdSession} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setCurrentVue} />
                 : (currentVue === vues.REGISTER)
@@ -59,7 +60,9 @@ export default function Home() {
                             ? <JoinSession idSession={idSession} token={token} setIdSession={setIdSession} changeView={setCurrentVue} />
                             : (currentVue === vues.CREATE_SESSION)
                                 ? <CreateSessionForm setIdSession={setIdSession} changeView={setCurrentVue} token={token} />
-                                : <ShareSession idSession={idSession} token={token} />
+                                : (currentVue === vues.SHARE_SESSION)
+                                    ? <ShareSession idSession={idSession} token={token} />
+                                    : <GameView />
         }
         <StatusBar animated={true} barStyle='default' backgroundColor={backgroundColor} />
     </View>);

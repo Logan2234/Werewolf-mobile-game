@@ -1,5 +1,5 @@
 // Affichage récapitulatif de la session qui vient d'être créée avec le numéro de l'ID
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
 import { commonStyles } from '../constants/style';
 import Title from '../components/Title';
 import SizedText from '../components/SizedText';
@@ -12,6 +12,19 @@ export default function ShareSession({ idSession, token }) {
     const [donnees, setDonnees] = useState({});
     const [showUsers, setShowUsers] = useState(0);
     const [users, setUsers] = useState([]);
+    const [timeLeft, setTimeLeft] = useState(0);
+
+    async function loadUsers() {
+        await fetch(`${BACKEND}/joinSession/${idSession}/users`, {
+            method: 'GET',
+            headers: { 'x-access-token': token },
+        })
+            .then(response => response.json())
+            .then(data => {
+                setUsers(data.usersList);
+            });
+    }
+
 
     useEffect(() => {
         fetch(`${BACKEND}/joinSession/${idSession}`, {
@@ -31,26 +44,23 @@ export default function ShareSession({ idSession, token }) {
                     },
                     body: JSON.stringify({})
                 }))
-            .then(
-                fetch(`${BACKEND}/joinSession/${idSession}/users`, {
-                    method: 'GET',
-                    headers: { 'x-access-token': token },
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        setUsers(data.usersList);
-                    })
-            )
             .catch(error => alert('Server error: ' + error));
     }, [token, idSession]);
 
-    let usersJSX = null;
-    for (let user of users) {
-        if (usersJSX === null)
-            usersJSX = <SizedText label={user} />;
-        else
-            usersJSX += <SizedText label={user} />;
-    }
+    let connectedUsers = [];
+    for (let user of users)
+        connectedUsers.push({ key: user });
+
+    // useEffect(() => {
+    //     // await fetch(`${BACKEND}/joinSession/${idSession}/time`, {
+    //     //     method: 'GET',
+    //     // })
+    //     //     .then(temps => { setTimeLeft(temps); });
+    //     // TODO: A supprimer c'est tempo
+    //     setTimeLeft(donnees.debutPartie);
+    //     console.log(donnees.debutPartie);
+    //     setTimeout(() => { setTimeLeft(timeLeft - 1); }, 1000);
+    // }, [timeLeft]);
 
     return (
         <View style={[styles.container, commonStyles.container]}>
@@ -64,12 +74,12 @@ export default function ShareSession({ idSession, token }) {
                 <SizedText label={donnees.nbMaxJoueurs} />
             </View>
             <View style={styles.res}>
-                <SizedText label={'Durée d\'une journée en minutes:'} />
-                <SizedText label={donnees.dureeJour} />
+                <SizedText label={'Durée d\'une journée:'} />
+                <SizedText label={`${donnees.dureeJour / 60}h ` + ((donnees.dureeJour % 60 != '0') ? `${donnees.dureeJour % 60}min` : '')} />
             </View>
             <View style={styles.res}>
-                <SizedText label={'Durée d\'une nuit en minutes:'} />
-                <SizedText label={donnees.dureeNuit} />
+                <SizedText label={'Durée d\'une nuit:'} />
+                <SizedText label={`${donnees.dureeNuit / 60}h ` + ((donnees.dureeNuit % 60 != '0') ? `${donnees.dureeNuit % 60}min` : '')} />
             </View>
             <View style={styles.res}>
                 <SizedText label={'Probabilité de contamination:'} />
@@ -95,20 +105,26 @@ export default function ShareSession({ idSession, token }) {
                 <SizedText label={'Date de début:'} />
                 <SizedText label={donnees.debutPartie} />
             </View>
-            {
+            { // TODO: donnees.debutPartie a changer soon
                 (showUsers)
                     ? <View style={styles.users}>
                         <Title label='Utilisateurs connectés' />
-                        {usersJSX}
+                        <View style={styles.list}>
+                            <FlatList
+                                renderItem={({ item }) => <SizedText style={styles.item} size={20} label={item.key} />}
+                                data={connectedUsers}
+                                contentContainerStyle={styles.flatListContainer}
+                                onTouchStart={loadUsers}
+                            />
+                        </View>
                     </View>
                     : null
             }
-            <Button containerStyle={styles.usersContainer} size='lg' title=' ' buttonStyle={styles.usersButton} onPress={() => { setShowUsers((showUsers + 1) % 2); }} />
+            <Button containerStyle={styles.usersContainer} size='lg' title=' ' buttonStyle={styles.usersButton} onPress={() => { setShowUsers((showUsers + 1) % 2); loadUsers(); }} />
             <View style={styles.idSection}>
                 <SizedText size={20} label={'ID session: #'} />
                 <SizedText style={styles.id} size={20} label={idSession} />
             </View>
-
         </View>
     );
 }
@@ -161,6 +177,16 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         backgroundColor: backgroundColor,
-        zIndex: 1
+        zIndex: 0
+    },
+    list: {
+        marginTop: 25,
+        height: '75%',
+        width: '100%',
+    },
+    flatListContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 50
     }
 });

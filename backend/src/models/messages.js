@@ -12,15 +12,15 @@ const message = db.define('Messages', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    idJoueur: {
-        type: Sequelize.INTEGER,
+    username: {
+        type: Sequelize.STRING,
         allowNull: false
     },
     message: {
         type: Sequelize.STRING,
         allowNull: false
     },
-    archieve: {
+    archichive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false

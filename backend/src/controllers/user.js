@@ -87,7 +87,6 @@ module.exports = {
         const username = req.login
         const data = await userModel.findOne({ where: { username }, attributes: ['id', 'username'] })
         if (!data) throw new CodeError('User not found', status.NOT_FOUND)
-    
         next()
         
     },

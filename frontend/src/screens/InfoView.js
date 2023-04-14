@@ -1,21 +1,37 @@
-import { StyleSheet, View } from 'react-native';
-import SizedText from '../components/SizedText';
-import Bouton from '../components/Bouton';
-import { commonStyles } from '../constants/style';
-import Title from '../components/Title';
 import { useContext } from 'react';
-import { DataContext } from './GameView';
+import { StyleSheet, View } from 'react-native';
+import Bouton from '../components/Bouton';
+import SizedText from '../components/SizedText';
+import Title from '../components/Title';
+import { InGameUserDataContext } from '../constants/hooks';
+import { commonStyles } from '../constants/style';
 
 export default function InfoView() {
-    const users = useContext(DataContext);
+    const usersData = useContext(InGameUserDataContext);
+
+    const role = (usersData.role === 'V') ? 'Villageois' : 'Loup-garou';
+    let pouvoir;
+    switch (usersData.pouvoir) {
+    case 'V':
+        pouvoir = 'Voyance'; break;
+    case 'S':
+        pouvoir = 'Spiritisme'; break;
+    case 'I':
+        pouvoir = 'Insomnie'; break;
+    case 'C':
+        pouvoir = 'Contamination'; break;
+    default:
+        pouvoir = 'Aucun'; break;
+    }
+    const vie = (usersData.vie === 'V') ? 'Vivant' : 'Mort';
 
     return (
         <View style={[commonStyles.container, styles.infoView]}>
             <Title style={styles.title} label='Jour' />
             <View style={styles.status}>
-                <SizedText label={`Rôle: ${users.role}`}/>
-                <SizedText label={`Pouvoir: ${users.pouvoir}`}/>
-                <SizedText label={`Vie: ${users.vie}`}/>
+                <SizedText label={`Rôle: ${role}`} />
+                <SizedText label={`Pouvoir: ${pouvoir}`} />
+                <SizedText label={`Vie: ${vie}`} />
             </View>
 
             <View style={styles.time}>
@@ -34,7 +50,7 @@ export default function InfoView() {
 }
 
 const styles = StyleSheet.create({
-    title:{
+    title: {
         backgroundColor: 'grey',
     },
     infoView: {

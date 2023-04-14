@@ -16,8 +16,12 @@ var timers = {}
 module.exports = {
     async startNight(idGame) {
         await inGameModel.update({"moment": "N"}, {where: {"id": idGame}})
-        const currentUrne = await urneModel.findOne({where: {"id": idGame}})
-        // Hurne
+        await urneModel.update({"idVictime": 0, "nbUsersVote": 0, "votesPour": 0, "votesContres": 0}, {where: {"id": idGame}})
+    },
+
+    async startDay(idGame) {
+        await inGameModel.update({"moment": "D"}, {where: {"id": idGame}})
+        const urne = await urneModel.findOne({where: {"id": idGame}})
     },
 
     async getMessagesFromPlace (req, res) {

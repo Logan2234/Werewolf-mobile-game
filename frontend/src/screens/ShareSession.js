@@ -12,7 +12,7 @@ export default function ShareSession({ idSession, token }) {
     const [donnees, setDonnees] = useState({});
     const [showUsers, setShowUsers] = useState(0);
     const [users, setUsers] = useState([]);
-    const [timeLeft, setTimeLeft] = useState(0);
+    // const [timeLeft, setTimeLeft] = useState(0);
 
     async function loadUsers() {
         await fetch(`${BACKEND}/joinSession/${idSession}/users`, {
@@ -44,6 +44,16 @@ export default function ShareSession({ idSession, token }) {
                     },
                     body: JSON.stringify({})
                 }))
+            // .then(
+            //     fetch(`${BACKEND}/joinSession/${idSession}/time`, {
+            //         method: 'GET',
+            //         headers: {
+            //             'x-access-token': token,
+            //             'Content-Type': 'application/json'
+            //         },
+            //     })
+            //         .then(temps => { setTimeLeft(temps.timeLeft); })
+            // )
             .catch(error => alert('Server error: ' + error));
     }, [token, idSession]);
 
@@ -52,13 +62,6 @@ export default function ShareSession({ idSession, token }) {
         connectedUsers.push({ key: user });
 
     // useEffect(() => {
-    //     // await fetch(`${BACKEND}/joinSession/${idSession}/time`, {
-    //     //     method: 'GET',
-    //     // })
-    //     //     .then(temps => { setTimeLeft(temps); });
-    //     // TODO: A supprimer c'est tempo
-    //     setTimeLeft(donnees.debutPartie);
-    //     console.log(donnees.debutPartie);
     //     setTimeout(() => { setTimeLeft(timeLeft - 1); }, 1000);
     // }, [timeLeft]);
 

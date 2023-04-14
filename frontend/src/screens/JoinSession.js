@@ -14,7 +14,7 @@ export default function JoinSession({ changeView, token, setIdSession, idSession
     const [borderColor, setBorderColor] = useState(secondaryColor);
 
     function verifyData() {
-        const idSessionVerification = verifyNumber(idSession, 0, 999999, 6); // TODO: not working with 0XXXXX
+        const idSessionVerification = verifyNumber(idSession, 0, 999999, 6);
         if (idSessionVerification == errorCodes.EMPTY)
             Alert.alert(errorCodes.EMPTY, 'Please enter a session ID.');
         else if (idSessionVerification == errorCodes.NOT_COMPLIANT)
@@ -22,8 +22,6 @@ export default function JoinSession({ changeView, token, setIdSession, idSession
         else if (idSessionVerification == errorCodes.INVALID_FORMAT)
             Alert.alert(errorCodes.INVALID_FORMAT, 'The session ID must only contain numbers.');
         else {
-            console.log(idSession);
-            console.log(token);
             fetch(`${BACKEND}/joinSession/${idSession}`, {
                 method: 'GET',
                 headers: { 'x-access-token': token, 'Content-Type': 'application/json' },

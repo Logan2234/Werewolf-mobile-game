@@ -30,12 +30,12 @@ export function verifyString(str, minsize, maxsize, regexp = null) {
  * @return {string} The error string if any error is found
  */
 export function verifyNumber(number, minvalue, maxvalue, strSize = null, regexp = /[^0-9]/g) {
+    if (strSize !== null && number.toString().length != strSize)
+        return errorCodes.NOT_COMPLIANT;
     number = parseFloat(number);
     if (number === null || number === undefined || isNaN(number))
         return errorCodes.EMPTY;
     if (number < minvalue || number > maxvalue)
-        return errorCodes.NOT_COMPLIANT;
-    if (strSize !== null && number.toString().length != strSize)
         return errorCodes.NOT_COMPLIANT;
     if (regexp !== null && number.toString().search(regexp) != -1)
         return errorCodes.INVALID_FORMAT;

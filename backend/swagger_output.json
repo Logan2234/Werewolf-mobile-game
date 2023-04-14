@@ -76,6 +76,19 @@
         }
       }
     },
+    "/user/status": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
+    },
     "/createSession": {
       "post": {
         "description": "",

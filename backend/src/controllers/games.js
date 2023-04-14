@@ -78,7 +78,7 @@ module.exports = {
 
         const gameData = await gameModel.create({"id": idGame, "nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "debutPartie": debutPartie});
         
-        //timers[idGame] = setTimeout(createGame, 60000 * debutPartie, idGame)
+        //timers[idGame] = setTimeout({} => {createGame(idGame)}, debutPartie)
 
         idGame = "0".repeat(6 - idGame.toString().length) + idGame.toString()  // On renvoit l'id sous forme de string de 6 caractères
         res.json({status: true, message: 'Session created', idGame})
@@ -207,7 +207,7 @@ module.exports = {
         let {idSession} = req.params
         if (await gameModel.findOne({where: {"id": idSession}})) {
             let timeLeft = getTimeLeft(timers[idSession])
-            res.json({status: true, message: 'Time left in seconds' + idSession.toString(), usersList})
+            res.json({status: true, message: 'Time left in seconds' + idSession.toString(), timeLeft})
             return
         }
 
@@ -216,7 +216,6 @@ module.exports = {
 
         throw new CodeError("Game doesn't exist", status.BAD_REQUEST)
     }
-
     
 }
 

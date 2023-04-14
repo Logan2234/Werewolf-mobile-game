@@ -92,4 +92,21 @@ module.exports = {
         
     },
 
+    async getRole(req, res) {
+        const username = req.login
+        const data = await userModel.findOne({where: {username}})
+        const userId = parseInt(data.id)
+
+        const userProfile = await usersInGameModel.findOne({where: {idUser: userId}})
+        if (userProfile) {
+            res.json({status: true, message: 'Role of user ' + username, role: userProfile.role, pouvoir: userProfile.pouvoir, vie: userProfile.vie})
+            return
+        } else {
+            userProfile = await usersInQModel.findOne({where: {idUser: userId}})
+            if (userProfile) {
+                throw new CodeError(username + " stills in the queue", status.NOT_FOUND)
+            } else throw new CodeError(username + " is not in a game nor in a queue", status.NOT_FOUND)
+        }
+    }
+
 }

@@ -183,7 +183,7 @@ module.exports = {
             await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "moment": "N"})
             await lieuModel.create({"idPartie": idSession, "typeLieu": "P"})
             await lieuModel.create({"idPartie": idSession, "typeLieu": "R"})
-            await lieuModel.create({"idPartie": idSession, "typeLieu": "E"})
+            if (isThereAS) await lieuModel.create({"idPartie": idSession, "typeLieu": "E"})
         }
 
         // Indépendament de si la partie a été créée ou pas, on supprime la session de la queue.

@@ -74,6 +74,24 @@ module.exports = {
     //    res.json({status: true, message: 'User deleted'});
     //},
 
+    async checkWhereIAm (req, res) {
+        const username = req.login
+        const userId = (await userModel.findOne({where: {username}})).id
+        const inSession = await usersInQModel.findOne({where: {"idUser": userId}})
+        if (inSession) {
+            const idSession = inSession.idGame
+            res.json({status: true, message: 'User is in a session', idSession})
+            return
+        }
+        const inGame = await usersInGameModel.findOne({where: {"idUser": userId}})
+        if (inGame) {
+            const idGame = inGame.idGame
+            res.json({status: true, message: 'User is in a game', idGame})
+            return
+        }
+        throw new CodeError('User is not in game or in a session', status.NOT_FOUND)
+    },
+
     async verificationUser (req, res, next) {
         // Code vérifiant qu'il y a bien un token dans l'entête
         if (!req.headers || !req.headers.hasOwnProperty('x-access-token'))

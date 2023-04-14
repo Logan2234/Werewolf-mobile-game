@@ -76,7 +76,7 @@ module.exports = {
             idGame = Math.trunc(Math.random()*1000000)
         }
 
-        const gameData = await gameModel.create({"id": idGame, "nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "debutPartie": debutPartie});
+        const gameData = await gameModel.create({"id": idGame, "nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "dateDebut": debutPartie + new Date().getTime()});
         
         //timers[idGame] = setTimeout({} => {createGame(idGame)}, debutPartie)
 
@@ -206,8 +206,9 @@ module.exports = {
     async returnTimeLeft(req, res) {
         let {idSession} = req.params
         if (await gameModel.findOne({where: {"id": idSession}})) {
-            let timeLeft = getTimeLeft(timers[idSession])
-            res.json({status: true, message: 'Time left in seconds' + idSession.toString(), timeLeft})
+            const session = await gameModel.findOne({where: {"id": idSession}})
+            const timeLeft = session.dateDebut - new Date().getTime()
+            res.json({status: true, message: 'Time left in ms' + idSession.toString(), timeLeft})
             return
         }
 
@@ -217,8 +218,4 @@ module.exports = {
         throw new CodeError("Game doesn't exist", status.BAD_REQUEST)
     }
     
-}
-
-function getTimeLeft(timeout) {
-    return Math.ceil((timeout._idleStart + timeout._idleTimeout - Date.now()) / 1000);
 }

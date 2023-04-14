@@ -114,7 +114,7 @@ export default function Discussion({idDiscussion, token}) {
                 //refreshing={true}
                 //onRefresh={() => {loadMessages();}}
             />
-            <InputMesssage />
+            <InputMesssage token={token} idDiscussion={idDiscussion}/>
         </View>
     )
 }

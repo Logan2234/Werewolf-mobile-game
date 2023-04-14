@@ -26,7 +26,7 @@ export default function LoginForm({ changeView, setToken, setIdSession, pseudo, 
                 } else if (data2.idGame) {
                     changeView(vues.IN_GAME);
                 } else {
-                    changeView(vues.CREATE_OR_JOIN);
+                    changeView(vues.DISCUSSION_JOUR);
                 }
             })
             .catch(error => alert('Server error: ' + error));

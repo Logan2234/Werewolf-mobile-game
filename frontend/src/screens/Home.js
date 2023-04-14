@@ -5,10 +5,11 @@ import { commonStyles } from '../constants/style';
 import { vues } from '../constants/screens';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
-import CreateSessionForm from './CreateSessionForm';
-import JoinSession from './JoinSession';
+//import CreateSessionForm from './CreateSessionForm';
+//import JoinSession from './JoinSession';
 import CreateOrJoin from './CreateOrJoin';
-import ShareSession from './ShareSession';
+//import ShareSession from './ShareSession';
+import DiscussionVillage from './DiscussionVillage';
 import { backgroundColor } from '../constants/colors';
 
 export default function Home() {
@@ -46,17 +47,17 @@ export default function Home() {
 
     }, [currentVue]);
 
-    // TODO : faire attention au cas où une session lui est déjà attribuée pour un token donné
     return (<View style={commonStyles.container}>
         {
+            //<DiscussionVillage token={null} />
             (currentVue === vues.LOGIN)
-                ? <LoginForm setToken={setToken} setIdSession={setIdSession} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setCurrentVue} />
-                : (currentVue === vues.REGISTER)
-                    ? <RegisterForm setToken={setToken} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setCurrentVue} />
+                 ? <LoginForm setToken={setToken} setIdSession={setIdSession} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setCurrentVue} />
+                 : (currentVue === vues.REGISTER)
+                     ? <RegisterForm setToken={setToken} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setCurrentVue} />
                     : (currentVue === vues.CREATE_OR_JOIN)
                         ? <CreateOrJoin changeView={setCurrentVue} />
                         : (currentVue === vues.JOIN_SESSION)
-                            ? <JoinSession idSession={idSession} token={token} setIdSession={setIdSession} changeView={setCurrentVue} />
+                           ? <JoinSession idSession={idSession} token={token} setIdSession={setIdSession} changeView={setCurrentVue} />
                             : (currentVue === vues.CREATE_SESSION)
                                 ? <CreateSessionForm setIdSession={setIdSession} changeView={setCurrentVue} token={token} />
                                 : <ShareSession idSession={idSession} token={token} />

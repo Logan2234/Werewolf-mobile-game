@@ -22,6 +22,6 @@ const styles = StyleSheet.create({
     pseudo: {
         fontWeight: 'bold',
         paddingLeft: 0
-    },
+    }
 
 })

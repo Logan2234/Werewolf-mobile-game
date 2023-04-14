@@ -1,15 +1,25 @@
 //InputMesssage.js
+import { useState } from "react";
 import { TextInput, StyleSheet, View } from "react-native";
 import { secondaryColor, textColor, placeholderColor } from "../constants/colors";
 import { commonStyles } from "../constants/style";
 
-export default function InputMesssage({token, idDiscussion}){
+export default function InputMesssage({token, idDiscussion, idGame}){
+    const [text, setText]=useState(null);
 
     /**
      * TODO : Requête qui envoie le message au serveur et nettoyer l'entrée une fois fait
      */
     function sendMessage(){
-
+        fetch(`${BACKEND}/inGame/${idGame}/messages/${idDiscussion}`, {
+            method: 'POST',
+            headers: {'x-access-token':token,
+                     'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: '{"message": "' + text + '"}' })
+        })
+        .then (() => {setText(null);})
+        .catch( error =>
+            {alert('Message non envoyé');})
     }
 
     /**

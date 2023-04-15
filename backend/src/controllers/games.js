@@ -162,7 +162,7 @@ function createGame (idSession) {
         const probaS = session.probaS
         const probaI = session.probaI
         const probaC = session.probaC
-        const nbLG = Math.floor(nbUsers * probaLG / 100) // On détermine le nombre de loups garous
+        const nbLG = 1 + Math.floor((nbUsers - 1) * probaLG / 100) // On détermine le nombre de loups garous, avec au moins un LG.
         let isThereAV = false
         let isThereAS = false
         let isThereAI = false

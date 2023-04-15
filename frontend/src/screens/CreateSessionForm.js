@@ -41,8 +41,8 @@ export default function CreateSessionForm({ setIdSession }) {
         const probaVo = verifyProba(voyance);
         const probaSp = verifyProba(spiritisme);
         const probaLG = verifyProba(loupGarous);
+        const timer = subDates(startDate, new Date());
         if (startDate.getTime() > new Date().getTime()){
-            const timer = subDates(startDate, new Date());
         } else {
             Alert.alert('Erreur de données rentrées', 'La date ne peut pas être déjà passée')
             return;
@@ -83,6 +83,7 @@ export default function CreateSessionForm({ setIdSession }) {
             .then(data => {
                 if (data.idGame) {
                     setIdSession(data.idGame);
+                    console.log('Session créée')
                     changeView(vues.SHARE_SESSION);
                 }
             })

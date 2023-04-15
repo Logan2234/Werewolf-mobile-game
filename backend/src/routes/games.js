@@ -16,6 +16,6 @@ router.post('/joinSession/:idSession', user.verificationUser, games.joinSession)
 
 router.get('/joinSession/:idSession/users', games.getUsersSession);
 
-router.get('/joinSession/:idSession/time', games.returnTimeLeft)
+router.get('/joinSession/:idSession/time', games.returnTimeLeft);
 
 module.exports = router;

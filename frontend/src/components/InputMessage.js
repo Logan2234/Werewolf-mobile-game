@@ -4,23 +4,26 @@ import { TextInput, StyleSheet, View, Alert } from "react-native";
 import { secondaryColor, textColor, placeholderColor } from "../constants/colors";
 import { primaryColor } from "../constants/colors";
 import { Icon } from "@rneui/base";
+import { BACKEND } from "../constants/backend";
 
 export default function InputMesssage({token, idDiscussion, idGame}){
     const [text, setText]=useState(null);
 
     /**
      * Requête qui envoie le message au serveur et nettoyer l'entrée une fois fait
-     * TODO : A tester
+     * TODO : A tester -> requete a priori ok mais reste à tester efficacement
      */
     function sendMessage(){
+        console.log('Message en cours d\'envoi : ', text);
         if (text != null){
             fetch(`${BACKEND}/inGame/${idGame}/messages/${idDiscussion}`, {
                 method: 'POST',
-                headers: {'x-access-token':token,
+                headers: {'x-access-token': token,
                          'Content-Type': 'application/json' },
                 body: JSON.stringify({ data: '{"message": "' + text + '"}' })
             })
-            .then (() => {setText(null);})
+            .then (() => {setText(null);
+                        console.log('Message envoyé')})
             .catch( error =>
                 {alert('Message non envoyé') + error;});
         }
@@ -35,8 +38,11 @@ export default function InputMesssage({token, idDiscussion, idGame}){
             <TextInput placeholder="Message"
             placeholderTextColor={placeholderColor}
             style={styles.input}
+            value={text}
+            onChangeText={setText}
             />
             <Icon
+                style={styles.button}
                 name='send'
                 type='FontAwesome'
                 onPress={sendMessage}
@@ -50,20 +56,26 @@ const styles = StyleSheet.create({
     bottom: {
         position: 'absolute',
         bottom: 0,
-        width: '100%',
+        width: '95%',
         borderWidth: 1,
         borderRadius: 5,
         borderColor: secondaryColor,
         left: 0,
         flex:1,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        height: 40,
+        paddingLeft: 10,
+        margin: '2.5%'
     },
     input: {
         borderWidth:0,
-        height: 40,
-        paddingLeft: 10,
+        width:'100%',
         margin: 10,
         color: textColor,
         fontSize: 15
+    },
+    button: {
+        margin:5
     }
 })

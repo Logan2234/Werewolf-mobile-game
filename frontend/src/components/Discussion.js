@@ -8,7 +8,7 @@ import { commonStyles } from "../constants/style";
 import { secondaryColor } from "../constants/colors";
 
 
-export default function Discussion({idDiscussion, token}) {
+export default function Discussion({idDiscussion, token, idGame}) {
     const messages=[
         {
             idMessage: '0',
@@ -97,25 +97,58 @@ export default function Discussion({idDiscussion, token}) {
         );
       }
 
+    /**
+     * Renvoie un booléen pour indiquer si on peut envoyer des messages
+     */
+    function canIWriteHere(){
+        fetch(`${BACKEND}/inGame/${idGame}/messages/${idDiscussion}`, {
+            method: 'POST',
+            headers: {'x-access-token': token,
+                     'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: '{"message": "' + text + '"}' })
+        })
+        .then (() => {return true;})
+        .catch( error => {return false;});
+    };
+
 
     /**
      * Renvoie l'affichage
+     * NOTE : il sera intéressant de faire un rendu (et une actualisation uniquement sur la flatList et pas sur l'input)
      */
-    return (
-        <View style={styles.container} >
-            <FlatList
-                data={messages}
-                // TODO : ne pas balancer l'id mais le pseudo
-                renderItem={({item}) => <Message pseudo={item.idJoueur} text={item.message} />}
-                keyExtractor={item => item.idMessage}
-                ItemSeparatorComponent={ItemDivider}
-                // TODO : rafraichissement ??
-                //refreshing={true}
-                //onRefresh={() => {loadMessages();}}
-            />
-            <InputMesssage token={token} idDiscussion={idDiscussion}/>
-        </View>
-    )
+    if (canIWriteHere()){
+        return (
+            <View style={styles.container} >
+                <FlatList
+                    data={messages}
+                    // TODO : ne pas balancer l'id mais le pseudo
+                    renderItem={({item}) => <Message pseudo={item.idJoueur} text={''} />}
+                    keyExtractor={item => item.idMessage}
+                    ItemSeparatorComponent={ItemDivider}
+                    // TODO : rafraichissement ??
+                    //refreshing={true}
+                    //onRefresh={() => {loadMessages();}}
+                />
+                <InputMesssage token={token} idDiscussion={idDiscussion} idGame={idGame}/>
+            </View>
+        );
+    }
+    else {
+        return (
+            <View style={styles.container} >
+                <FlatList
+                    data={messages}
+                    // TODO : ne pas balancer l'id mais le pseudo
+                    renderItem={({item}) => <Message pseudo={item.idJoueur} text={item.message} />}
+                    keyExtractor={item => item.idMessage}
+                    ItemSeparatorComponent={ItemDivider}
+                    // TODO : rafraichissement ??
+                    //refreshing={true}
+                    //onRefresh={() => {loadMessages();}}
+                />
+            </View>
+        )
+    }
 }
 
 

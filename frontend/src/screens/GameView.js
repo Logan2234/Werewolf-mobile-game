@@ -9,7 +9,7 @@ import ChatView from './ChatView';
 import InfoView from './InfoView';
 import VoteView from './VoteView';
 
-export default function GameView() {
+export default function GameView({idSession} ) {
     const [index, setIndex] = useState(0);
     const [donneesUser, setDonneesUser] = useState({});
 
@@ -61,12 +61,12 @@ export default function GameView() {
                         <InfoView />
                     </TabView.Item>
                     <TabView.Item style={{ width: '100%' }}>
-                        <ChatView />
+                        <ChatView idGame={idSession}  />
                     </TabView.Item>
                     <TabView.Item style={{ width: '100%' }}>
                         <VoteView />
                     </TabView.Item>
                 </TabView>
             </InGameUserDataContext.Provider>
-        </View >);
+        </View>);
 }

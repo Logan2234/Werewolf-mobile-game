@@ -3,8 +3,9 @@ import { commonStyles } from "../constants/style";
 import { vues } from "../constants/screens";
 
 
-export default function DiscussionVillage({ token }) {
+export default function DiscussionVillage({ token, idGame }) {
+
     return(
-        <Discussion token={token} idDiscussion={'place'}/>
+        <Discussion token={token} idDiscussion={'place'} idGame={idGame}/>
     )
 }

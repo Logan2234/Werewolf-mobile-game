@@ -96,7 +96,7 @@ module.exports = {
         const data = await userModel.findOne({where: {username}})
         const userId = parseInt(data.id)
 
-        const userProfile = await usersInGameModel.findOne({where: {idUser: userId}})
+        let userProfile = await usersInGameModel.findOne({where: {idUser: userId}})
         if (userProfile) {
             res.json({status: true, message: 'Role of user ' + username, role: userProfile.role, pouvoir: userProfile.pouvoir, vie: userProfile.vie})
             return

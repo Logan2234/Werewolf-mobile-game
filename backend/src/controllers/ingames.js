@@ -217,6 +217,40 @@ module.exports = {
     },
 
     async selectAVictimForSpiritism (req, res) {
-        // ! TODO
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
+            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+        }
+
+        const data = JSON.parse(req.body.data)
+        const victime = data.victime
+        const idVictime = await userModel.findOne({where: {"username": victime}})
+        if (idVictime == null) {
+            throw new CodeError('This user does not exist', status.BAD_REQUEST)
+        }
+        const useriNTheGame = await usersInGames.findOne({where: {"idUser": idVictime.id}})
+        if (useriNTheGame == null) {
+            throw new CodeError('This user is not in a game', status.BAD_REQUEST)
+        }
+        if (useriNTheGame.vie != "M") {
+            throw new CodeError('You cannot use spiritism with alive people', status.BAD_REQUEST)
+        }
+
+        const username = req.login
+        let {idGame} = req.params
+
+        const salleEspiritisme = await salleEspiritismeModel.findOne({where: {"idGame": idGame}})
+        if (salleEspiritisme == null) {
+            await salleEspiritismeModel.create({"idGame": idGame, "espiritiste": username, "victime": victime})
+            res.json({status: true, message: 'Victim selected'})
+            return
+        } else {
+            if (salleEspiritisme.dejaChange) {
+                throw new CodeError('The victim has already been changed', status.FORBIDDEN)
+            } else {
+                await salleEspiritismeModel.update({"victime": victime, "dejaChange": 1}, {where: {"idGame": idGame}})
+                res.json({status: true, message: 'Victim selected'})
+                return
+            }
+        }
     }
 }

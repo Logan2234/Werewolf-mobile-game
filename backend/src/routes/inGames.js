@@ -20,4 +20,7 @@ router.get('/game/:idGame/alives', inGames.getAliveUsers);
 router.get('/game/:idGame/deads', inGames.getDeadUsers);
 
 
+// Actions 
+router.post('/game/:idGame/actions/spiritism', user.verificationUser, inGames.selectAVictimForSpiritism);
+
 module.exports = router

@@ -217,6 +217,154 @@ module.exports = {
     },
 
     async selectAVictimForSpiritism (req, res) {
-        // ! TODO
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
+            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+        }
+
+        const data = JSON.parse(req.body.data)
+
+        const username = req.login
+        let idSpiritist = (await userModel.findOne({where: {"username": username}})).id
+        const spiritistInGame = await usersInGames.findOne({where: {"idUser": idSpiritist}})
+        if (spiritistInGame == null) {
+            throw new CodeError('You are not in a game', status.BAD_REQUEST)
+        }
+        if (spiritistInGame.pouvoir != "S") {
+            throw new CodeError('You are not a spiritist', status.BAD_REQUEST)
+        }
+
+        const victime = data.victime
+        const idVictime = await userModel.findOne({where: {"username": victime}})
+        if (idVictime == null) {
+            throw new CodeError('This user does not exist', status.BAD_REQUEST)
+        }
+        const userInTheGame = await usersInGames.findOne({where: {"idUser": idVictime.id}})
+        if (userInTheGame == null) {
+            throw new CodeError('This user is not in a game', status.BAD_REQUEST)
+        }
+        if (userInTheGame.vie != "M") {
+            throw new CodeError('You cannot use spiritism with alive people', status.BAD_REQUEST)
+        }
+
+        let {idGame} = req.params
+
+        const salleEspiritisme = await salleEspiritismeModel.findOne({where: {"idGame": idGame}})
+        if (salleEspiritisme == null) {
+            await salleEspiritismeModel.create({"idGame": idGame, "espiritiste": username, "victime": victime})
+            await usersInGames.update({"pouvoirUtilise": true}, {where: {"idUser": idSpiritist}})
+            res.json({status: true, message: 'Victim selected'})
+            return
+        } else {
+            if (userInTheGame.pouvoirUtilise) {
+                throw new CodeError('The victim has already been changed', status.FORBIDDEN)
+            } else {
+                await salleEspiritismeModel.update({"victime": victime}, {where: {"idGame": idGame}})
+                await usersInGames.update({"pouvoirUtilise": true}, {where: {"idUser": idSpiritist}})
+                res.json({status: true, message: 'Victim selected'})
+                return
+            }
+        }
+    },
+
+    async selectAVictimForContaminator (req, res) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
+            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+        }
+
+        const data = JSON.parse(req.body.data)
+        const victime = data.victime
+        const username = req.login
+        let idContaminator = (await userModel.findOne({where: {"username": username}})).id
+        const contaminatorInGame = await usersInGames.findOne({where: {"idUser": idContaminator}})
+        if (contaminatorInGame == null) {
+            throw new CodeError('You are not in a game', status.BAD_REQUEST)
+        }
+        if (contaminatorInGame.pouvoir != "C") {
+            throw new CodeError('You are not a contaminator', status.BAD_REQUEST)
+        }
+        if (contaminatorInGame.pouvoirUtilise) {
+            throw new CodeError('You have already used your power for today', status.FORBIDDEN)
+        }
+
+        let {idGame} = req.params
+
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+        if (game == null) {
+            throw new CodeError('This game does not exist', status.BAD_REQUEST)
+        }
+        if (game.moment != "N") {
+            throw new CodeError('You can\'t use your power during the day', status.FORBIDDEN)
+        }
+
+        const idVictime = await userModel.findOne({where: {"username": victime}})
+        if (idVictime == null) {
+            throw new CodeError('This user does not exist', status.BAD_REQUEST)
+        }
+        const userInTheGame = await usersInGames.findOne({where: {"idUser": idVictime.id}})
+        if (userInTheGame == null) {
+            throw new CodeError('This user is not in a game', status.BAD_REQUEST)
+        }
+        if (userInTheGame.vie == "M") {
+            throw new CodeError('You cannot contaminate dead people', status.BAD_REQUEST)
+        }
+        if (userInTheGame.role == "LG"){
+            throw new CodeError(victime + ' is already a werewolf', status.BAD_REQUEST)
+        }
+        
+        if (userInTheGame.pouvoir == "I") {
+            await usersInGames.update({"role": "LG", "pouvoir": "R"}, {where: {"idUser": idVictime.id}})
+        } else {
+            await usersInGames.update({"role": "LG"}, {where: {"idUser": idVictime.id}})
+        }
+        await usersInGames.update({"pouvoirUtilise": true}, {where: {"idUser": idContaminator}})
+        res.json({status: true, message: 'Villager converted into werewolf'})
+        
+    },
+
+    async selectAVictimForSeer (req, res) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
+            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+        }
+
+        const data = JSON.parse(req.body.data)
+        const victime = data.victime
+        const username = req.login
+        let idSeer = (await userModel.findOne({where: {"username": username}})).id
+        const seerInGame = await usersInGames.findOne({where: {"idUser": idSeer}})
+        if (seerInGame == null) {
+            throw new CodeError('You are not in a game', status.BAD_REQUEST)
+        }
+        if (seerInGame.pouvoir != "V") {
+            throw new CodeError('You are not a seer', status.BAD_REQUEST)
+        }
+        if (seerInGame.pouvoirUtilise) {
+            throw new CodeError('You have already used your power for today', status.FORBIDDEN)
+        }
+
+        let {idGame} = req.params
+
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+        if (game == null) {
+            throw new CodeError('This game does not exist', status.BAD_REQUEST)
+        }
+        if (game.moment != "N") {
+            throw new CodeError('You can\'t use your power during the day', status.FORBIDDEN)
+        }
+
+        const idVictime = await userModel.findOne({where: {"username": victime}})
+        if (idVictime == null) {
+            throw new CodeError('This user does not exist', status.BAD_REQUEST)
+        }
+        const userInTheGame = await usersInGames.findOne({where: {"idUser": idVictime.id}})
+        if (userInTheGame == null) {
+            throw new CodeError('This user is not in a game', status.BAD_REQUEST)
+        }
+        
+        const role = userInTheGame.role
+        const pouvoir = userInTheGame.pouvoir
+        await usersInGames.update({"pouvoirUtilise": true}, {where: {"idUser": idSeer}})
+        res.json({status: true, message: 'This is the role and power of ' + victime, role, pouvoir})
+        
     }
+
 }

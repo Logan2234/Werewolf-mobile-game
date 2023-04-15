@@ -18,6 +18,7 @@ router.post('/game/:idGame/messages/spiritism', user.verificationUser, inGames.s
 
 router.get('/game/:idGame/alives', inGames.getAliveUsers);
 router.get('/game/:idGame/deads', inGames.getDeadUsers);
+router.get('/game/:idGame/info', inGames.getInfos);
 
 
 // Actions 

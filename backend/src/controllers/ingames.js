@@ -365,6 +365,24 @@ module.exports = {
         await usersInGames.update({"pouvoirUtilise": true}, {where: {"idUser": idSeer}})
         res.json({status: true, message: 'This is the role and power of ' + victime, role, pouvoir})
         
+    },
+
+    async getInfos (req, res) {
+        let {idGame} = req.params
+        let gameInfo = await inGameModel.findOne({where: {"id": parseInt(idGame)}, attributes: ['nbJoueurs', 'dureeJour', 'dureeNuit', 'nbLG', 'probaV', 'probaS', 'probaI', 'probaC', 'moment']})
+        if (gameInfo == null) {
+            throw new CodeError('This game does not exist', status.BAD_REQUEST)
+        }
+        res.json({status: true, message: 'Info from game ' + idGame, gameInfo})
     }
 
+}
+
+let finUrne = async (idGame) => {
+    let urne = await urneModel.findOne({where: {"idGame": idGame}})
+    let idVictime = urne.idVictime
+    let nbUsersVote = urne.nbUsersVote
+    let votesPour = urne.votesPour
+
+    
 }

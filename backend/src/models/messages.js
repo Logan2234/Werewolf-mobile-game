@@ -20,7 +20,7 @@ const message = db.define('Messages', {
         type: Sequelize.STRING,
         allowNull: false
     },
-    archichive: {
+    archive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false

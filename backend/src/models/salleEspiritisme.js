@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const db = require('./database.js');
 
-const salleEspiritisme = db.define('SallesEspiritisme', {
+const salleEspiritisme = db.define('SallesEspiritismes', {
     idGame: {
         primaryKey: true,
         type: Sequelize.INTEGER

@@ -15,11 +15,6 @@ const salleEspiritisme = db.define('SallesEspiritismes', {
         type: Sequelize.STRING,
         allowNull: true,
         defaultValue: null
-    },
-    dejaChange: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
     }
 
 }, { timestamps: false })

@@ -26,6 +26,11 @@ const usersInGames = db.define('UsersInGames', {
     // ! Attention ! La vie ne peut être que : V ou M
         type: Sequelize.STRING,
         allowNull: false,
+    },
+    pouvoirUtilise: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
 
 }, { timestamps: false })

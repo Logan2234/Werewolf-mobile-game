@@ -222,20 +222,30 @@ module.exports = {
         }
 
         const data = JSON.parse(req.body.data)
+
+        const username = req.login
+        let idSpiritist = (await userModel.findOne({where: {"username": username}})).id
+        const spiritistInGame = await usersInGames.findOne({where: {"idUser": idSpiritist}})
+        if (spiritistInGame == null) {
+            throw new CodeError('You are not in a game', status.BAD_REQUEST)
+        }
+        if (spiritistInGame.pouvoir != "S") {
+            throw new CodeError('You are not a spiritist', status.BAD_REQUEST)
+        }
+
         const victime = data.victime
         const idVictime = await userModel.findOne({where: {"username": victime}})
         if (idVictime == null) {
             throw new CodeError('This user does not exist', status.BAD_REQUEST)
         }
-        const useriNTheGame = await usersInGames.findOne({where: {"idUser": idVictime.id}})
-        if (useriNTheGame == null) {
+        const userInTheGame = await usersInGames.findOne({where: {"idUser": idVictime.id}})
+        if (userInTheGame == null) {
             throw new CodeError('This user is not in a game', status.BAD_REQUEST)
         }
-        if (useriNTheGame.vie != "M") {
+        if (userInTheGame.vie != "M") {
             throw new CodeError('You cannot use spiritism with alive people', status.BAD_REQUEST)
         }
 
-        const username = req.login
         let {idGame} = req.params
 
         const salleEspiritisme = await salleEspiritismeModel.findOne({where: {"idGame": idGame}})
@@ -244,7 +254,7 @@ module.exports = {
             res.json({status: true, message: 'Victim selected'})
             return
         } else {
-            if (salleEspiritisme.dejaChange) {
+            if (userInTheGame.pouvoirUtilise) {
                 throw new CodeError('The victim has already been changed', status.FORBIDDEN)
             } else {
                 await salleEspiritismeModel.update({"victime": victime, "dejaChange": 1}, {where: {"idGame": idGame}})
@@ -252,5 +262,50 @@ module.exports = {
                 return
             }
         }
+    },
+
+    async selectAVictimForContaminator (req, res) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
+            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+        }
+
+        const data = JSON.parse(req.body.data)
+        const victime = data.victime
+        const username = req.login
+        let idContaminator = (await userModel.findOne({where: {"username": username}})).id
+        const contaminatorInGame = await usersInGames.findOne({where: {"idUser": idContaminator}})
+        if (contaminatorInGame == null) {
+            throw new CodeError('You are not in a game', status.BAD_REQUEST)
+        }
+        if (contaminatorInGame.pouvoir != "C") {
+            throw new CodeError('You are not a contaminator', status.BAD_REQUEST)
+        }
+        if (contaminatorInGame.pouvoirUtilise) {
+            throw new CodeError('You have already used your power for today', status.FORBIDDEN)
+        }
+
+        const idVictime = await userModel.findOne({where: {"username": victime}})
+        if (idVictime == null) {
+            throw new CodeError('This user does not exist', status.BAD_REQUEST)
+        }
+        const userInTheGame = await usersInGames.findOne({where: {"idUser": idVictime.id}})
+        if (userInTheGame == null) {
+            throw new CodeError('This user is not in a game', status.BAD_REQUEST)
+        }
+        if (userInTheGame.vie == "M") {
+            throw new CodeError('You cannot contaminate dead people', status.BAD_REQUEST)
+        }
+        if (userInTheGame.role == "LG"){
+            throw new CodeError(victime + ' is already a werewolf', status.BAD_REQUEST)
+        }
+        
+        if (userInTheGame.pouvoir == "I") {
+            await usersInGames.update({"role": "LG", "pouvoir": "R"}, {where: {"idUser": idVictime.id}})
+        } else {
+            await usersInGames.update({"role": "LG"}, {where: {"idUser": idVictime.id}})
+        }
+        res.json({status: true, message: 'Villager converted into werewolf'})
+        
     }
+
 }

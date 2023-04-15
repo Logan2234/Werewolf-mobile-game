@@ -284,6 +284,16 @@ module.exports = {
             throw new CodeError('You have already used your power for today', status.FORBIDDEN)
         }
 
+        let {idGame} = req.params
+
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+        if (game == null) {
+            throw new CodeError('This game does not exist', status.BAD_REQUEST)
+        }
+        if (game.moment != "N") {
+            throw new CodeError('You can\'t use your power during the day', status.FORBIDDEN)
+        }
+
         const idVictime = await userModel.findOne({where: {"username": victime}})
         if (idVictime == null) {
             throw new CodeError('This user does not exist', status.BAD_REQUEST)

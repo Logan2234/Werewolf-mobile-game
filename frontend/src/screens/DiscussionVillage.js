@@ -5,6 +5,6 @@ import { vues } from "../constants/screens";
 
 export default function DiscussionVillage({ token }) {
     return(
-        <Discussion token={token} idDiscussion={null}/>
+        <Discussion token={token} idDiscussion={'place'}/>
     )
 }

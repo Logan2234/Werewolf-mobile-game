@@ -45,8 +45,8 @@ export default function CreateSessionForm({ setIdSession }) {
 
         if (probaC == null || probaIn == null || probaVo == null || probaSp == null || probaLG == null) {
             Alert.alert('Erreur des données rentrées', 'Les probabilités et proportions doivent être comprises entre 0 et 1.');
-        } if (minPlayer < 5) {
-            Alert.alert('Erreur des données rentrées', 'Le nombre minimal de joueurs doit être supérieur ou égal à 5.');
+        //} if (minPlayer < 5) {
+            //Alert.alert('Erreur des données rentrées', 'Le nombre minimal de joueurs doit être supérieur ou égal à 5.');
         } if (maxPlayer > 100) {
             Alert.alert('Erreur des données rentrées', 'Le nombre maximal de joueurs doit être inférieur ou égal à 100.');
         } if (lengthDayHours < 0 || lengthNightHours < 0 || lengthDayHours > 23 || lengthNightHours > 23) {

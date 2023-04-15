@@ -4,7 +4,6 @@ import { BACKEND } from '../constants/backend';
 import { FlatList } from "react-native";
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, SafeAreaView } from "react-native";
-import Divider from '@rneui/themed'
 import { commonStyles } from "../constants/style";
 import { secondaryColor } from "../constants/colors";
 
@@ -125,5 +124,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 10,
+        flexDirection: 'column',
       }
 })

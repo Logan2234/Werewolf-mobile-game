@@ -105,7 +105,7 @@ export default function Discussion({idDiscussion, token, idGame}) {
             method: 'POST',
             headers: {'x-access-token': token,
                      'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: '{"message": "' + text + '"}' })
+            body: JSON.stringify({ data: '{"message": ""}' })
         })
         .then (() => {return true;})
         .catch( error => {return false;});

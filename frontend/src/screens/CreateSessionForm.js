@@ -75,6 +75,7 @@ export default function CreateSessionForm({ setIdSession }) {
                 'x-access-token': token,
                 'Content-Type': 'application/json'
             },
+            
             body: JSON.stringify({
                 data: '{"nbMinJoueurs": ' + minPlayer + ', "nbMaxJoueurs": ' + maxPlayer + ', "dureeJour": ' + lengthDay + ', "dureeNuit": ' + lengthNight + ', "probaLG": ' + probaLG + ', "probaV": ' + probaVo + ', "probaS": ' + probaSp + ', "probaI": ' + probaIn + ', "probaC": ' + probaC + ', "debutPartie":  ' + timer + '}'
             })

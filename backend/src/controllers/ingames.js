@@ -4,12 +4,14 @@ const gameModel = require('../models/games.js')
 const userModel = require('../models/users.js')
 const inGameModel = require('../models/inGames.js')
 const usersInQModel = require('../models/usersInQs.js')
-const lieuModel = require('../models/lieux.js')
+const lieuModel = require('../models/lieus.js')
 const messageModel = require('../models/messages.js')
 const urneModel = require('../models/urnes.js')
+const salleEspiritismeModel = require('../models/salleEspiritisme.js')
 const CodeError = require('../util/CodeError.js')
 
-const has = require('has-keys')
+const has = require('has-keys');
+const usersInGames = require('../models/usersInGames.js');
 
 var timers = {}
 
@@ -22,17 +24,19 @@ module.exports = {
 
     async getMessagesFromPlace (req, res) {
         const username = req.login
-        let {idSession} = req.params
+        let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
-        const userInGame = await inGameModel.findOne({where: {"idUser": userId, "idGame": parseInt(idSession)}})
-        if (!userInGame) throw new CodeError(username + ' is not in game ' + idSession, status.FORBIDDEN)
-        const idLieu = (await lieuModel.findOne({where: {"idPartie": idSession, "typeLieu": "P"}})).idLieu
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        const idLieu = (await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "P"}})).idLieu
         if (userInGame.vie == "M") {
-            const messages = await messageModel.findAll({where: {"idLieu": idLieu}})
+            const messages = await messageModel.findAll({where: {"idLieu": idLieu}, attributes: ['username', 'message', 'timePosted']})
             res.json({status: true, message: 'Messages of the Central Place from the beginning', messages})
             return
         } else {
-            const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}})
+            const session = await inGameModel.findOne({where: {"id": idGame}})
+            if (session.moment != "J") throw new CodeError('You can\'t see the messages of the Central Place during the night', status.FORBIDDEN)
+            const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}, attributes: ['username', 'message', 'timePosted']})
             res.json({status: true, message: 'Messages of the Central Place', messages})
             return
         }
@@ -40,48 +44,151 @@ module.exports = {
 
     async getMessagesFromRepere (req, res) {
         const username = req.login
-        let {idSession} = req.params
+        let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
-        const userInGame = await inGameModel.findOne({where: {"idUser": userId, "idGame": parseInt(idSession)}})
-        if (!userInGame) throw new CodeError(username + ' is not in game ' + idSession, status.FORBIDDEN)
-        const idLieu = (await lieuModel.findOne({where: {"idPartie": idSession, "typeLieu": "R"}})).idLieu
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        const idLieu = (await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "R"}})).idLieu
         if (userInGame.vie == "M") {
-            const messages = await messageModel.findAll({where: {"idLieu": idLieu}})
+            const messages = await messageModel.findAll({where: {"idLieu": idLieu}, attributes: ['username', 'message', 'timePosted']})
             res.json({status: true, message: 'Messages of the lair of werewolves from the beginning', messages})
             return
         } else {
             if (userInGame.role == "LG" || userInGame.pouvoir == "I") {
-                const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}})
+                const session = await inGameModel.findOne({where: {"id": idGame}})
+                if (session.moment != "N") throw new CodeError('You can\'t see the messages of the lair of werewolves during the day', status.FORBIDDEN)
+                const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}, attributes: ['username', 'message', 'timePosted']})
                 res.json({status: true, message: 'Messages of the lair of werewolves', messages})
                 return
             } else {
-                throw new CodeError(username + ' have no access to the messages of the lair of werewolves ' + idSession, status.FORBIDDEN)
+                throw new CodeError(username + ' have no access to the messages of the lair of werewolves', status.FORBIDDEN)
             }
         }
     },
 
     async getMessagesFromSpiritismRoom (req, res) {
         const username = req.login
-        let {idSession} = req.params
+        let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
-        const userInGame = await inGameModel.findOne({where: {"idUser": userId, "idGame": parseInt(idSession)}})
-        if (!userInGame) throw new CodeError(username + ' is not in game ' + idSession, status.FORBIDDEN)
-        const Lieu = await lieuModel.findOne({where: {"idPartie": idSession, "typeLieu": "E"}})
-        if (!Lieu) throw new CodeError('No spiritism room in game ' + idSession, status.NOT_FOUND)
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        const Lieu = await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "E"}})
+        if (!Lieu) throw new CodeError('No spiritism room in game ' + idGame, status.NOT_FOUND)
         const idLieu = Lieu.idLieu
 
         if (userInGame.vie == "M") {
-            const messages = await messageModel.findAll({where: {"idLieu": idLieu}})
+            const messages = await messageModel.findAll({where: {"idLieu": idLieu}, attributes: ['username', 'message', 'timePosted']})
             res.json({status: true, message: 'Messages of the spiritist room from the beginning', messages})
             return
         } else {
-            if (userInGame.role == "S") {
-                const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}})
+            if (userInGame.pouvoir == "S") {
+                const session = await inGameModel.findOne({where: {"id": idGame}})
+                if (session.moment != "N") throw new CodeError('You can\'t see the messages of the spiritism room during the day', status.FORBIDDEN)
+                const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}, attributes: ['username', 'message', 'timePosted']})
                 res.json({status: true, message: 'Messages of the spiritism room', messages})
                 return
             } else {
-                throw new CodeError(username + ' have no access to the messages of the spiritism room ' + idSession, status.FORBIDDEN)
+                throw new CodeError(username + ' have no access to the messages of the spiritism room', status.FORBIDDEN)
             }
         }
-    }
+    },
+
+    async sendMessageToPlace (req, res) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message')) {
+            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+        }
+
+        const data = JSON.parse(req.body.data)
+        const message = data.message
+
+        if (message == "") {
+            throw new CodeError('Your message can\'t be empty', status.BAD_REQUEST)
+        }
+
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        const idLieu = (await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "P"}})).idLieu
+
+        if (userInGame.vie == "M") {
+            throw new CodeError(username + ' is dead in game ' + idGame, status.FORBIDDEN)
+        } else {
+            const session = await inGameModel.findOne({where: {"id": parseInt(idGame)}})
+            if (session.moment != "J") throw new CodeError('You can\'t send messages to the Central Place during the night', status.FORBIDDEN)
+            await messageModel.create({"idLieu": idLieu, "username": username, "message": message, "archive": false})
+            res.json({status: true, message: 'Message sent'})
+            return
+        }
+    },
+
+    async sendMessageToRepere (req, res) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message')) {
+            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+        }
+
+        const data = JSON.parse(req.body.data)
+        const message = data.message
+
+        if (message == "") {
+            throw new CodeError('Your message can\'t be empty', status.BAD_REQUEST)
+        }
+
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        const idLieu = (await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "R"}})).idLieu
+
+        if (userInGame.vie == "M") {
+            throw new CodeError(username + ' is dead in game ' + idGame, status.FORBIDDEN)
+        } else {
+            if (userInGame.role == "LG") {
+                const session = await inGameModel.findOne({where: {"id": parseInt(idGame)}})
+                if (session.moment != "N") throw new CodeError('You can\'t send messages to the lair of werewolves during the day', status.FORBIDDEN)
+                await messageModel.create({"idLieu": idLieu, "username": username, "message": message, "archive": false})
+                res.json({status: true, message: 'Message sent'})
+                return
+            } else {
+                throw new CodeError(username + ' can\'t messages to the lair of werewolves', status.FORBIDDEN)
+            }
+        }
+    },
+
+    async sendMessageToSpiritismRoom (req, res) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message')) {
+            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+        }
+
+        const data = JSON.parse(req.body.data)
+        const message = data.message
+
+        if (message == "") {
+            throw new CodeError('Your message can\'t be empty', status.BAD_REQUEST)
+        }
+
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        const idLieu = (await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "E"}})).idLieu
+
+        const victime = await salleEspiritismeModel.findOne({where: {"victime": username}})
+        if (userInGame.vie == "M" && !victime) {
+            throw new CodeError(username + ' is dead in game ' + idGame, status.FORBIDDEN)
+        } else {
+            if (userInGame.pouvoir == "S" || (userInGame.vie == "M" && victime != null)) {
+                const session = await inGameModel.findOne({where: {"id": idGame}})
+                if (session.moment != "N") throw new CodeError('You can\'t send messages to the spiritism room during the day', status.FORBIDDEN)
+                await messageModel.create({"idLieu": idLieu, "username": username, "message": message, "archive": false})
+                res.json({status: true, message: 'Message sent'})
+                return
+            } else {
+                throw new CodeError(username + ' can\'t messages to the spiritism room', status.FORBIDDEN)
+            }
+        }
+    },
 }

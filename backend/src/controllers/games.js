@@ -4,7 +4,7 @@ const gameModel = require('../models/games.js');
 const userModel = require('../models/users.js');
 const inGameModel = require('../models/inGames.js');
 const usersInQModel = require('../models/usersInQs.js');
-const lieuModel = require('../models/lieux.js');
+const lieuModel = require('../models/lieus.js');
 const CodeError = require('../util/CodeError.js')
 
 const has = require('has-keys');

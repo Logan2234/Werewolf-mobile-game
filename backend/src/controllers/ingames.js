@@ -359,12 +359,6 @@ module.exports = {
         if (userInTheGame == null) {
             throw new CodeError('This user is not in a game', status.BAD_REQUEST)
         }
-        if (userInTheGame.vie == "M") {
-            throw new CodeError('You cannot contaminate dead people', status.BAD_REQUEST)
-        }
-        if (userInTheGame.role == "LG"){
-            throw new CodeError(victime + ' is already a werewolf', status.BAD_REQUEST)
-        }
         
         const role = userInTheGame.role
         const pouvoir = userInTheGame.pouvoir

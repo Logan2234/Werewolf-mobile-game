@@ -191,4 +191,32 @@ module.exports = {
             }
         }
     },
+
+    async getAliveUsers (req, res) {
+        let {idGame} = req.params
+        const users = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V"}, attributes: ['idUser']})
+        var aliveUsers = []
+        let aux = ""
+        for (let i = 0; i < users.length; i++) {
+            aux = (await userModel.findOne({where: {"id": users[i].idUser}})).username
+            aliveUsers.push(aux)
+        }
+        res.json({status: true, message: 'List of alive users', aliveUsers})
+    },
+
+    async getDeadUsers (req, res) {
+        let {idGame} = req.params
+        const users = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "M"}, attributes: ['idUser']})
+        var deadUsers = []
+        let aux = ""
+        for (let i = 0; i < users.length; i++) {
+            aux = (await userModel.findOne({where: {"id": users[i].idUser}})).username
+            deadUsers.push(aux)
+        }
+        res.json({status: true, message: 'List of dead users', deadUsers})
+    },
+
+    async selectAVictimForSpiritism (req, res) {
+        // ! TODO
+    }
 }

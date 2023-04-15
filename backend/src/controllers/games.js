@@ -116,7 +116,6 @@ module.exports = {
         res.json({status: true, message: 'Session found', session})
     },
 
-    
     async getUsersSession (req, res) {
         let {idSession} = req.params
         idSession = parseInt(idSession)
@@ -146,9 +145,9 @@ module.exports = {
     
 }
 
-async function createGame (idSession) {
-    const session = await gameModel.findOne({where: {"id": idSession}})
-    const users = await usersInQModel.findAll({where: {"idGame": idSession}})
+function createGame (idSession) {
+    const session = gameModel.findOne({where: {"id": idSession}})
+    const users = usersInQModel.findAll({where: {"idGame": idSession}})
     const nbUsers = users.length
     const nbMinJoueurs = session.nbMinJoueurs
 
@@ -163,7 +162,7 @@ async function createGame (idSession) {
         const probaS = session.probaS
         const probaI = session.probaI
         const probaC = session.probaC
-        const nbLG = Math.floor(nbUsers * probaLG / 100) // On détermine le nombre de loups garous
+        const nbLG = 1 + Math.floor((nbUsers - 1) * probaLG / 100) // On détermine le nombre de loups garous, avec au moins un LG.
         let isThereAV = false
         let isThereAS = false
         let isThereAI = false
@@ -186,43 +185,43 @@ async function createGame (idSession) {
         
         let indicateur = 0
         if (isThereAC) {
-            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "C", "vie": "V"})
+            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "C", "vie": "V"})
             indicateur++
         }
         if (isThereAV && VisLG) {
-            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "V", "vie": "V"})
+            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "V", "vie": "V"})
             indicateur++
         }
         if (isThereAS && SisLG) {
-            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "S", "vie": "V"})
+            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "S", "vie": "V"})
             indicateur++
         }
         for (let i = indicateur; i < nbLG; i++) {
-            await usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "LG", "pouvoir": "R", "vie": "V"})
+            usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "LG", "pouvoir": "R", "vie": "V"})
         }
         indicateur = nbLG
         if (isThereAV && !VisLG) {
-            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "V", "vie": "V"})
+            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "V", "vie": "V"})
             indicateur++
         }
         if (isThereAS && !SisLG) {
-            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "S", "vie": "V"})
+            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "S", "vie": "V"})
             indicateur++
         }
         if (isThereAI) {
-            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "I", "vie": "V"})
+            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "I", "vie": "V"})
             indicateur++
         }
         for (let i = indicateur; i < nbUsers; i++) {
-            await usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "V", "pouvoir": "R", "vie": "V"})
+            usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "V", "pouvoir": "R", "vie": "V"})
         }
-        await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "moment": "N"})
-        await lieuModel.create({"idPartie": idSession, "typeLieu": "P"})
-        await lieuModel.create({"idPartie": idSession, "typeLieu": "R"})
-        if (isThereAS) await lieuModel.create({"idPartie": idSession, "typeLieu": "E"})
+        inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "moment": "N"})
+        lieuModel.create({"idPartie": idSession, "typeLieu": "P"})
+        lieuModel.create({"idPartie": idSession, "typeLieu": "R"})
+        if (isThereAS) lieuModel.create({"idPartie": idSession, "typeLieu": "E"})
     }
 
     // Indépendament de si la partie a été créée ou pas, on supprime la session de la queue.
-    await gameModel.destroy({where: {"id": idSession}})
-    await usersInQModel.destroy({where: {"idGame": idSession}})
+    gameModel.destroy({where: {"id": idSession}})
+    usersInQModel.destroy({where: {"idGame": idSession}})
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Alert, Pressable, View } from 'react-native';
 import Bouton from '../components/Bouton';
 import Field from '../components/Field';
@@ -6,24 +6,29 @@ import SizedText from '../components/SizedText';
 import Title from '../components/Title';
 import { BACKEND } from '../constants/backend';
 import { loginAndRegisterStyle as styles } from '../constants/constants';
+import { errorCodes } from '../constants/errorCode';
+import { ScreenContext, TokenContext } from '../constants/hooks';
 import { vues } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 import { verifyString } from '../utils/verifyData';
-import { errorCodes } from '../constants/errorCode';
 
-export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, password, setPassword }) {
+export default function RegisterForm() {
+    const [pseudo, setPseudo] = useState('');
+    const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
-    const [afficheMotDePasseDiffere, setAfficheMotDePasseDiffere] = useState(false);
+
+    const changeView = useContext(ScreenContext);
+    const setToken = useContext(TokenContext).setToken;
 
     function verifyData() {
-        const pseudoVerification = verifyString(pseudo, 5, 32, /[^0-9a-zA-Z]/g);
+        const pseudoVerification = verifyString(pseudo, 5, 16, /[^0-9a-zA-Z]/g);
         const passwordVerification = verifyString(password, 8, 32);
         const passwordCVerification = verifyString(passwordConfirmation, 8, 32);
 
         if (pseudoVerification == errorCodes.EMPTY)
             Alert.alert(errorCodes.EMPTY, 'Please enter a username.');
         else if (pseudoVerification == errorCodes.NOT_COMPLIANT)
-            Alert.alert(errorCodes.NOT_COMPLIANT, 'Please enter a 5 to 32 characters username.');
+            Alert.alert(errorCodes.NOT_COMPLIANT, 'Please enter a 5 to 16 characters username.');
         else if (pseudoVerification == errorCodes.INVALID_FORMAT)
             Alert.alert(errorCodes.INVALID_FORMAT, 'The username must contain only letters and numbers.');
         else if (passwordVerification == errorCodes.EMPTY)
@@ -55,24 +60,15 @@ export default function RegisterForm({ changeView, setToken, pseudo, setPseudo, 
             .catch(error => alert('Server error: ' + error));
     }
 
-    useEffect(() => {
-        setAfficheMotDePasseDiffere(() => password.length > 0 && password.length == passwordConfirmation.length && passwordConfirmation !== password);
-    }, [passwordConfirmation, password]);
-
     // TODO: Enter on first and second field goes to the second one
     return (
         <View style={[styles.form, commonStyles.container]}>
             <Title style={styles.header} label='Inscription' />
 
             <View style={styles.fields}>
-                <Field nativeID='pseudoInput' value={pseudo} setFunction={setPseudo} placeholder='Pseudo' />
-                <Field nativeID='passwordInput' value={password} setFunction={setPassword} placeholder='Mot de passe' secureTextEntry={true} />
-                <Field nativeID='passwordInputConfirmation' value={passwordConfirmation} setFunction={setPasswordConfirmation} placeholder='Confirmation du mot de passe' secureTextEntry={true} onSubmitEditing={() => register()} />
-                {
-                    (afficheMotDePasseDiffere == true) ?
-                        <SizedText style={styles.error} label='Les mots de passe ne correspondent pas' />
-                        : null
-                }
+                <Field nativeID='pseudoInput' value={pseudo} onChangeText={setPseudo} placeholder='Pseudo' />
+                <Field nativeID='passwordInput' value={password} onChangeText={setPassword} placeholder='Mot de passe' secureTextEntry={true} />
+                <Field nativeID='passwordInputConfirmation' value={passwordConfirmation} onChangeText={setPasswordConfirmation} placeholder='Confirmation du mot de passe' secureTextEntry={true} onSubmitEditing={() => register()} />
                 <Bouton nativeID='register' label='S&apos;enregistrer' onPress={verifyData} />
             </View>
 

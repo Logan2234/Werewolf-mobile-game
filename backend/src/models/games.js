@@ -52,10 +52,10 @@ const session = db.define('Games', {
         allowNull: false,
         defaultValue: 0
     },
-    debutPartie: {
+    dateDebut: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 180
+        defaultValue: new Date().getTime()
     }
 }, { timestamps: false })
 

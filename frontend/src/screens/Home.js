@@ -1,67 +1,77 @@
 import { useEffect, useState } from 'react';
-// import { StatusBar } from 'expo-status-bar';
-import { View, BackHandler, Alert, StatusBar, Vibration } from 'react-native';
-import { commonStyles } from '../constants/style';
+import { Alert, BackHandler, StatusBar, Vibration, View } from 'react-native';
+import { backgroundColor } from '../constants/colors';
+import { ScreenContext, TokenContext } from '../constants/hooks';
 import { vues } from '../constants/screens';
+import { commonStyles } from '../constants/style';
+import CreateOrJoin from './CreateOrJoin';
+import CreateSessionForm from './CreateSessionForm';
+import GameView from './GameView';
+import JoinSession from './JoinSession';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
-//import CreateSessionForm from './CreateSessionForm';
-//import JoinSession from './JoinSession';
-import CreateOrJoin from './CreateOrJoin';
-//import ShareSession from './ShareSession';
+import ShareSession from './ShareSession';
 import DiscussionVillage from './DiscussionVillage';
-import { backgroundColor } from '../constants/colors';
 
 export default function Home() {
     const [token, setToken] = useState(null);
-    const [pseudo, setPseudo] = useState('');
-    const [password, setPassword] = useState('');
     const [idSession, setIdSession] = useState('');
-    const [currentVue, setCurrentVue] = useState(vues.LOGIN);
+    const [currentView, setCurrentView] = useState(vues.LOGIN);
+    const [currentViewJSX, setCurrentViewJSX] = useState(null);
 
     useEffect(() => {
+        function setJSX() {
+            switch (currentView) {
+            case vues.LOGIN:
+                setCurrentViewJSX(<LoginForm setIdSession={setIdSession} />); break;
+            case vues.REGISTER:
+                setCurrentViewJSX(<RegisterForm />); break;
+            case vues.CREATE_OR_JOIN:
+                setCurrentViewJSX(<CreateOrJoin />); break;
+            case vues.JOIN_SESSION:
+                setCurrentViewJSX(<JoinSession idSession={idSession} setIdSession={setIdSession} />); break;
+            case vues.CREATE_SESSION:
+                setCurrentViewJSX(<CreateSessionForm setIdSession={setIdSession} />); break;
+            case vues.SHARE_SESSION:
+                setCurrentViewJSX(<ShareSession idSession={idSession} />); break;
+            case vues.IN_GAME:
+                setCurrentViewJSX(<GameView />); break;
+            }
+        }
+
         const backActionHandler = () => {
-            if (currentVue === vues.CREATE_OR_JOIN) {
+            if (currentView === vues.CREATE_OR_JOIN) {
                 Alert.alert('Déconnexion', 'Voulez-vous vraiment vous déconnecter ?',
                     [
                         { text: 'Non', onPress: () => null, style: 'default' },
-                        { text: 'Oui', onPress: () => { setToken(null); setPassword(''); setCurrentVue(vues.LOGIN); }, style: 'destructive' },
+                        { text: 'Oui', onPress: () => { setToken(null); setCurrentView(vues.LOGIN); }, style: 'destructive' },
                     ],
                 );
-            } else if (currentVue === vues.LOGIN || currentVue === vues.REGISTER) {
+            } else if (currentView === vues.LOGIN || currentView === vues.REGISTER) {
                 Alert.alert('Quitter', 'Voulez-vous vraiment vraiment quitter ?',
                     [
                         { text: 'Non', onPress: () => null, style: 'default' },
                         { text: 'Oui', onPress: () => BackHandler.exitApp(), style: 'destructive' },
                     ],
                 );
-            } else if (currentVue === vues.CREATE_SESSION || currentVue === vues.JOIN_SESSION) {
-                setCurrentVue(vues.CREATE_OR_JOIN);
+            } else if (currentView === vues.CREATE_SESSION || currentView === vues.JOIN_SESSION) {
+                setCurrentView(vues.CREATE_OR_JOIN);
             }
             Vibration.vibrate(10);
             return true;
         };
-
         BackHandler.addEventListener('backButtonPressed', backActionHandler);
+        setJSX();
         return () => BackHandler.removeEventListener('backButtonPressed', backActionHandler);
+    }, [currentView, idSession]);
 
-    }, [currentVue]);
-
-    return (<View style={commonStyles.container}>
-        {
-            //<DiscussionVillage token={null} />
-            (currentVue === vues.LOGIN)
-                 ? <LoginForm setToken={setToken} setIdSession={setIdSession} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setCurrentVue} />
-                 : (currentVue === vues.REGISTER)
-                     ? <RegisterForm setToken={setToken} pseudo={pseudo} setPseudo={setPseudo} password={password} setPassword={setPassword} changeView={setCurrentVue} />
-                    : (currentVue === vues.CREATE_OR_JOIN)
-                        ? <CreateOrJoin changeView={setCurrentVue} />
-                        : (currentVue === vues.JOIN_SESSION)
-                           ? <JoinSession idSession={idSession} token={token} setIdSession={setIdSession} changeView={setCurrentVue} />
-                            : (currentVue === vues.CREATE_SESSION)
-                                ? <CreateSessionForm setIdSession={setIdSession} changeView={setCurrentVue} token={token} />
-                                : <ShareSession idSession={idSession} token={token} />
-        }
-        <StatusBar animated={true} barStyle='default' backgroundColor={backgroundColor} />
-    </View>);
+    return (
+        <View style={commonStyles.container}>
+            <ScreenContext.Provider value={setCurrentView}>
+                <TokenContext.Provider value={{ setToken, token }}>
+                    {currentViewJSX}
+                </TokenContext.Provider>
+            </ScreenContext.Provider>
+            <StatusBar animated={true} barStyle='default' backgroundColor={backgroundColor} />
+        </View>);
 }

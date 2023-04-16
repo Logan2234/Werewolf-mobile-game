@@ -498,7 +498,7 @@ module.exports = {
     async getNbWerewolfs (req, res) {
         let {idGame} = req.params
         let nbWerewolfs = getLG(idGame)
-        res.json({status: true, message: 'Number of alive werewolfs', nbWerewolfs})
+        res.json({status: true, message: 'Number of alive werewolves', nbWerewolfs})
     },
 
     async returnTimeLeft(req, res) {

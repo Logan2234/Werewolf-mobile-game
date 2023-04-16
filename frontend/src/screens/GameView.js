@@ -3,15 +3,18 @@ import { useContext, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { BACKEND } from '../constants/backend';
 import { textColor } from '../constants/colors';
-import { InGameUserDataContext, ScreenContext, TokenContext } from '../constants/hooks';
+import { GameData, ScreenContext, TokenContext } from '../constants/hooks';
 import { commonStyles, fontSize } from '../constants/style';
 import ChatView from './ChatView';
 import InfoView from './InfoView';
 import VoteView from './VoteView';
+import PlayerView from './PlayerView';
 
-export default function GameView() {
+export default function GameView({idSession}) {
     const [index, setIndex] = useState(0);
-    const [donneesUser, setDonneesUser] = useState({});
+    const [userData, setUserData] = useState({});
+    const [alivePlayers, setAlivePlayers] = useState({});
+    const [gameData, setGameData] = useState({});
 
     const changeView = useContext(ScreenContext);
     const token = useContext(TokenContext).token;
@@ -26,11 +29,39 @@ export default function GameView() {
                 }
             })
                 .then(response => response.json())
-                .then(data => { console.log(data); setDonneesUser(data); })
+                .then(data => { setUserData(data); })
+                .catch(error => alert(error.message));
+        }
+
+        async function fetchAliveData() {
+            await fetch(`${BACKEND}/game/${idSession}/alives`, {
+                method: 'GET',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => { setAlivePlayers(data); })
+                .catch(error => alert(error.message));
+        }
+
+        async function fetchGameData() {
+            await fetch(`${BACKEND}/game/${idSession}/info`, {
+                method: 'GET',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => { setGameData(data); })
                 .catch(error => alert(error.message));
         }
         fetchUserData();
-    }, [token]);
+        fetchAliveData();
+        fetchGameData();
+    }, [token, idSession]);
 
     return (
         <View style={commonStyles.container}>
@@ -54,8 +85,12 @@ export default function GameView() {
                     title="Vote"
                     icon={{ name: 'how-to-vote', type: 'material', color: textColor }}
                 />
+                <Tab.Item
+                    title="Joueurs"
+                    icon={{ name: 'people', type: 'ionicon', color: textColor }}
+                />
             </Tab>
-            <InGameUserDataContext.Provider value={donneesUser}>
+            <GameData.Provider value={{userData: userData, alivePlayers: alivePlayers, gameData: gameData}}>
                 <TabView value={index} onChange={setIndex} animationType="spring">
                     <TabView.Item style={{ width: '100%' }}>
                         <InfoView />
@@ -66,7 +101,10 @@ export default function GameView() {
                     <TabView.Item style={{ width: '100%' }}>
                         <VoteView />
                     </TabView.Item>
+                    <TabView.Item style={{ width: '100%' }}>
+                        <PlayerView />
+                    </TabView.Item>
                 </TabView>
-            </InGameUserDataContext.Provider>
+            </GameData.Provider>
         </View >);
 }

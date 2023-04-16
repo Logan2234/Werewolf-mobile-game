@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Bouton from '../components/Bouton';
 import { ScreenContext } from '../constants/hooks';
-import { vues } from '../constants/screens';
+import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 
 export default function JoinSession() {
@@ -10,8 +10,8 @@ export default function JoinSession() {
 
     return (
         <View style={[commonStyles.container, styles.container]}>
-            <Bouton onPress={() => changeView(vues.CREATE_SESSION)} style={styles.bouton} label='Créer une partie' labelSize={30} />
-            <Bouton onPress={() => changeView(vues.JOIN_SESSION)} style={styles.bouton} label='Rejoindre une partie' labelSize={30} />
+            <Bouton onPress={() => changeView(views.CREATE_SESSION)} style={styles.bouton} label='Créer une partie' labelSize={30} />
+            <Bouton onPress={() => changeView(views.JOIN_SESSION)} style={styles.bouton} label='Rejoindre une partie' labelSize={30} />
         </View>
     );
 }

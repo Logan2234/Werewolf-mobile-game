@@ -7,7 +7,7 @@ import { BACKEND } from '../constants/backend';
 import { errorColor, primaryColor, secondaryColor } from '../constants/colors';
 import { errorCodes } from '../constants/errorCode';
 import { ScreenContext, TokenContext } from '../constants/hooks';
-import { vues } from '../constants/screens';
+import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 import { verifyNumber } from '../utils/verifyData';
 
@@ -34,7 +34,7 @@ export default function JoinSession({ setIdSession, idSession }) {
                 .then((data) => {
                     if (data.session){
                         setIdSession(idSession);
-                        changeView(vues.SHARE_SESSION);
+                        changeView(views.SHARE_SESSION);
                     } else {
                         Alert.alert(errorCodes.UNABLE_TO_CONNECT, 'This session does not exist.');
                     }

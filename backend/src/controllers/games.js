@@ -184,15 +184,15 @@ let createGame = async (idSession) => {
         users.sort(() => Math.random() - 0.5); // On mélange les joueurs pour attribuer les rôles aléatoirement
         
         let indicateur = 0
-        if (isThereAC) {
+        if (isThereAC && indicateur < nbUsers) {
             usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "C", "vie": "V"})
             indicateur++
         }
-        if (isThereAV && VisLG) {
+        if (isThereAV && VisLG && indicateur < nbUsers) {
             usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "V", "vie": "V"})
             indicateur++
         }
-        if (isThereAS && SisLG) {
+        if (isThereAS && SisLG && indicateur < nbUsers) {
             usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "S", "vie": "V"})
             indicateur++
         }
@@ -200,15 +200,15 @@ let createGame = async (idSession) => {
             usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "LG", "pouvoir": "R", "vie": "V"})
         }
         indicateur = nbLG
-        if (isThereAV && !VisLG) {
+        if (isThereAV && !VisLG && indicateur < nbUsers) {
             usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "V", "vie": "V"})
             indicateur++
         }
-        if (isThereAS && !SisLG) {
+        if (isThereAS && !SisLG && indicateur < nbUsers) {
             usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "S", "vie": "V"})
             indicateur++
         }
-        if (isThereAI) {
+        if (isThereAI && indicateur < nbUsers) {
             usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "I", "vie": "V"})
             indicateur++
         }

@@ -313,6 +313,7 @@ module.exports = {
         }
         await usersInGames.update({"pouvoirUtilise": true}, {where: {"idUser": idContaminator}})
         res.json({status: true, message: 'Villager converted into werewolf'})
+        await checkIfEndGame(idGame)
         
     },
 
@@ -494,6 +495,12 @@ module.exports = {
         res.json({status: true, message: 'Info about the vote', victime, votesPour: urne.votesPour, votesContre: urne.votesContre, nbUsersVote: urne.nbUsersVote})
     },
 
+    async getNbWerewolfs (req, res) {
+        let {idGame} = req.params
+        let nbWerewolfs = getLG(idGame)
+        res.json({status: true, message: 'Number of alive werewolfs', nbWerewolfs})
+    },
+
     async returnTimeLeft(req, res) {
         let {idGame} = req.params
         if (await gameModel.findOne({where: {"id": idGame}})) {
@@ -526,6 +533,7 @@ let finUrne = async (idGame) => {
     }
     await urneModel.destroy({where: {"idGame": idGame}})
     await voteModel.destroy({where: {"idGame": idGame}})
+    await checkIfEndGame(idGame)
 }
 
 let startNight = async (idGame) => {
@@ -543,4 +551,37 @@ let startDay = async (idGame) => {
     await usersInGames.update({"pouvoirUtilise": false}, {where: {"idGame": idGame}})
     await inGameModel.update({"finTimer": new Date().getTime() + game.dureeJour}, {where: {"id": idGame}})
     timers[idGame] = setTimeout(() => {startNight(idGame)}, game.dureeJour)
+}
+
+let finGame = async (idGame) => {
+    const game = await inGameModel.findOne({where: {"id": idGame}})
+    await inGameModel.destroy({where: {"id": idGame}})
+    await usersInGames.destroy({where: {"idGame": idGame}})
+    await voteModel.destroy({where: {"idGame": idGame}})
+    await urneModel.destroy({where: {"idGame": idGame}})
+
+    const lieux = await lieuModel.findAll({where: {"idGame": idGame}})
+    for (let i = 0; i < lieux.length; i++) {
+        await messageModel.destroy({where: {"idLieu": lieux[i].id}})
+    }
+
+    await lieuModel.destroy({where: {"idPartie": idGame}})
+    clearTimeout(timers[idGame])
+    delete timers[idGame]
+}
+
+let getLG = async (idGame) => {
+    let playersLG = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V", "role": "LG"}})
+    if (playersLG == null) {
+        return 0
+    }
+    return playersLG.length
+}
+
+let checkIfEndGame = async (idGame) => {
+    let nbWerewolfs = getLG(idGame)
+    let aliveUsers = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V"}})
+    if (aliveUsers == null || nbWerewolfs == 0 || nbWerewolfs >= aliveUsers.length) {
+        await finGame(idGame)
+    }
 }

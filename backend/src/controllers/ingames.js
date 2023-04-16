@@ -483,6 +483,17 @@ module.exports = {
         }
     },
 
+    async getInfoVotes (req, res) {
+        let {idGame} = req.params
+        
+        let urne = (await urneModel.findOne({where: {"idGame": parseInt(idGame)}, attributes: ['votesPour', 'votesContre', 'nbUsersVote']}))
+        if (urne == null) {
+            throw new CodeError('There is no election in process', status.BAD_REQUEST)
+        }
+        const victime = (await userModel.findOne({where: {"id": urne.idVictime}})).username
+        res.json({status: true, message: 'Info about the vote', victime, votesPour: urne.votesPour, votesContre: urne.votesContre, nbUsersVote: urne.nbUsersVote})
+    },
+
     async returnTimeLeft(req, res) {
         let {idGame} = req.params
         if (await gameModel.findOne({where: {"id": idGame}})) {

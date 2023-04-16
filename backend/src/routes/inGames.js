@@ -29,6 +29,7 @@ router.post('/game/:idGame/actions/voyance', user.verificationUser, inGames.sele
 
 // Vote 
 
+router.get('/game/:idGame/vote', inGames.getInfoVotes);
 router.post('/game/:idGame/vote/start', user.verificationUser, inGames.startUrne);
 router.post('/game/:idGame/vote', user.verificationUser, inGames.vote);
 

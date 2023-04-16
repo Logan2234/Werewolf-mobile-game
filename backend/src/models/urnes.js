@@ -25,7 +25,7 @@ const urne = db.define('urnes', {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0
-    },
+    }
 }, { timestamps: false })
 
 module.exports = urne

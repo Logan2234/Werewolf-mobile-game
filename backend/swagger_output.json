@@ -202,20 +202,6 @@
         }
       }
     },
-    "/test/{idSession}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "idSession",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      }
-    },
     "/game/{idGame}/messages/place": {
       "get": {
         "description": "",
@@ -420,6 +406,24 @@
         }
       }
     },
+    "/game/{idGame}/info": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/game/{idGame}/actions/spiritism": {
       "post": {
         "description": "",
@@ -491,6 +495,76 @@
       }
     },
     "/game/{idGame}/actions/voyance": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/game/{idGame}/vote/start": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/game/{idGame}/vote": {
       "post": {
         "description": "",
         "parameters": [

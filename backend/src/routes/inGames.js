@@ -28,6 +28,7 @@ router.post('/game/:idGame/actions/voyance', user.verificationUser, inGames.sele
 
 // Vote 
 
-router.post('/game/:idGame/vote', user.verificationUser, inGames.startUrne);
+router.post('/game/:idGame/vote/start', user.verificationUser, inGames.startUrne);
+router.post('/game/:idGame/vote', user.verificationUser, inGames.vote);
 
 module.exports = router

@@ -219,7 +219,7 @@ module.exports = {
 
     async selectAVictimForSpiritism (req, res) {
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
-            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+            throw new CodeError('You have not specified a victim !', status.BAD_REQUEST)
         }
 
         const data = JSON.parse(req.body.data)
@@ -269,7 +269,7 @@ module.exports = {
 
     async selectAVictimForContaminator (req, res) {
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
-            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+            throw new CodeError('You have not specified a victim !', status.BAD_REQUEST)
         }
 
         const data = JSON.parse(req.body.data)
@@ -324,7 +324,7 @@ module.exports = {
 
     async selectAVictimForSeer (req, res) {
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
-            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+            throw new CodeError('You have not specified a victim !', status.BAD_REQUEST)
         }
 
         const data = JSON.parse(req.body.data)
@@ -379,17 +379,18 @@ module.exports = {
 
     async startUrne (req, res) {
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
-            throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
+            throw new CodeError('You have not specified a victim !', status.BAD_REQUEST)
         }
 
-        if ((await urneModel.findOne({where: {"idGame": parseInt(idGame)}})) != null) {
-            throw new CodeError('There is already an election in process', status.BAD_REQUEST)
-        }
-
+        
         const data = JSON.parse(req.body.data)
         const victime = data.victime
         const username = req.login
         let {idGame} = req.params
+
+        if ((await urneModel.findOne({where: {"idGame": parseInt(idGame)}})) != null) {
+            throw new CodeError('There is already an election in process', status.BAD_REQUEST)
+        }
 
         const game = await inGameModel.findOne({where: {"id": idGame}})
         if (game == null) {
@@ -400,6 +401,9 @@ module.exports = {
         const userInTheGame = await usersInGames.findOne({where: {"idUser": idUser.id, "idGame": parseInt(idGame)}})
         if (userInTheGame == null) {
             throw new CodeError('You are not in game ' + idGame, status.FORBIDDEN)
+        }
+        if (userInTheGame.vie == "M") {
+            throw new CodeError('You are dead, and dead people can\'t vote', status.FORBIDDEN)
         }
 
         let nbJoueurs = 0
@@ -417,8 +421,13 @@ module.exports = {
         if (idVictime == null) {
             throw new CodeError('This user does not exist', status.NOT_FOUND)
         }
-        if ((await usersInGames.findOne({where: {"idUser": idVictime.id, "idGame": parseInt(idGame)}})) == null) {
+
+        let victimInGame = await usersInGames.findOne({where: {"idUser": idVictime.id, "idGame": parseInt(idGame)}})
+        if (victimInGame == null) {
             throw new CodeError('This user is not in game ' + idGame, status.NOT_FOUND)
+        }
+        if (victimInGame.vie == "M") {
+            throw new CodeError('This user is already dead', status.FORBIDDEN)
         }
 
         await urneModel.create({"idGame": parseInt(idGame), "idVictime": idVictime.id, "nbUsersVote": nbJoueurs})
@@ -426,6 +435,56 @@ module.exports = {
         res.json({status: true, message: 'You have created a vote against ' + victime})
 
         if (nbJoueurs == 1) {
+            await finUrne(idGame)
+        }
+    },
+
+    async vote (req, res) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'decision')) {
+            throw new CodeError('You have not specified an answer to the vote !', status.BAD_REQUEST)
+        }
+        let {idGame} = req.params
+        
+        let urne = (await urneModel.findOne({where: {"idGame": parseInt(idGame)}}))
+        if (urne == null) {
+            throw new CodeError('There is no election in process', status.BAD_REQUEST)
+        }
+
+        const data = JSON.parse(req.body.data)
+        const decision = data.decision
+        const username = req.login
+        const victime = (await userModel.findOne({where: {"id": urne.idVictime}})).username
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+
+        const idUser = await userModel.findOne({where: {"username": username}})
+        const userInTheGame = await usersInGames.findOne({where: {"idUser": idUser.id, "idGame": parseInt(idGame)}})
+        if (userInTheGame == null) {
+            throw new CodeError('You are not in game ' + idGame, status.FORBIDDEN)
+        }
+        if (userInTheGame.vie == "M") {
+            throw new CodeError('You are dead, and dead people can\'t vote', status.FORBIDDEN)
+        }
+
+        if ((await voteModel.findOne({where: {"idGame": parseInt(idGame), "idUser": idUser.id}})) != null) {
+            throw new CodeError('You have already voted', status.FORBIDDEN)
+        }
+
+        if (game.moment == "N" && userInTheGame.role != "LG") {
+            throw new CodeError('Only werewolfs can vote now', status.FORBIDDEN)
+        }
+
+        let seuil = Math.floor(urne.nbUsersVote / 2)
+        await voteModel.create({"idGame": parseInt(idGame), "idUser": idUser.id})
+        if (decision == true) {
+            await urneModel.update({"votesPour": urne.votesPour + 1}, {where: {"idGame": parseInt(idGame)}})
+            if (urne.votesPour + 1 > seuil) await finUrne(idGame)
+            res.json({status: true, message: 'You have voted to kill ' + victime})
+        } else {
+            await urneModel.update({"votesContre": urne.votesContre + 1}, {where: {"idGame": parseInt(idGame)}})
+            if (urne.votesContre + 1 > seuil) await finUrne(idGame)
+            res.json({status: true, message: 'You have voted not to kill ' + victime})
+        }
+        if (urne.votesContre + urne.votesPour + 1 == urne.nbUsersVote) {
             await finUrne(idGame)
         }
     }

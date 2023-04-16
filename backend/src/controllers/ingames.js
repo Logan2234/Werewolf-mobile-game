@@ -3,25 +3,19 @@ const status = require('http-status');
 const gameModel = require('../models/games.js')
 const userModel = require('../models/users.js')
 const inGameModel = require('../models/inGames.js')
-const usersInQModel = require('../models/usersInQs.js')
 const lieuModel = require('../models/lieus.js')
 const messageModel = require('../models/messages.js')
 const urneModel = require('../models/urnes.js')
 const salleEspiritismeModel = require('../models/salleEspiritisme.js')
 const voteModel = require('../models/votes.js')
+const usersInGames = require('../models/usersInGames.js');
 const CodeError = require('../util/CodeError.js')
 
 const has = require('has-keys');
-const usersInGames = require('../models/usersInGames.js');
 
 var timers = {}
 
 module.exports = {
-    async startNight(idGame) {
-        await inGameModel.update({"moment": "N"}, {where: {"id": idGame}})
-        const currentUrne = await urneModel.findOne({where: {"id": idGame}})
-        // Hurne
-    },
 
     async getMessagesFromPlace (req, res) {
         const username = req.login
@@ -487,11 +481,30 @@ module.exports = {
         if (urne.votesContre + urne.votesPour + 1 == urne.nbUsersVote) {
             await finUrne(idGame)
         }
+    },
+
+    async returnTimeLeft(req, res) {
+        let {idGame} = req.params
+        if (await gameModel.findOne({where: {"id": idGame}})) {
+            throw new CodeError('Game has not started yet !', status.BAD_REQUEST)
+        }
+        
+        if (await inGameModel.findOne({where: {"id": idGame}})) {
+            const game = await gameModel.findOne({where: {"id": idGame}})
+            const timeLeft = game.dateDebut - new Date().getTime()
+            res.json({status: true, message: 'Time left in ms' + idGame.toString(), timeLeft})
+            return
+        }
+
+        throw new CodeError("Game doesn't exist", status.BAD_REQUEST)
     }
 
 }
 
 let finUrne = async (idGame) => {
+    if (await urneModel.findOne({where: {"idGame": idGame}}) == null) {
+        return
+    }
     let urne = await urneModel.findOne({where: {"idGame": idGame}})
     let idVictime = urne.idVictime
     let nbUsersVote = urne.nbUsersVote
@@ -502,4 +515,21 @@ let finUrne = async (idGame) => {
     }
     await urneModel.destroy({where: {"idGame": idGame}})
     await voteModel.destroy({where: {"idGame": idGame}})
+}
+
+let startNight = async (idGame) => {
+    const game = await inGameModel.findOne({where: {"id": idGame}})
+    await finUrne(idGame)
+    await inGameModel.update({"moment": "N"}, {where: {"id": idGame}})
+    await inGameModel.update({"finTimer": new Date().getTime() + game.dureeNuit}, {where: {"id": idGame}})
+    timers[idGame] = setTimeout(() => {startDay(idGame)}, game.dureeNuit)
+}
+
+let startDay = async (idGame) => {
+    const game = await inGameModel.findOne({where: {"id": idGame}})
+    await finUrne(idGame)
+    await inGameModel.update({"moment": "J"}, {where: {"id": idGame}})
+    await usersInGames.update({"pouvoirUtilise": false}, {where: {"idGame": idGame}})
+    await inGameModel.update({"finTimer": new Date().getTime() + game.dureeJour}, {where: {"id": idGame}})
+    timers[idGame] = setTimeout(() => {startNight(idGame)}, game.dureeJour)
 }

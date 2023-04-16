@@ -116,6 +116,7 @@ export default function Discussion({idDiscussion, token, idGame}) {
      * Renvoie l'affichage
      * NOTE : il sera intéressant de faire un rendu (et une actualisation uniquement sur la flatList et pas sur l'input)
      */
+    // TODO : rajouter un retour en arrière
     if (canIWriteHere()){
         return (
             <View style={styles.container} >

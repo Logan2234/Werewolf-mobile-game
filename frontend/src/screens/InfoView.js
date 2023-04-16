@@ -9,6 +9,7 @@ import { commonStyles } from '../constants/style';
 export default function InfoView() {
     const gameData = useContext(GameData);
 
+    console.log(gameData);
     const dayOrNight = (gameData.gameData.gameInfo.moment === 'N') ? 'Nuit' : 'Jour';
 
     const role = (gameData.userData.role === 'V') ? 'Villageois' : 'Loup-garou';
@@ -56,7 +57,7 @@ export default function InfoView() {
                     ? <Bouton style={styles.bouton} label='Utiliser pouvoir' />
                     : null
             }
-        </View >);
+        </View>);
 }
 
 const styles = StyleSheet.create({

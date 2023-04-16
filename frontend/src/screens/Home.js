@@ -35,7 +35,7 @@ export default function Home() {
             case vues.SHARE_SESSION:
                 setCurrentViewJSX(<ShareSession idSession={idSession} />); break;
             case vues.IN_GAME:
-                setCurrentViewJSX(<GameView idSession={idSession} />); break;
+                setCurrentViewJSX(<GameView idSession={idSession}/>); break;
             }
         }
 

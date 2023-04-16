@@ -78,7 +78,7 @@ module.exports = {
 
         const gameData = await gameModel.create({"id": idGame, "nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "dateDebut": debutPartie + new Date().getTime()});
         
-        //timers[idGame] = setTimeout({} => {createGame(idGame)}, debutPartie)
+        // timers[idGame] = setTimeout(() => {createGame(idGame)}, debutPartie)
 
         idGame = "0".repeat(6 - idGame.toString().length) + idGame.toString()  // On renvoit l'id sous forme de string de 6 caractères
         res.json({status: true, message: 'Session created', idGame})
@@ -145,9 +145,9 @@ module.exports = {
     
 }
 
-function createGame (idSession) {
-    const session = gameModel.findOne({where: {"id": idSession}})
-    const users = usersInQModel.findAll({where: {"idGame": idSession}})
+let createGame = async (idSession) => {
+    let session = await gameModel.findOne({where: {"id": parseInt(idSession)}})
+    const users = await usersInQModel.findAll({where: {"idGame": parseInt(idSession)}})
     const nbUsers = users.length
     const nbMinJoueurs = session.nbMinJoueurs
 

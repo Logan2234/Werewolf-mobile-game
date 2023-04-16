@@ -32,6 +32,7 @@ export default function LoginForm({ setIdSession }) {
                     setIdSession(data2.idSession);
                     changeView(vues.SHARE_SESSION);
                 } else if (data2.idGame) {
+                    setIdSession(data2.idGame);
                     changeView(vues.IN_GAME);
                 } else {
                     changeView(vues.CREATE_OR_JOIN);

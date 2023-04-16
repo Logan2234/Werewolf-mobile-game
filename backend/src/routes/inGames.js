@@ -18,6 +18,12 @@ router.post('/game/:idGame/messages/spiritism', user.verificationUser, inGames.s
 
 router.get('/game/:idGame/alives', inGames.getAliveUsers);
 router.get('/game/:idGame/deads', inGames.getDeadUsers);
+router.get('/game/:idGame/info', inGames.getInfos);
 
+
+// Actions 
+router.post('/game/:idGame/actions/spiritism', user.verificationUser, inGames.selectAVictimForSpiritism);
+router.post('/game/:idGame/actions/contamination', user.verificationUser, inGames.selectAVictimForContaminator);
+router.post('/game/:idGame/actions/voyance', user.verificationUser, inGames.selectAVictimForSeer);
 
 module.exports = router

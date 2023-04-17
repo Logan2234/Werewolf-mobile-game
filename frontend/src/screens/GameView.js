@@ -11,7 +11,6 @@ import VoteView from './VoteView';
 
 export default function GameView({ idSession }) {
     const [index, setIndex] = useState(0);
-
     const changeView = useContext(ScreenContext);
 
     return (

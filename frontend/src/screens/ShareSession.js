@@ -91,6 +91,8 @@ export default function ShareSession({ idSession }) {
         }
         if (timeLeft != null)
             setTimeout(() => { setTimeLeft(timeLeft - 1000); computeTimeLeft(); }, 1000);
+        if (timeLeft <= 0)
+            changeView(views.IN_GAME);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [timeLeft]);
 

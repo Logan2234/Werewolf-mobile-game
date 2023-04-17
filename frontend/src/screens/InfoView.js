@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Bouton from '../components/Bouton';
 import SizedText from '../components/SizedText';
 import Title from '../components/Title';
-import { CurrentGameView, TokenContext } from '../constants/hooks';
-import { commonStyles } from '../constants/style';
-import { gameViews } from '../constants/screens';
 import { BACKEND } from '../constants/backend';
+import { primaryColor } from '../constants/colors';
+import { CurrentGameView, TokenContext } from '../constants/hooks';
+import { gameViews } from '../constants/screens';
+import { commonStyles } from '../constants/style';
 
 export default function InfoView({ idSession }) {
     const [alivePlayers, setAlivePlayers] = useState({});
@@ -66,11 +67,12 @@ export default function InfoView({ idSession }) {
             })
                 .then(response => response.json())
                 .then(data => setAliveWerewolves(data.nbWerewolfs))
-                // .then(() => setCanShow(true))
+                .then(() => setCanShow(true))
                 .catch(error => alert(error.message));
         }
 
         if (currentGameView == gameViews.INFO) {
+            setCanShow(false);
             fetchAliveData();
             fetchDeadData();
             fetchUserData();
@@ -80,7 +82,6 @@ export default function InfoView({ idSession }) {
     }, [currentGameView, idSession, token]);
 
     const dayOrNight = (gameData.moment === 'N') ? 'Nuit' : 'Jour';
-
     const role = (userData.role === 'V') ? 'Villageois' : 'Loup-garou';
 
     let pouvoir;
@@ -101,32 +102,37 @@ export default function InfoView({ idSession }) {
 
     return (
         <View style={[commonStyles.container, styles.infoView]}>
-            <Title style={styles.title} label={dayOrNight} />
-            <View style={styles.status}>
-                <SizedText label={`Rôle: ${role}`} />
-                <SizedText label={`Pouvoir: ${pouvoir}`} />
-                <SizedText label={`Vie: ${vie}`} />
-            </View>
-
-            <View style={styles.time}>
-                <SizedText label={`Durée jour: ${gameData.dureeJour / 60}h` + ((gameData.dureeJour % 60 != 0) ? `${gameData.dureeJour % 60}mins` : '')} />
-                <SizedText label={`Durée nuit: ${gameData.dureeNuit / 60}h` + ((gameData.dureeNuit % 60 != 0) ? `${gameData.dureeNuit % 60}mins` : '')} />
-                <SizedText label='Prochain jour: ' />
-                <SizedText label='Prochaine nuit: ' />
-                <SizedText label='Temps actuel: ' />
-                <SizedText label='Temps de jeu: ' />
-            </View>
-
-            <View style={styles.gameStatus}>
-                <SizedText label={`Nombre de joueurs vivants: ${alivePlayers.length} / ${alivePlayers.length + deadPlayers.length}`} />
-                <SizedText label={`Nombre de loups-garou: ${aliveWerewolves} / ${gameData.nbLG}`} />
-            </View>
             {
-                (userData.role !== 'R' && userData.vivant === 'V')
-                    ? <Bouton style={styles.bouton} label='Utiliser pouvoir' />
-                    : null
+                (canShow)
+                    ? <>
+                        <Title style={styles.title} label={dayOrNight} />
+                        <View style={styles.status}>
+                            <SizedText label={`Rôle: ${role}`} />
+                            <SizedText label={`Pouvoir: ${pouvoir}`} />
+                            <SizedText label={`Vie: ${vie}`} />
+                        </View>
+
+                        <View style={styles.time}>
+                            <SizedText label={`Durée jour: ${gameData.dureeJour / 60}h` + ((gameData.dureeJour % 60 != 0) ? `${gameData.dureeJour % 60}mins` : '')} />
+                            <SizedText label={`Durée nuit: ${gameData.dureeNuit / 60}h` + ((gameData.dureeNuit % 60 != 0) ? `${gameData.dureeNuit % 60}mins` : '')} />
+                            <SizedText label='Prochain jour: ' />
+                            <SizedText label='Prochaine nuit: ' />
+                            <SizedText label='Temps actuel: ' />
+                            <SizedText label='Temps de jeu: ' />
+                        </View>
+
+                        <View style={styles.gameStatus}>
+                            <SizedText label={`Nombre de joueurs vivants: ${alivePlayers.length} / ${alivePlayers.length + deadPlayers.length}`} />
+                            <SizedText label={`Nombre de loups-garou: ${aliveWerewolves} / ${gameData.nbLG}`} />
+                        </View>
+                        {
+                            (userData.role !== 'R' && userData.vivant === 'V')
+                                ? <Bouton style={styles.bouton} label='Utiliser pouvoir' />
+                                : null
+                        }
+                    </>
+                    : <ActivityIndicator style={{ height: '100%' }} size={100} color={primaryColor} />
             }
-            {/* : <ActivityIndicator style={{ height: '92%' }} size={100} color={primaryColor} /> */}
         </View >);
 }
 

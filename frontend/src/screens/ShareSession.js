@@ -89,10 +89,11 @@ export default function ShareSession({ idSession }) {
             if (!canShow)
                 setCanShow(true);
         }
-        if (timeLeft != null)
+        if (timeLeft != null) {
+            if (timeLeft <= 0)
+                changeView(views.IN_GAME);
             setTimeout(() => { setTimeLeft(timeLeft - 1000); computeTimeLeft(); }, 1000);
-        if (timeLeft <= 0)
-            changeView(views.IN_GAME);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [timeLeft]);
 
@@ -116,11 +117,11 @@ export default function ShareSession({ idSession }) {
                         </View>
                         <View style={styles.res}>
                             <SizedText label={'Durée d\'une journée:'} />
-                            <SizedText label={`${donnees.dureeJour / 60}h` + ((donnees.dureeJour % 60 != '0') ? `${donnees.dureeJour % 60}min` : '')} />
+                            <SizedText label={((parseInt(donnees.dureeJour / 60) != '0') ? `${parseInt(donnees.dureeJour / 60)}h` : '') + ((donnees.dureeJour % 60 != '0') ? `${donnees.dureeJour % 60}min` : '')} />
                         </View>
                         <View style={styles.res}>
                             <SizedText label={'Durée d\'une nuit:'} />
-                            <SizedText label={`${donnees.dureeNuit / 60}h` + ((donnees.dureeNuit % 60 != '0') ? `${donnees.dureeNuit % 60}min` : '')} />
+                            <SizedText label={((parseInt(donnees.dureeNuit / 60) != '0') ? `${parseInt(donnees.dureeNuit / 60)}h` : '') + ((donnees.dureeNuit % 60 != '0') ? `${donnees.dureeNuit % 60}min` : '')} />
                         </View>
                         <View style={styles.res}>
                             <SizedText label={'Probabilité de contamination:'} />

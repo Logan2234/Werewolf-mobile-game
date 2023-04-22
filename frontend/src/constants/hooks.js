@@ -5,4 +5,4 @@ export const ScreenContext = createContext(null);
 export const TokenContext = createContext(null);
 
 // Provider used in GameView.js
-export const GameData = createContext(null);
+export const CurrentGameView = createContext(null);

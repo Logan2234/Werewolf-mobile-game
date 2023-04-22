@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert, BackHandler, StatusBar, Vibration, View } from 'react-native';
 import { backgroundColor } from '../constants/colors';
 import { ScreenContext, TokenContext } from '../constants/hooks';
-import { vues } from '../constants/screens';
+import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 import CreateOrJoin from './CreateOrJoin';
 import CreateSessionForm from './CreateSessionForm';
@@ -16,53 +16,53 @@ import DiscussionVillage from './DiscussionVillage';
 export default function Home() {
     const [token, setToken] = useState(null);
     const [idSession, setIdSession] = useState('');
-    const [currentView, setCurrentView] = useState(vues.LOGIN);
+    const [currentView, setCurrentView] = useState(views.LOGIN);
     const [currentViewJSX, setCurrentViewJSX] = useState(null);
 
     useEffect(() => {
         function setJSX() {
             switch (currentView) {
-            case vues.LOGIN:
+            case views.LOGIN:
                 setCurrentViewJSX(<LoginForm setIdSession={setIdSession} />); break;
-            case vues.REGISTER:
+            case views.REGISTER:
                 setCurrentViewJSX(<RegisterForm />); break;
-            case vues.CREATE_OR_JOIN:
+            case views.CREATE_OR_JOIN:
                 setCurrentViewJSX(<CreateOrJoin />); break;
-            case vues.JOIN_SESSION:
+            case views.JOIN_SESSION:
                 setCurrentViewJSX(<JoinSession idSession={idSession} setIdSession={setIdSession} />); break;
-            case vues.CREATE_SESSION:
+            case views.CREATE_SESSION:
                 setCurrentViewJSX(<CreateSessionForm setIdSession={setIdSession} />); break;
-            case vues.SHARE_SESSION:
+            case views.SHARE_SESSION:
                 setCurrentViewJSX(<ShareSession idSession={idSession} />); break;
-            case vues.IN_GAME:
-                setCurrentViewJSX(<GameView idSession={idSession}/>); break;
+            case views.IN_GAME:
+                setCurrentViewJSX(<GameView idSession={idSession} />); break;
             }
         }
 
         const backActionHandler = () => {
-            if (currentView === vues.CREATE_OR_JOIN) {
-                Alert.alert('Déconnexion', 'Voulez-vous vraiment vous déconnecter ?',
-                    [
-                        { text: 'Non', onPress: () => null, style: 'default' },
-                        { text: 'Oui', onPress: () => { setToken(null); setCurrentView(vues.LOGIN); }, style: 'destructive' },
-                    ],
-                );
-            } else if (currentView === vues.LOGIN || currentView === vues.REGISTER) {
+            if (currentView === views.LOGIN || currentView === views.REGISTER) {
                 Alert.alert('Quitter', 'Voulez-vous vraiment vraiment quitter ?',
                     [
                         { text: 'Non', onPress: () => null, style: 'default' },
                         { text: 'Oui', onPress: () => BackHandler.exitApp(), style: 'destructive' },
                     ],
                 );
-            } else if (currentView === vues.CREATE_SESSION || currentView === vues.JOIN_SESSION) {
-                setCurrentView(vues.CREATE_OR_JOIN);
+            } else if (currentView === views.CREATE_SESSION || currentView === views.JOIN_SESSION)
+                setCurrentView(views.CREATE_OR_JOIN);
+            else {
+                Alert.alert('Déconnexion', 'Voulez-vous vraiment vous déconnecter ?',
+                    [
+                        { text: 'Non', onPress: () => null, style: 'default' },
+                        { text: 'Oui', onPress: () => { setToken(null); setCurrentView(views.LOGIN); }, style: 'destructive' },
+                    ],
+                );
             }
             Vibration.vibrate(10);
             return true;
         };
-        BackHandler.addEventListener('backButtonPressed', backActionHandler);
+        BackHandler.addEventListener('hardwareBackPress', backActionHandler);
         setJSX();
-        return () => BackHandler.removeEventListener('backButtonPressed', backActionHandler);
+        return () => BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
     }, [currentView, idSession]);
 
     return (

@@ -6,7 +6,7 @@ import SelectDateHeure from '../components/SelectDateHeure';
 import Title from '../components/Title';
 import { BACKEND } from '../constants/backend';
 import { ScreenContext, TokenContext } from '../constants/hooks';
-import { vues } from '../constants/screens';
+import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 import subDates, { tomorrowDate } from '../utils/dates';
 import { verifyProba } from '../utils/verifyData';
@@ -62,14 +62,15 @@ export default function CreateSessionForm({ setIdSession }) {
         } if (lengthDayMin < 0 || lengthNightMin < 0 || lengthDayMin > 59 || lengthNightMin > 59) {
             Alert.alert('Erreur des données rentrées', 'Les durées demandées en minutes doivent être comprises entre 0 et 59 minutes.');
             return;
+        } if (parseInt(minPlayer) > maxPlayer) {
+            Alert.alert('Erreur des données rentrées', 'Le nombre minimum de joueurs ne peut être supérieur au nombre maximal.');
+            return;
         }
-
         sendData(lengthDay, lengthNight, timer, probaLG, probaVo, probaSp, probaIn, probaC);
     }
 
-    function sendData(lengthDay, lengthNight, timer, probaLG, probaVo, probaSp, probaIn, probaC) {
-
-        fetch(`${BACKEND}/createSession`, {
+    async function sendData(lengthDay, lengthNight, timer, probaLG, probaVo, probaSp, probaIn, probaC) {
+        await fetch(`${BACKEND}/createSession`, {
             method: 'POST',
             headers: {
                 'x-access-token': token,

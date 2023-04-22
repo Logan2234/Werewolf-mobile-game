@@ -8,7 +8,7 @@ import { BACKEND } from '../constants/backend';
 import { loginAndRegisterStyle as styles } from '../constants/constants';
 import { errorCodes } from '../constants/errorCode';
 import { ScreenContext, TokenContext } from '../constants/hooks';
-import { vues } from '../constants/screens';
+import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 
 export default function LoginForm({ setIdSession }) {
@@ -30,12 +30,12 @@ export default function LoginForm({ setIdSession }) {
             .then(data2 => {
                 if (data2.idSession) {
                     setIdSession(data2.idSession);
-                    changeView(vues.SHARE_SESSION);
+                    changeView(views.SHARE_SESSION);
                 } else if (data2.idGame) {
                     setIdSession(data2.idGame);
-                    changeView(vues.IN_GAME);
+                    changeView(views.IN_GAME);
                 } else {
-                    changeView(vues.CREATE_OR_JOIN);
+                    changeView(views.CREATE_OR_JOIN);
                 }
             })
             .catch(error => alert('Server error: ' + error));
@@ -71,7 +71,7 @@ export default function LoginForm({ setIdSession }) {
 
             <View style={styles.footer}>
                 <SizedText label='Pas encore inscrit ? ' size={17} />
-                <Pressable onPress={() => changeView(vues.REGISTER)}>
+                <Pressable onPress={() => changeView(views.REGISTER)}>
                     <SizedText style={commonStyles.link} size={17} label='Inscrivez-vous!' />
                 </Pressable>
             </View>

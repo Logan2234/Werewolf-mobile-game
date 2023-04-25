@@ -7,4 +7,3 @@ export const commonStyles = StyleSheet.create({
 });
 
 export const fontSize=Dimensions.get('window').width/27;
-console.log(fontSize);

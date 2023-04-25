@@ -8,7 +8,7 @@ import { BACKEND } from '../constants/backend';
 import { loginAndRegisterStyle as styles } from '../constants/constants';
 import { errorCodes } from '../constants/errorCode';
 import { ScreenContext, TokenContext } from '../constants/hooks';
-import { vues } from '../constants/screens';
+import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 import { verifyString } from '../utils/verifyData';
 
@@ -53,7 +53,7 @@ export default function RegisterForm() {
             .then(data => {
                 if (data.token) {
                     setToken(data.token);
-                    changeView(vues.CREATE_OR_JOIN);
+                    changeView(views.CREATE_OR_JOIN);
                 } else
                     Alert.alert('Enregistrement impossible', data.message);
             })
@@ -74,7 +74,7 @@ export default function RegisterForm() {
 
             <View style={styles.footer}>
                 <SizedText label='Déjà inscrit ? ' size='17' />
-                <Pressable onPress={() => changeView(vues.LOGIN)}>
+                <Pressable onPress={() => changeView(views.LOGIN)}>
                     <SizedText style={commonStyles.link} size='17' label='Connectez-vous!' />
                 </Pressable>
             </View>

@@ -185,43 +185,43 @@ let createGame = async (idSession) => {
         
         let indicateur = 0
         if (isThereAC && indicateur < nbUsers) {
-            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "C", "vie": "V"})
+            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "C", "vie": "V"})
             indicateur++
         }
         if (isThereAV && VisLG && indicateur < nbUsers) {
-            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "V", "vie": "V"})
+            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "V", "vie": "V"})
             indicateur++
         }
         if (isThereAS && SisLG && indicateur < nbUsers) {
-            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "S", "vie": "V"})
+            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "S", "vie": "V"})
             indicateur++
         }
         for (let i = indicateur; i < nbLG; i++) {
-            usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "LG", "pouvoir": "R", "vie": "V"})
+            await usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "LG", "pouvoir": "R", "vie": "V"})
         }
         indicateur = nbLG
         if (isThereAV && !VisLG && indicateur < nbUsers) {
-            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "V", "vie": "V"})
+            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "V", "vie": "V"})
             indicateur++
         }
         if (isThereAS && !SisLG && indicateur < nbUsers) {
-            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "S", "vie": "V"})
+            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "S", "vie": "V"})
             indicateur++
         }
         if (isThereAI && indicateur < nbUsers) {
-            usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "I", "vie": "V"})
+            await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "I", "vie": "V"})
             indicateur++
         }
         for (let i = indicateur; i < nbUsers; i++) {
-            usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "V", "pouvoir": "R", "vie": "V"})
+            await usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "V", "pouvoir": "R", "vie": "V"})
         }
-        inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "moment": "N"})
-        lieuModel.create({"idPartie": idSession, "typeLieu": "P"})
-        lieuModel.create({"idPartie": idSession, "typeLieu": "R"})
-        if (isThereAS) lieuModel.create({"idPartie": idSession, "typeLieu": "E"})
+        await inGameModel.create({"id": idSession, "nbJoueurs": nbUsers, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "nbLG": nbLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "moment": "N"})
+        await lieuModel.create({"idPartie": idSession, "typeLieu": "P"})
+        await lieuModel.create({"idPartie": idSession, "typeLieu": "R"})
+        if (isThereAS) await lieuModel.create({"idPartie": idSession, "typeLieu": "E"})
     }
 
     // Indépendament de si la partie a été créée ou pas, on supprime la session de la queue.
-    gameModel.destroy({where: {"id": idSession}})
-    usersInQModel.destroy({where: {"idGame": idSession}})
+    await gameModel.destroy({where: {"id": idSession}})
+    await usersInQModel.destroy({where: {"idGame": idSession}})
 }

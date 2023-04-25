@@ -147,7 +147,7 @@ module.exports = {
                 res.json({status: true, message: 'Message sent'})
                 return
             } else {
-                throw new CodeError(username + ' can\'t messages to the lair of werewolves', status.FORBIDDEN)
+                throw new CodeError(username + ' can\'t send messages to the lair of werewolves', status.FORBIDDEN)
             }
         }
     },
@@ -182,7 +182,7 @@ module.exports = {
                 res.json({status: true, message: 'Message sent'})
                 return
             } else {
-                throw new CodeError(username + ' can\'t messages to the spiritism room', status.FORBIDDEN)
+                throw new CodeError(username + ' can\'t send messages to the spiritism room', status.FORBIDDEN)
             }
         }
     },

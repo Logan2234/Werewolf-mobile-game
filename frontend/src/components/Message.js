@@ -5,8 +5,8 @@ import SizedText from './SizedText';
 export default function Message({pseudo, text}) {
     return (
         <View style={styles.res}>
-            <SizedText style={styles.pseudo} label={pseudo} />
-            <SizedText style={styles.text} label={text} />
+            <SizedText style={styles.pseudo} label={pseudo} size={12} />
+            <SizedText style={styles.text} label={text} size={12}/>
         </View>
     )
 }

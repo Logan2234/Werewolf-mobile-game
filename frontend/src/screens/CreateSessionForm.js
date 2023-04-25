@@ -86,7 +86,7 @@ export default function CreateSessionForm({ setIdSession }) {
                 if (data.idGame) {
                     setIdSession(data.idGame);
                     console.log('Session créée')
-                    changeView(vues.SHARE_SESSION);
+                    changeView(views.SHARE_SESSION);
                 }
             })
             .catch(error => alert('Server error: ' + error));

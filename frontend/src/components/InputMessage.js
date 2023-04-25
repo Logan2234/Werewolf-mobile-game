@@ -6,7 +6,7 @@ import { primaryColor } from "../constants/colors";
 import { Icon } from "@rneui/base";
 import { BACKEND } from "../constants/backend";
 
-export default function InputMesssage({token, idDiscussion, idGame}){
+export default function InputMesssage({token, idDiscussion, idSession}){
     const [text, setText]=useState(null);
 
     /**
@@ -16,7 +16,7 @@ export default function InputMesssage({token, idDiscussion, idGame}){
     function sendMessage(){
         console.log('Message en cours d\'envoi : ', text);
         if (text != null){
-            fetch(`${BACKEND}/inGame/${idGame}/messages/${idDiscussion}`, {
+            fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}`, {
                 method: 'POST',
                 headers: {'x-access-token': token,
                          'Content-Type': 'application/json' },

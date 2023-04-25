@@ -406,7 +406,43 @@
         }
       }
     },
+    "/game/{idGame}/werewolves": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/game/{idGame}/info": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/game/{idGame}/time": {
       "get": {
         "description": "",
         "parameters": [
@@ -529,7 +565,23 @@
         }
       }
     },
-    "/game/{idGame}/vote/start": {
+    "/game/{idGame}/vote": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "post": {
         "description": "",
         "parameters": [
@@ -564,7 +616,7 @@
         }
       }
     },
-    "/game/{idGame}/vote": {
+    "/game/{idGame}/vote/start": {
       "post": {
         "description": "",
         "parameters": [

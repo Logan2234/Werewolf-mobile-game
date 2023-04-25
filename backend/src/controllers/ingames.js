@@ -509,7 +509,7 @@ module.exports = {
         
         if (await inGameModel.findOne({where: {"id": idGame}})) {
             const game = await gameModel.findOne({where: {"id": idGame}})
-            const timeLeft = game.dateDebut - new Date().getTime()
+            const timeLeft = game.finTimer - new Date().getTime()
             res.json({status: true, message: 'Time left in ms' + idGame.toString(), timeLeft})
             return
         }

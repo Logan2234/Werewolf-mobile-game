@@ -19,7 +19,7 @@ export default function Discussion({idDiscussion, token, idSession}) {
     useEffect(()=>{
         /**
          * Renvoie un booléen pour indiquer si on peut envoyer des messages 
-         * ! Requête sera à revoir (:
+         * !TODO Requête sera à revoir (:
          */
         function canIWriteHere(){
             // fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}`, {

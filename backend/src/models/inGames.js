@@ -55,7 +55,12 @@ const game = db.define('InGames', {
     finTimer: {
         type: Sequelize.INTEGER,
         defaultValue: new Date().getTime()
-    }
+    },
+    voted: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    },
 }, { timestamps: false })
 
 

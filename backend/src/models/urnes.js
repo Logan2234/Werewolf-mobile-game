@@ -3,8 +3,13 @@ const Sequelize = require('sequelize');
 const db = require('./database.js');
 
 const urne = db.define('urnes', {
-    idGame: {
+    idUrne: {
         primaryKey: true,
+        type: Sequelize.INTEGER,
+        unique: true,
+        autoIncrement: true
+    },
+    idGame: {
         type: Sequelize.INTEGER,
         allowNull: false
     },

@@ -14,9 +14,7 @@ router.get('/user/game', user.verificationUser, user.checkWhereIAm)
 
 router.get('/user/status', user.verificationUser, user.getRole)
 
-// router.post('/createSession', user.newSession);
-
-// router.delete('/createSession', user.deleteSession);
+router.get('/whoami', user.verificationUser, user.whoAmI);
 
 
 module.exports = router;

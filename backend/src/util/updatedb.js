@@ -3,11 +3,11 @@ const inGamesModel = require('../models/inGames.js')
 const gamesModel = require('../models/games.js')
 const lieuModel = require('../models/lieus.js')
 const urneModel = require('../models/urnes.js')
-const voteModel = require('../models/votes.js')
 const usersInGameModel = require('../models/usersInGames.js')
 const usersInQModel = require('../models/usersInQs.js')
 const salleEspiritismeModel = require('../models/salleEspiritisme.js')
 const messageModel = require('../models/messages.js')
+const voteModel = require('../models/votes.js')
 
 const bcrypt = require('bcrypt');
 // Ajouter ici les nouveaux require des nouveaux modèles
@@ -31,10 +31,10 @@ const bcrypt = require('bcrypt');
   await gamesModel.destroy({where: {}, truncate: true})
   await lieuModel.destroy({where: {}, truncate: true})
   await urneModel.destroy({where: {}, truncate: true})
-  await voteModel.destroy({where: {}, truncate: true})
   await usersInGameModel.destroy({where: {}, truncate: true})
   await usersInQModel.destroy({where: {}, truncate: true})
   await salleEspiritismeModel.destroy({where: {}, truncate: true})
   await messageModel.destroy({where: {}, truncate: true})
+  await voteModel.destroy({where: {}, truncate: true})
   
 })()

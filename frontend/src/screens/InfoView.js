@@ -133,7 +133,7 @@ export default function InfoView({ idSession }) {
                     </>
                     : <ActivityIndicator style={{ height: '100%' }} size={100} color={primaryColor} />
             }
-        </View >);
+        </View>);
 }
 
 const styles = StyleSheet.create({

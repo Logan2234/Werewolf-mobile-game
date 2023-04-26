@@ -93,7 +93,7 @@
         }
       }
     },
-    "/user/whoami": {
+    "/whoami": {
       "get": {
         "description": "",
         "parameters": [
@@ -659,6 +659,24 @@
                 }
               }
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/game/{idGame}/vote/free-users": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {

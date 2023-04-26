@@ -496,12 +496,21 @@ module.exports = {
     async getInfoVotes (req, res) {
         let {idGame} = req.params
         
-        let urne = (await urneModel.findOne({where: {"idGame": parseInt(idGame)}, attributes: ['votesPour', 'votesContre', 'nbUsersVote']}))
+        let urne = (await urneModel.findAll({where: {"idGame": parseInt(idGame)}, attributes: ['idVictime', 'votesPour', 'votesContre', 'nbUsersVote']}))
         if (urne == null) {
             throw new CodeError('There is no election in process', status.BAD_REQUEST)
         }
-        const victime = (await userModel.findOne({where: {"id": urne.idVictime}})).username
-        res.json({status: true, message: 'Info about the vote', victime, votesPour: urne.votesPour, votesContre: urne.votesContre, nbUsersVote: urne.nbUsersVote})
+        let victimes = []
+        let votesPour = []
+        let votesContre = []
+        let nbUsersVote = []
+        for (let i = 0; i < urne.length; i++) {
+            victimes.push((await userModel.findOne({where: {"id": urne[i].idVictime}})).username)
+            votesPour.push(urne[i].votesPour)
+            votesContre.push(urne[i].votesContre)
+            nbUsersVote.push(urne[i].nbUsersVote)
+        }
+        res.json({status: true, message: 'Info about the votes in progress', victimes, votesPour, votesContre, nbUsersVote})
     },
 
     async getWerewolfs (req, res) {
@@ -525,6 +534,18 @@ module.exports = {
         }
 
         throw new CodeError("Game doesn't exist", status.BAD_REQUEST)
+    },
+
+    async notVictimsYet(req, res) {
+        let {idGame} = req.params
+        let users = await usersInGames.findAll({where: {"idGame": idGame, "vie": "V"}})
+        let usersNotVictims = []
+        for (let i = 0; i < users.length; i++) {
+            if (!(await urneModel.findOne({where: {"idVictime": users[i].idUser}}))){
+                usersNotVictims.push((await userModel.findOne({where: {"id": users[i].idUser}})).username)
+            }
+        }
+        res.json({status: true, message: 'Users not victims yet', usersNotVictims})
     }
 
 }

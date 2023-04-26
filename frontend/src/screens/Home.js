@@ -11,7 +11,6 @@ import JoinSession from './JoinSession';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import ShareSession from './ShareSession';
-import DiscussionVillage from './DiscussionVillage';
 
 export default function Home() {
     const [token, setToken] = useState(null);

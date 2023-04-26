@@ -6,8 +6,8 @@ import { primaryColor } from "../constants/colors";
 import { Icon } from "@rneui/base";
 import { BACKEND } from "../constants/backend";
 
-export default function InputMesssage({token, idDiscussion, idSession}){
-    const [text, setText]=useState(null);
+export default function InputMessage({token, idDiscussion, idSession}){
+    const [text, setText]=useState('');
 
     /**
      * Requête qui envoie le message au serveur et nettoyer l'entrée une fois fait
@@ -22,7 +22,7 @@ export default function InputMesssage({token, idDiscussion, idSession}){
                          'Content-Type': 'application/json' },
                 body: JSON.stringify({ data: '{"message": "' + text + '"}' })
             })
-            .then (() => {setText(null);
+            .then (() => {setText('');
                         console.log('Message envoyé')})
             .catch( error =>
                 {alert('Message non envoyé') + error;});
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         height: 40,
         paddingLeft: 10,
-        margin: '2.5%'
+        margin: 2
     },
     input: {
         borderWidth:0,

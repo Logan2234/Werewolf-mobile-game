@@ -14,6 +14,10 @@ router.post('/game/:idGame/messages/place', user.verificationUser, inGames.sendM
 router.post('/game/:idGame/messages/repere', user.verificationUser, inGames.sendMessageToRepere);
 router.post('/game/:idGame/messages/spiritism', user.verificationUser, inGames.sendMessageToSpiritismRoom);
 
+router.get('/game/:idGame/messages/place/check', user.verificationUser, inGames.canISendAMessageToPlace)
+router.get('/game/:idGame/messages/repere/check', user.verificationUser, inGames.canISendAMessageToRepere)
+router.get('/game/:idGame/messages/spiritism/check', user.verificationUser, inGames.canISendAMessageToSpiritismRoom)
+
 // État de la partie
 
 router.get('/game/:idGame/alives', inGames.getAliveUsers);

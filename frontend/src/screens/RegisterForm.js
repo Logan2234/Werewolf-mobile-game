@@ -60,7 +60,6 @@ export default function RegisterForm() {
             .catch(error => alert('Server error: ' + error));
     }
 
-    // TODO: Enter on first and second field goes to the second one
     return (
         <View style={[styles.form, commonStyles.container]}>
             <Title style={styles.header} label='Inscription' />

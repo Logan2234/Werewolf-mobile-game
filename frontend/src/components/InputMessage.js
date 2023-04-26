@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderColor: secondaryColor,
         left: 0,
-        flex:1,
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         height: 40,

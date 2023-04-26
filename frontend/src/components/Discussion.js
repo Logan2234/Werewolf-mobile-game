@@ -1,10 +1,8 @@
 import Message from "./Message"
 import InputMessage from "./InputMessage";
 import { BACKEND } from '../constants/backend';
-import { FlatList } from "react-native";
 import { useEffect, useState, useContext } from 'react';
-import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
-import { commonStyles } from "../constants/style";
+import { StyleSheet, View, SafeAreaView, FlatList } from "react-native";
 import { secondaryColor } from "../constants/colors";
 import { TokenContext, CurrentGameView } from '../constants/hooks';
 
@@ -59,7 +57,6 @@ export default function Discussion({idDiscussion, token, idSession}) {
     },[token, currentGameView, canWrite])
     // TODO: rafraichissement actuellement au changement de page
     
-;
 
     /**
      * 

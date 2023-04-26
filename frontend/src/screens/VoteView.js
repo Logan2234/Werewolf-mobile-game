@@ -1,19 +1,19 @@
 import { View } from 'react-native';
 import Title from '../components/Title';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import ChoixUrne from './ChoixUrne';
-import { ScreenContext, TokenContext } from '../constants/hooks';
+import { TokenContext, CurrentGameView } from '../constants/hooks';
 
 
 export default function VoteView({idSession}) {
     const [voteState, setVoteState] = useState(2);
     const [voteJSX, setVoteJSX] = useState(null);
 
-    const token = useContext(TokenContext).setToken;
+    const currentGameView = useContext(CurrentGameView);
+    const token = useContext(TokenContext).token;
 
 
     useEffect (()=>{
-        // TODO : à compléter avec les bons éléments JSX
         function setViewVote(){
             switch (voteState) {
                 case 0:
@@ -54,7 +54,7 @@ export default function VoteView({idSession}) {
         }
         setViewVote();
 
-    },[])
+    },[currentGameView])
 
 
     return (

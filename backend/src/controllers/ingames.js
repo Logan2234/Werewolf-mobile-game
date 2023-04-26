@@ -7,7 +7,6 @@ const lieuModel = require('../models/lieus.js')
 const messageModel = require('../models/messages.js')
 const urneModel = require('../models/urnes.js')
 const salleEspiritismeModel = require('../models/salleEspiritisme.js')
-const voteModel = require('../models/votes.js')
 const usersInGames = require('../models/usersInGames.js');
 const CodeError = require('../util/CodeError.js')
 
@@ -426,7 +425,7 @@ module.exports = {
         }
 
         await urneModel.create({"idGame": parseInt(idGame), "idVictime": idVictime.id, "nbUsersVote": nbJoueurs})
-        await voteModel.create({"idGame": parseInt(idGame), "idUser": idUser.id})
+        await usersInGames.update({"vote": true}, {where: {"idUser": idUser.id}})
         res.json({status: true, message: 'You have created a vote against ' + victime})
 
         if (nbJoueurs == 1) {
@@ -460,7 +459,7 @@ module.exports = {
             throw new CodeError('You are dead, and dead people can\'t vote', status.FORBIDDEN)
         }
 
-        if ((await voteModel.findOne({where: {"idGame": parseInt(idGame), "idUser": idUser.id}})) != null) {
+        if (!(userInTheGame.vote)) {
             throw new CodeError('You have already voted', status.FORBIDDEN)
         }
 
@@ -469,7 +468,7 @@ module.exports = {
         }
 
         let seuil = Math.floor(urne.nbUsersVote / 2)
-        await voteModel.create({"idGame": parseInt(idGame), "idUser": idUser.id})
+        await usersInGames.update({"vote": true}, {where: {"idUser": idUser.id, "idGame": parseInt(idGame)}})
         if (decision == true) {
             await urneModel.update({"votesPour": urne.votesPour + 1}, {where: {"idGame": parseInt(idGame)}})
             if (urne.votesPour + 1 > seuil) await finUrne(idGame)
@@ -495,10 +494,11 @@ module.exports = {
         res.json({status: true, message: 'Info about the vote', victime, votesPour: urne.votesPour, votesContre: urne.votesContre, nbUsersVote: urne.nbUsersVote})
     },
 
-    async getNbWerewolfs (req, res) {
+    async getWerewolfs (req, res) {
         let {idGame} = req.params
-        let nbWerewolfs = await getLG(idGame)
-        res.json({status: true, message: 'Number of alive werewolves', nbWerewolfs})
+        let werewolfs = await getLG(idGame)
+        let nbWerewolfs = werewolfs.length
+        res.json({status: true, message: 'Info about werewolves', werewolfs, nbWerewolfs})
     },
 
     async returnTimeLeft(req, res) {
@@ -532,7 +532,7 @@ let finUrne = async (idGame) => {
         await usersInGames.update({"vie": "M"}, {where: {"idUser": idVictime}})
     }
     await urneModel.destroy({where: {"idGame": idGame}})
-    await voteModel.destroy({where: {"idGame": idGame}})
+    await usersInGames.update({"vote": false}, {where: {"idGame": idGame}})
     await checkIfEndGame(idGame)
 }
 
@@ -557,7 +557,6 @@ let finGame = async (idGame) => {
     const game = await inGameModel.findOne({where: {"id": idGame}})
     await inGameModel.destroy({where: {"id": idGame}})
     await usersInGames.destroy({where: {"idGame": idGame}})
-    await voteModel.destroy({where: {"idGame": idGame}})
     await urneModel.destroy({where: {"idGame": idGame}})
 
     const lieux = await lieuModel.findAll({where: {"idGame": idGame}})
@@ -575,7 +574,7 @@ let getLG = async (idGame) => {
     if (playersLG == null) {
         return 0
     }
-    return playersLG.length
+    return playersLG
 }
 
 let checkIfEndGame = async (idGame) => {

@@ -51,7 +51,6 @@ export default function LoginForm({ setIdSession }) {
             .then(data => {
                 if (data.token) {
                     setToken(data.token);
-                    console.log(data.token);
                 } else
                     Alert.alert(errorCodes.UNABLE_TO_CONNECT, data.message);
                 return data.token;

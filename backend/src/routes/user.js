@@ -18,5 +18,7 @@ router.get('/user/status', user.verificationUser, user.getRole)
 
 // router.delete('/createSession', user.deleteSession);
 
+router.get('/whoami', user.verificationUser, user.whoAmI);
+
 
 module.exports = router;

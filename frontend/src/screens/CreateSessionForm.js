@@ -42,13 +42,16 @@ export default function CreateSessionForm({ setIdSession }) {
         const probaSp = verifyProba(spiritisme);
         const probaLG = verifyProba(loupGarous);
         const timer = subDates(startDate, new Date());
+        if (startDate.getTime() <= new Date().getTime()){
+            Alert.alert('Erreur de données rentrées', 'La date ne peut pas être déjà passée')
+            return;  
+        } 
 
         if (probaC == null || probaIn == null || probaVo == null || probaSp == null || probaLG == null) {
             Alert.alert('Erreur des données rentrées', 'Les probabilités et proportions doivent être comprises entre 0 et 1.');
             return;
-        } if (minPlayer < 1) {
+        } if (minPlayer < 5) {
             Alert.alert('Erreur des données rentrées', 'Le nombre minimal de joueurs doit être supérieur ou égal à 5.');
-            return;
         } if (maxPlayer > 100) {
             Alert.alert('Erreur des données rentrées', 'Le nombre maximal de joueurs doit être inférieur ou égal à 100.');
             return;
@@ -72,6 +75,7 @@ export default function CreateSessionForm({ setIdSession }) {
                 'x-access-token': token,
                 'Content-Type': 'application/json'
             },
+            
             body: JSON.stringify({
                 data: '{"nbMinJoueurs": ' + minPlayer + ', "nbMaxJoueurs": ' + maxPlayer + ', "dureeJour": ' + lengthDay + ', "dureeNuit": ' + lengthNight + ', "probaLG": ' + probaLG + ', "probaV": ' + probaVo + ', "probaS": ' + probaSp + ', "probaI": ' + probaIn + ', "probaC": ' + probaC + ', "debutPartie":  ' + timer + '}'
             })

@@ -34,7 +34,7 @@ module.exports = {
             throw new CodeError('Your specifications must be integers', status.BAD_REQUEST)
 
         if (nbMinJoueurs < 5)
-            throw new CodeError('The minimum number of players must be at least 5', status.BAD_REQUEST)
+        throw new CodeError('The minimum number of players must be at least 5', status.BAD_REQUEST)
 
         if (nbMaxJoueurs > 100)
             throw new CodeError('The maximum number of players must be at most 100', status.BAD_REQUEST)
@@ -127,7 +127,7 @@ module.exports = {
         }
         res.json({status: true, message: 'Users of session ' + idSession.toString(), usersList})
     },
-
+    
     async returnTimeLeft(req, res) {
         let {idSession} = req.params
         if (await gameModel.findOne({where: {"id": idSession}})) {
@@ -136,10 +136,9 @@ module.exports = {
             res.json({status: true, message: 'Time left in ms' + idSession.toString(), timeLeft})
             return
         }
-
+        
         if (await inGameModel.findOne({where: {"id": idSession}}))
             throw new CodeError('Game has started already !', status.BAD_REQUEST)
-
         throw new CodeError("Game doesn't exist", status.BAD_REQUEST)
     }
     

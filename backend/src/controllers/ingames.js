@@ -495,10 +495,11 @@ module.exports = {
         res.json({status: true, message: 'Info about the vote', victime, votesPour: urne.votesPour, votesContre: urne.votesContre, nbUsersVote: urne.nbUsersVote})
     },
 
-    async getNbWerewolfs (req, res) {
+    async getWerewolfs (req, res) {
         let {idGame} = req.params
-        let nbWerewolfs = await getLG(idGame)
-        res.json({status: true, message: 'Number of alive werewolves', nbWerewolfs})
+        let werewolfs = await getLG(idGame)
+        let nbWerewolfs = werewolfs.length
+        res.json({status: true, message: 'Info about werewolves', werewolfs, nbWerewolfs})
     },
 
     async returnTimeLeft(req, res) {
@@ -509,7 +510,7 @@ module.exports = {
         
         if (await inGameModel.findOne({where: {"id": idGame}})) {
             const game = await gameModel.findOne({where: {"id": idGame}})
-            const timeLeft = game.dateDebut - new Date().getTime()
+            const timeLeft = game.finTimer - new Date().getTime()
             res.json({status: true, message: 'Time left in ms' + idGame.toString(), timeLeft})
             return
         }
@@ -575,7 +576,7 @@ let getLG = async (idGame) => {
     if (playersLG == null) {
         return 0
     }
-    return playersLG.length
+    return playersLG
 }
 
 let checkIfEndGame = async (idGame) => {

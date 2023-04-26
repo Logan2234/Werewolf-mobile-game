@@ -33,8 +33,8 @@ module.exports = {
         if (isNaN(nbMinJoueurs) || isNaN(nbMaxJoueurs) || isNaN(dureeJour) || isNaN(dureeNuit) || isNaN(probaLG) || isNaN(probaV) || isNaN(probaS) || isNaN(probaI) || isNaN(probaC) || isNaN(debutPartie))
             throw new CodeError('Your specifications must be integers', status.BAD_REQUEST)
 
-        // if (nbMinJoueurs < 5)
-        //     throw new CodeError('The minimum number of players must be at least 5', status.BAD_REQUEST)
+        if (nbMinJoueurs < 5)
+        throw new CodeError('The minimum number of players must be at least 5', status.BAD_REQUEST)
 
         if (nbMaxJoueurs > 100)
             throw new CodeError('The maximum number of players must be at most 100', status.BAD_REQUEST)
@@ -138,8 +138,7 @@ module.exports = {
         }
         
         if (await inGameModel.findOne({where: {"id": idSession}}))
-        throw new CodeError('Game has started already !', status.BAD_REQUEST)
-        
+            throw new CodeError('Game has started already !', status.BAD_REQUEST)
         throw new CodeError("Game doesn't exist", status.BAD_REQUEST)
     }
     

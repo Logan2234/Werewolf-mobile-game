@@ -7,7 +7,6 @@ import DiscussionRepere from './DiscussionRepere';
 import DiscussionSpiritisme from './DiscussionSpiritisme';
 import { useContext, useEffect, useState } from 'react';
 import { TokenContext, CurrentGameView } from '../constants/hooks';
-import { gameViews } from '../constants/screens';
 import { primaryColor } from '../constants/colors';
 
 
@@ -146,7 +145,6 @@ export default function ChatView({idSession}) {
         )
     } else {
         return (
-                //<DiscussionVillage token={token} idSession={idSession} />
                 <View style={styles.container}>
                     {
                         (canShow)

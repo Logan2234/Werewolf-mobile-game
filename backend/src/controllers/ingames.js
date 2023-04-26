@@ -6,6 +6,7 @@ const inGameModel = require('../models/inGames.js')
 const lieuModel = require('../models/lieus.js')
 const messageModel = require('../models/messages.js')
 const urneModel = require('../models/urnes.js')
+const voteModel = require('../models/votes.js')
 const salleEspiritismeModel = require('../models/salleEspiritisme.js')
 const usersInGames = require('../models/usersInGames.js');
 const CodeError = require('../util/CodeError.js')
@@ -375,20 +376,28 @@ module.exports = {
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
             throw new CodeError('You have not specified a victim !', status.BAD_REQUEST)
         }
-
         
         const data = JSON.parse(req.body.data)
         const victime = data.victime
         const username = req.login
         let {idGame} = req.params
 
-        if ((await urneModel.findOne({where: {"idGame": parseInt(idGame)}})) != null) {
-            throw new CodeError('There is already an election in process', status.BAD_REQUEST)
+        const idVictime = await userModel.findOne({where: {"username": victime}})
+        if (idVictime == null) {
+            throw new CodeError('This user does not exist', status.NOT_FOUND)
+        }
+
+        if ((await urneModel.findOne({where: {"idGame": parseInt(idGame), "idVictime": idVictime.id}})) != null) {
+            throw new CodeError('There is already an election in process against ' + victime, status.BAD_REQUEST)
         }
 
         const game = await inGameModel.findOne({where: {"id": idGame}})
         if (game == null) {
             throw new CodeError('This game does not exist', status.NOT_FOUND)
+        }
+
+        if (game.voted) {
+            throw new CodeError('A vote has already been submitted', status.BAD_REQUEST)
         }
 
         const idUser = await userModel.findOne({where: {"username": username}})
@@ -410,12 +419,6 @@ module.exports = {
             }
         }
 
-
-        const idVictime = await userModel.findOne({where: {"username": victime}})
-        if (idVictime == null) {
-            throw new CodeError('This user does not exist', status.NOT_FOUND)
-        }
-
         let victimInGame = await usersInGames.findOne({where: {"idUser": idVictime.id, "idGame": parseInt(idGame)}})
         if (victimInGame == null) {
             throw new CodeError('This user is not in game ' + idGame, status.NOT_FOUND)
@@ -424,30 +427,37 @@ module.exports = {
             throw new CodeError('This user is already dead', status.FORBIDDEN)
         }
 
-        await urneModel.create({"idGame": parseInt(idGame), "idVictime": idVictime.id, "nbUsersVote": nbJoueurs})
-        await usersInGames.update({"vote": true}, {where: {"idUser": idUser.id}})
+        urne = await urneModel.create({"idGame": parseInt(idGame), "idVictime": idVictime.id, "nbUsersVote": nbJoueurs})
+        await voteModel.create({"idUrne": urne.idUrne, "idUser": idUser.id, "decision": true, "idGame": idGame})
         res.json({status: true, message: 'You have created a vote against ' + victime})
 
         if (nbJoueurs == 1) {
-            await finUrne(idGame)
+            await finUrne(urne.idUrne, idGame)
         }
     },
 
     async vote (req, res) {
-        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'decision')) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'decision') || !has(JSON.parse(req.body.data), 'victime')) {
             throw new CodeError('You have not specified an answer to the vote !', status.BAD_REQUEST)
         }
         let {idGame} = req.params
         
-        let urne = (await urneModel.findOne({where: {"idGame": parseInt(idGame)}}))
+        const data = JSON.parse(req.body.data)
+        const victime = data.victime
+
+        let victimeModel = await userModel.findOne({where: {"username": victime}})
+        if (victimeModel == null) {
+            throw new CodeError('This victim does not exist', status.BAD_REQUEST)
+        }
+        const victimeId = victimeModel.id
+
+        let urne = (await urneModel.findOne({where: {"idGame": parseInt(idGame), "idVictime": victimeId}}))
         if (urne == null) {
-            throw new CodeError('There is no election in process', status.BAD_REQUEST)
+            throw new CodeError('There is no election in process against ' + victime, status.BAD_REQUEST)
         }
 
-        const data = JSON.parse(req.body.data)
         const decision = data.decision
         const username = req.login
-        const victime = (await userModel.findOne({where: {"id": urne.idVictime}})).username
         const game = await inGameModel.findOne({where: {"id": idGame}})
 
         const idUser = await userModel.findOne({where: {"username": username}})
@@ -459,7 +469,7 @@ module.exports = {
             throw new CodeError('You are dead, and dead people can\'t vote', status.FORBIDDEN)
         }
 
-        if (!(userInTheGame.vote)) {
+        if ((await voteModel.findOne({where: {"idUrne": urne.idUrne, "idUser": idUser.id}})) != null) {
             throw new CodeError('You have already voted', status.FORBIDDEN)
         }
 
@@ -468,30 +478,39 @@ module.exports = {
         }
 
         let seuil = Math.floor(urne.nbUsersVote / 2)
-        await usersInGames.update({"vote": true}, {where: {"idUser": idUser.id, "idGame": parseInt(idGame)}})
+        await voteModel.create({"idUrne": urne.idUrne, "idUser": idUser.id, "decision": decision, "idGame": idGame})
         if (decision == true) {
-            await urneModel.update({"votesPour": urne.votesPour + 1}, {where: {"idGame": parseInt(idGame)}})
-            if (urne.votesPour + 1 > seuil) await finUrne(idGame)
+            await urneModel.update({"votesPour": urne.votesPour + 1}, {where: {"idUrne": urne.idUrne}})
+            if (urne.votesPour + 1 > seuil) await finUrne(urne.idUrne, idGame)
             res.json({status: true, message: 'You have voted to kill ' + victime})
         } else {
-            await urneModel.update({"votesContre": urne.votesContre + 1}, {where: {"idGame": parseInt(idGame)}})
-            if (urne.votesContre + 1 > seuil) await finUrne(idGame)
+            await urneModel.update({"votesContre": urne.votesContre + 1}, {where: {"idUrne": urne.idUrne}})
+            if (urne.votesContre + 1 > seuil) await finUrne(urne.idUrne, idGame)
             res.json({status: true, message: 'You have voted not to kill ' + victime})
         }
         if (urne.votesContre + urne.votesPour + 1 == urne.nbUsersVote) {
-            await finUrne(idGame)
+            await finUrne(urne.idUrne, idGame)
         }
     },
 
     async getInfoVotes (req, res) {
         let {idGame} = req.params
         
-        let urne = (await urneModel.findOne({where: {"idGame": parseInt(idGame)}, attributes: ['votesPour', 'votesContre', 'nbUsersVote']}))
+        let urne = (await urneModel.findAll({where: {"idGame": parseInt(idGame)}, attributes: ['idVictime', 'votesPour', 'votesContre', 'nbUsersVote']}))
         if (urne == null) {
             throw new CodeError('There is no election in process', status.BAD_REQUEST)
         }
-        const victime = (await userModel.findOne({where: {"id": urne.idVictime}})).username
-        res.json({status: true, message: 'Info about the vote', victime, votesPour: urne.votesPour, votesContre: urne.votesContre, nbUsersVote: urne.nbUsersVote})
+        let victimes = []
+        let votesPour = []
+        let votesContre = []
+        let nbUsersVote = []
+        for (let i = 0; i < urne.length; i++) {
+            victimes.push((await userModel.findOne({where: {"id": urne[i].idVictime}})).username)
+            votesPour.push(urne[i].votesPour)
+            votesContre.push(urne[i].votesContre)
+            nbUsersVote.push(urne[i].nbUsersVote)
+        }
+        res.json({status: true, message: 'Info about the votes in progress', victimes, votesPour, votesContre, nbUsersVote})
     },
 
     async getWerewolfs (req, res) {
@@ -515,11 +534,41 @@ module.exports = {
         }
 
         throw new CodeError("Game doesn't exist", status.BAD_REQUEST)
+    },
+
+    async notVictimsYet(req, res) {
+        let {idGame} = req.params
+        let users = await usersInGames.findAll({where: {"idGame": idGame, "vie": "V"}})
+        let usersNotVictims = []
+        for (let i = 0; i < users.length; i++) {
+            if (!(await urneModel.findOne({where: {"idVictime": users[i].idUser}}))){
+                usersNotVictims.push((await userModel.findOne({where: {"id": users[i].idUser}})).username)
+            }
+        }
+        res.json({status: true, message: 'Users not victims yet', usersNotVictims})
     }
 
 }
 
-let finUrne = async (idGame) => {
+let finUrne = async (idUrne, idGame) => {
+    if (await urneModel.findOne({where: {"idUrne": idUrne}}) == null) {
+        return
+    }
+    let urne = await urneModel.findOne({where: {"idUrne": idUrne}})
+    let idVictime = urne.idVictime
+    let nbUsersVote = urne.nbUsersVote
+    let votesPour = urne.votesPour
+
+    if (votesPour > Math.floor(nbUsersVote / 2)) {
+        await usersInGames.update({"vie": "M"}, {where: {"idUser": idVictime}})
+        await inGameModel.update({"voted": true}, {where: {"id": idGame}})
+    }
+    await voteModel.destroy({where: {"idGame": idGame}})
+    await urneModel.destroy({where: {"idGame": idGame}})
+    await checkIfEndGame(idGame)
+}
+
+let finUrneFinPeriode = async (idGame) => {
     if (await urneModel.findOne({where: {"idGame": idGame}}) == null) {
         return
     }
@@ -532,13 +581,14 @@ let finUrne = async (idGame) => {
         await usersInGames.update({"vie": "M"}, {where: {"idUser": idVictime}})
     }
     await urneModel.destroy({where: {"idGame": idGame}})
-    await usersInGames.update({"vote": false}, {where: {"idGame": idGame}})
+    await inGameModel.update({"voted": false}, {where: {"id": idGame}})
     await checkIfEndGame(idGame)
 }
 
 let startNight = async (idGame) => {
     const game = await inGameModel.findOne({where: {"id": idGame}})
-    await finUrne(idGame)
+    await inGameModel.update({"voted": false}, {where: {"id": idGame}})
+    await finUrneFinPeriode(idGame)
     await inGameModel.update({"moment": "N"}, {where: {"id": idGame}})
     await inGameModel.update({"finTimer": new Date().getTime() + game.dureeNuit}, {where: {"id": idGame}})
     timers[idGame] = setTimeout(() => {startDay(idGame)}, game.dureeNuit)
@@ -546,7 +596,8 @@ let startNight = async (idGame) => {
 
 let startDay = async (idGame) => {
     const game = await inGameModel.findOne({where: {"id": idGame}})
-    await finUrne(idGame)
+    await inGameModel.update({"voted": false}, {where: {"id": idGame}})
+    await finUrneFinPeriode(idGame)
     await inGameModel.update({"moment": "J"}, {where: {"id": idGame}})
     await usersInGames.update({"pouvoirUtilise": false}, {where: {"idGame": idGame}})
     await inGameModel.update({"finTimer": new Date().getTime() + game.dureeJour}, {where: {"id": idGame}})

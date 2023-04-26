@@ -2,35 +2,30 @@ const Sequelize = require('sequelize');
 
 const db = require('./database.js');
 
-const urne = db.define('urnes', {
-    idUrne: {
+const vote = db.define('votes', {
+    idVote: {
         primaryKey: true,
         type: Sequelize.INTEGER,
         unique: true,
         autoIncrement: true
     },
+    idUrne: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    idUser: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    decision: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    },
     idGame: {
         type: Sequelize.INTEGER,
         allowNull: false
-    },
-    idVictime: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    nbUsersVote: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-    },
-    votesPour: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 1
-    },
-    votesContre: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0
     }
 }, { timestamps: false })
 
-module.exports = urne
+module.exports = vote

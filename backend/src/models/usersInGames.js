@@ -31,11 +31,6 @@ const usersInGames = db.define('UsersInGames', {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
-    },
-    vote: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
     }
 
 }, { timestamps: false })

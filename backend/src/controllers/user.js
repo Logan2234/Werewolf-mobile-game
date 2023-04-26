@@ -106,6 +106,11 @@ module.exports = {
                 throw new CodeError(username + " stills in the queue", status.NOT_FOUND)
             } else throw new CodeError(username + " is not in a game nor in a queue", status.NOT_FOUND)
         }
+    },
+
+    async whoAmI(req, res) {
+        const username = req.login
+        res.json({status: true, message: 'You\'re...', username})
     }
 
 }

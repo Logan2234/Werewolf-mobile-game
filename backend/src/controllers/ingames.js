@@ -17,6 +17,79 @@ var timers = {}
 
 module.exports = {
 
+    async canISendAMessageToPlace(req, res) {
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        if (userInGame.vie == "M") {
+            res.json({status: false, message: 'You cannot send a message'})
+            return
+        } else {
+            const session = await inGameModel.findOne({where: {"id": idGame}})
+            if (session.moment != "J") {
+                res.json({status: false, message: 'You cannot send a message'})
+                return
+            }
+            res.json({status: true, message: 'You can send a message !'})
+            return
+        }
+    },
+
+    async canISendAMessageToRepere(req, res) {
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        if (userInGame.vie == "M") {
+            res.json({status: false, message: 'You cannot send a message'})
+            return
+        } else {
+            if (userInGame.role == "LG") {
+                const session = await inGameModel.findOne({where: {"id": idGame}})
+                if (session.moment != "N") {
+                    res.json({status: false, message: 'You cannot send a message'})
+                    return
+                }
+                res.json({status: true, message: 'You can send a message !'})
+                return
+            } else {
+                res.json({status: false, message: 'You cannot send a message'})
+                return
+            }
+        }
+    },
+
+    async canISendAMessageToSpiritismRoom (req, res) {
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        const Lieu = await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "E"}})
+        if (!Lieu) throw new CodeError('No spiritism room in game ' + idGame, status.NOT_FOUND)
+
+        if (userInGame.vie == "M") {
+            res.json({status: false, message: 'You cannot send a message'})
+            return
+        } else {
+            if (userInGame.pouvoir == "S") {
+                const session = await inGameModel.findOne({where: {"id": idGame}})
+                if (session.moment != "N") {
+                    res.json({status: false, message: 'You cannot send a message'})
+                    return
+                }
+                res.json({status: true, message: 'You can send a message !'})
+                return
+            } else {
+                res.json({status: false, message: 'You cannot send a message'})
+                return
+            }
+        }
+    },
+
     async getMessagesFromPlace (req, res) {
         const username = req.login
         let {idGame} = req.params

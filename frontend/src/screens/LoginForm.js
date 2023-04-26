@@ -14,7 +14,7 @@ import { commonStyles } from '../constants/style';
 export default function LoginForm({ setIdSession }) {
     const [pseudo, setPseudo] = useState('');
     const [password, setPassword] = useState('');
-    
+
     const changeView = useContext(ScreenContext);
     const setToken = useContext(TokenContext).setToken;
 
@@ -58,7 +58,6 @@ export default function LoginForm({ setIdSession }) {
             .catch(error => alert('Server error: ' + error));
     }
 
-    // TODO: Enter on first field goes to the second one
     return (
         <View style={[styles.form, commonStyles.container]}>
             <Title style={styles.header} label='Connexion' />

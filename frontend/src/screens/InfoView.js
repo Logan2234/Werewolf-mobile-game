@@ -66,7 +66,7 @@ export default function InfoView({ idSession }) {
                 method: 'GET',
             })
                 .then(response => response.json())
-                .then(data => setAliveWerewolves(data.nbWerewolfs))
+                .then(data => setAliveWerewolves(data.nbWerewolves))
                 .then(() => setCanShow(true))
                 .catch(error => alert(error.message));
         }

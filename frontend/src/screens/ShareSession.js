@@ -10,8 +10,6 @@ import { ScreenContext, TokenContext } from '../constants/hooks';
 import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 
-
-// TODO: Quand le timer est dépassé ou que le nombre max de joueur est dessus: setView(INGAME)
 export default function ShareSession({ idSession }) {
     const [donnees, setDonnees] = useState({});
     const [users, setUsers] = useState([]);
@@ -93,16 +91,12 @@ export default function ShareSession({ idSession }) {
     }, [token, idSession, changeView]);
 
     useEffect(() => {
-        // ws.onopen = () => {
-        //     ws.send(JSON.stringify({ player: username, idSession: idSession }));
-        // };
-        // ws.onclose = (e) => {};
         ws.onerror = (e) => {
             console.log(e);
         };
         ws.onmessage = (e) => {
             let newUser = (JSON.parse(e.data).idSession == idSession.toString()) ? JSON.parse(e.data).player : null;
-            if (newUser != null)
+            if (newUser != null && !users.includes(newUser))
                 setUsers((users) => [...users, newUser]);
         };
     }, []);

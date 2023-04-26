@@ -9,9 +9,8 @@ import { gameViews } from '../constants/screens';
 export default function PlayerView({ idSession }) {
     const [alivePlayers, setAlivePlayers] = useState([]);
     const [deadPlayers, setDeadPlayers] = useState([]);
-    const [aliveWerewolves, setAliveWerewolves] = useState([]);
 
-    const token = useContext(TokenContext);
+    const token = useContext(TokenContext).token;
     const currentGameView = useContext(CurrentGameView);
 
     useEffect(() => {
@@ -44,7 +43,6 @@ export default function PlayerView({ idSession }) {
         }
 
         function fetchUserRole() {
-            let role = null;
             fetch(`${BACKEND}/user/status`, {
                 method: 'GET',
                 headers: {
@@ -53,9 +51,8 @@ export default function PlayerView({ idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then(data => role = data.role)
+                .then(data => (data.role == 'LG') ? fetchAliveWerewolves() : null)
                 .catch(error => alert(error.message));
-            return role;
         }
 
         function fetchAliveWerewolves() {
@@ -64,10 +61,13 @@ export default function PlayerView({ idSession }) {
             })
                 .then(response => response.json())
                 .then(data => {
-                    let users = [];
+                    let users = alivePlayers; // TODO: ATTENTION ON GET LES ID AU LIEU DES USERNAME POUR LE MOMENT
                     for (let user of data.werewolves)
-                        users.push({ key: user, color: 'orange' });
-                    setAliveWerewolves(users);
+                        if (users.includes({ key: user, color: 'green' })) {
+                            let index = users.indexOf({ key: user, color: 'green' });
+                            users[index].color = 'orange';
+                        }
+                    setAlivePlayers(users);
                 })
 
                 .catch(error => alert(error.message));
@@ -76,8 +76,7 @@ export default function PlayerView({ idSession }) {
         if (currentGameView == gameViews.PLAYERS) {
             fetchAliveData();
             fetchDeadData();
-            if (fetchUserRole() === 'LG')
-                fetchAliveWerewolves();
+            fetchUserRole();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentGameView]);
@@ -85,7 +84,7 @@ export default function PlayerView({ idSession }) {
     return (
         <FlatList
             renderItem={({ item }) => <SizedText size={20} label={item.key} style={{ color: item.color }} />}
-            data={alivePlayers.concat(deadPlayers).concat(aliveWerewolves)}
+            data={alivePlayers.concat(deadPlayers)}
             contentContainerStyle={styles.flatListContainer} style={styles.flatList} />
     );
 }

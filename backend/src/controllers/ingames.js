@@ -696,9 +696,13 @@ let finGame = async (idGame) => {
 let getLG = async (idGame) => {
     let playersLG = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V", "role": "LG"}})
     if (playersLG == null) {
-        return 0
+        return []
     }
-    return playersLG
+    let LGUsers = []
+    for (let i = 0; i < playersLG.length; i++) {
+        LGUsers.push(await userModel.findOne({where: {"id": playersLG[i].idUser}}))
+    }
+    return LGUsers
 }
 
 let checkIfEndGame = async (idGame) => {

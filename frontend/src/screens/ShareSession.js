@@ -1,16 +1,15 @@
 // Affichage récapitulatif de la session qui vient d'être créée avec le numéro de l'ID
 import { Button, Icon } from '@rneui/base';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import SizedText from '../components/SizedText';
 import Title from '../components/Title';
-import { BACKEND } from '../constants/backend';
+import { BACKEND, WEBSOCKET } from '../constants/backend';
 import { backgroundColor, primaryColor } from '../constants/colors';
 import { ScreenContext, TokenContext } from '../constants/hooks';
 import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 
-// TODO: Quand le timer est dépassé ou que le nombre max de joueur est dessus: setView(INGAME)
 export default function ShareSession({ idSession }) {
     const [donnees, setDonnees] = useState({});
     const [users, setUsers] = useState([]);
@@ -18,22 +17,10 @@ export default function ShareSession({ idSession }) {
     const [timeLeftFormatted, setTimeLeftFormatted] = useState({});
     const [showUsers, setShowUsers] = useState(false);
     const [canShow, setCanShow] = useState(false);
-    const [canShowUsers, setCanShowUsers] = useState(false);
 
     const changeView = useContext(ScreenContext);
     const token = useContext(TokenContext).token;
-
-    function loadUsers() {
-        setCanShowUsers(false);
-        fetch(`${BACKEND}/joinSession/${idSession}/users`, {
-            method: 'GET',
-            headers: { 'x-access-token': token },
-        })
-            .then(response => response.json())
-            .then(data => setUsers(data.usersList))
-            .then(() => setCanShowUsers(true))
-            .catch(error => alert(error.message));
-    }
+    const ws = useRef(new WebSocket(WEBSOCKET)).current;
 
     useEffect(() => {
         function getSessionData() {
@@ -43,19 +30,6 @@ export default function ShareSession({ idSession }) {
             })
                 .then(response => response.json())
                 .then(data => setDonnees(data.session))
-                .catch(error => alert('Server error: ' + error));
-        }
-
-        function sendUserData() {
-            fetch(`${BACKEND}/joinSession/${idSession}`, {
-                method: 'POST',
-                headers: {
-                    'x-access-token': token,
-                    'Content-Type': 'application/json'
-                },
-            })
-                .then((response) => response.json())
-                .then((data) => (data.message === 'Session joined and game started') ? changeView(views.IN_GAME) : null) // In case it's the last player
                 .catch(error => alert('Server error: ' + error));
         }
 
@@ -71,10 +45,66 @@ export default function ShareSession({ idSession }) {
                 .then(data => { setTimeLeft(data.timeLeft); })
                 .catch(error => alert('Server error: ' + error));
         }
+
+        function getUsername() {
+            fetch(`${BACKEND}/whoami`, {
+                method: 'GET',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                },
+            })
+                .then(response => response.json())
+                .then(data => { return data.username; })
+                .then(username => ws.send(JSON.stringify({ player: username, idSession: idSession })))
+                .then(loadUsers)
+                .catch(error => alert('Server error: ' + error));
+        }
+
+        function loadUsers() {
+            fetch(`${BACKEND}/joinSession/${idSession}/users`, {
+                method: 'GET',
+                headers: { 'x-access-token': token },
+            })
+                .then(response => response.json())
+                .then(data => setUsers((users) => users.concat(data.usersList)))
+                .then(sendUserData)
+                .catch(error => alert(error.message));
+        }
+
+        function sendUserData() {
+            fetch(`${BACKEND}/joinSession/${idSession}`, {
+                method: 'POST',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => (data.message === 'Session joined and game started') ? changeView(views.IN_GAME) : null) // In case it's the last player
+                .catch(error => alert('Server error: ' + error));
+        }
+
         getSessionData();
-        sendUserData();
         getTimeRemaining();
+        getUsername();
     }, [token, idSession, changeView]);
+
+    useEffect(() => {
+        ws.onerror = (e) => {
+            console.log(e);
+        };
+        ws.onmessage = (e) => {
+            let newUser = (JSON.parse(e.data).idSession == idSession.toString()) ? JSON.parse(e.data).player : null;
+            if (newUser != null && !users.includes(newUser))
+                setUsers((users) => [...users, newUser]);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (users.length == donnees.nbMaxJoueurs)
+            changeView(views.IN_GAME);
+    }, [users, donnees, changeView]);
 
     useEffect(() => {
         function computeTimeLeft() {
@@ -89,6 +119,7 @@ export default function ShareSession({ idSession }) {
             if (!canShow)
                 setCanShow(true);
         }
+
         if (timeLeft != null) {
             if (timeLeft <= 0)
                 changeView(views.IN_GAME);
@@ -154,21 +185,18 @@ export default function ShareSession({ idSession }) {
                 (showUsers)
                     ? <View style={styles.users}>
                         <Title label='Utilisateurs connectés' />
-                        {
-                            (canShowUsers)
-                                ? <View style={styles.list}>
-                                    <FlatList
-                                        renderItem={({ item }) => <SizedText size={20} label={item.key} />}
-                                        data={connectedUsers}
-                                        contentContainerStyle={styles.flatListContainer}
-                                        onTouchStart={() => (showUsers == false) ? loadUsers() : null} />
-                                </View>
-                                : <ActivityIndicator style={{ height: '78%' }} size={100} color={primaryColor} />
-                        }
+                        <View style={styles.list}>
+                            <FlatList
+                                renderItem={({ item }) => <SizedText size={20} label={item.key} />}
+                                data={connectedUsers}
+                                contentContainerStyle={styles.flatListContainer}
+                            // onTouchStart={() => (showUsers == false) ? ws.send('coucou') : null}
+                            />
+                        </View>
                     </View>
                     : null
             }
-            <Button containerStyle={styles.usersContainer} size='lg' icon={<Icon name='people' color='white' />} buttonStyle={styles.usersButton} onPress={() => { (showUsers == false) ? loadUsers() : null; setShowUsers(!showUsers); }} />
+            <Button containerStyle={styles.usersContainer} size='lg' icon={<Icon name='people' color='white' />} buttonStyle={styles.usersButton} onPress={() => setShowUsers(!showUsers)} />
             <View style={styles.idSection}>
                 <SizedText size={20} label={'ID session: #'} />
                 <SizedText style={styles.id} size={20} label={idSession} />

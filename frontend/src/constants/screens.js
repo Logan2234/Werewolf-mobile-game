@@ -6,7 +6,6 @@ export const views = {
     CREATE_SESSION: 4,
     SHARE_SESSION: 5,
     IN_GAME: 6
-    // TODO: Ne pas oublier de rajouter les autres
 };
 
 export const gameViews = {

@@ -14,7 +14,7 @@ import { commonStyles } from '../constants/style';
 export default function LoginForm({ setIdSession }) {
     const [pseudo, setPseudo] = useState('');
     const [password, setPassword] = useState('');
-    
+
     const changeView = useContext(ScreenContext);
     const setToken = useContext(TokenContext).setToken;
 

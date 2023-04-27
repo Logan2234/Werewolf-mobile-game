@@ -15,6 +15,8 @@ const { TOKENSECRET } = process.env
 
 module.exports = {
     async signIn(req, res){
+        // #swagger.tags = ['Users']
+        // #swagger.summary = 'Sign in a new user and return a token.'
         
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'username') || !has(JSON.parse(req.body.data), 'password'))
             throw {code: status.BAD_REQUEST, message: 'You must specify the username and password'};
@@ -31,6 +33,8 @@ module.exports = {
         res.json({status: true, message: 'User Added', token});
     },
     async logIn(req, res){
+        // #swagger.tags = ['Users']
+        // #swagger.summary = 'Log in a user and return a token.'
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'username') || !has(JSON.parse(req.body.data), 'password'))
             throw {code: status.BAD_REQUEST, message: 'You must specify the username and password'};
 
@@ -57,6 +61,8 @@ module.exports = {
     },
 
     async checkWhereIAm (req, res) {
+        // #swagger.tags = ['Users']
+        // #swagger.summary = 'Return the game or the session of the player.'
         const username = req.login
         const userId = (await userModel.findOne({where: {username}})).id
         const inSession = await usersInQModel.findOne({where: {"idUser": userId}})
@@ -75,6 +81,9 @@ module.exports = {
     },
 
     async verificationUser (req, res, next) {
+        // #swagger.tags = ['Users']
+        // #swagger.summary = 'Check if the token if the user is valid.'
+
         // Code vérifiant qu'il y a bien un token dans l'entête
         if (!req.headers || !req.headers.hasOwnProperty('x-access-token'))
           { throw { code: 403, message: 'Token missing' } }
@@ -92,6 +101,9 @@ module.exports = {
     },
 
     async getRole(req, res) {
+        // #swagger.tags = ['Users']
+        // #swagger.summary = 'Return the role of the player.'
+
         const username = req.login
         const data = await userModel.findOne({where: {username}})
         const userId = parseInt(data.id)
@@ -109,6 +121,9 @@ module.exports = {
     },
 
     async whoAmI(req, res) {
+        // #swagger.tags = ['Users']
+        // #swagger.summary = 'Return the username of the player from the token.'
+
         const username = req.login
         res.json({status: true, message: 'You\'re...', username})
     }

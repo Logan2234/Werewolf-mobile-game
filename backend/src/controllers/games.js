@@ -14,6 +14,9 @@ var timers = {}
 
 module.exports = {
     async createSession (req, res) {
+        // #swagger.tags = ['Games']
+        // #swagger.summary = 'Create a new session.'
+
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'nbMinJoueurs') || !has(JSON.parse(req.body.data), 'nbMaxJoueurs') || !has(JSON.parse(req.body.data), 'dureeJour') || !has(JSON.parse(req.body.data), 'dureeNuit') || !has(JSON.parse(req.body.data), 'probaLG') || !has(JSON.parse(req.body.data), 'probaV') || !has(JSON.parse(req.body.data), 'probaS') || !has(JSON.parse(req.body.data), 'probaI') || !has(JSON.parse(req.body.data), 'probaC') || !has(JSON.parse(req.body.data), 'debutPartie')) {
             throw new CodeError('You must send all the specifications of the session', status.BAD_REQUEST)
         }
@@ -86,6 +89,9 @@ module.exports = {
     },
 
     async joinSession (req, res){
+        // #swagger.tags = ['Users']
+        // #swagger.summary = 'Join an existing session'
+
         const username = req.login
         const data = await userModel.findOne({where: {username}})
         const userId = parseInt(data.id)
@@ -107,6 +113,9 @@ module.exports = {
     },
     
     async getSessionParam (req, res){
+        // #swagger.tags = ['Games']
+        // #swagger.summary = 'Return the parameters of a session, including the number of players in the session and the roles percentages'
+
         if (!has(req.params, 'idSession')) throw new CodeError('You must specify the id of the session', status.BAD_REQUEST)
         let {idSession} = req.params
         idSession = parseInt(idSession)
@@ -118,6 +127,9 @@ module.exports = {
     },
 
     async getUsersSession (req, res) {
+        // #swagger.tags = ['Games']
+        // #swagger.summary = 'Get the list of users in a session'
+
         let {idSession} = req.params
         idSession = parseInt(idSession)
         const users = await usersInQModel.findAll({where: {"idGame": idSession}, attributes: ['idUser']})
@@ -130,6 +142,9 @@ module.exports = {
     },
     
     async returnTimeLeft(req, res) {
+        // #swagger.tags = ['Games']
+        // #swagger.summary = 'Return the time left before the game starts'
+
         let {idSession} = req.params
         if (await gameModel.findOne({where: {"id": idSession}})) {
             const session = await gameModel.findOne({where: {"id": idSession}})

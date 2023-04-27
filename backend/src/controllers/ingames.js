@@ -17,6 +17,82 @@ var timers = {}
 
 module.exports = {
 
+    async canISendAMessageToPlace(req, res) {
+        // #swagger.tags = ['InGames']
+        // #swagger.summary = 'Return if the user can send a message to the main place.'
+
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        if (userInGame.vie == "M") {
+            res.json({status: false, message: 'You cannot send a message to the main place'})
+            return
+        } else {
+            const session = await inGameModel.findOne({where: {"id": idGame}})
+            if (session.moment != "J") {
+                res.json({status: false, message: 'You cannot send a message to the main place'})
+                return
+            }
+            res.json({status: true, message: 'You can send a message to the main !'})
+            return
+        }
+    },
+
+    async canISendAMessageToRepere(req, res) {
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        if (userInGame.vie == "M") {
+            res.json({status: false, message: 'You cannot send a message'})
+            return
+        } else {
+            if (userInGame.role == "LG") {
+                const session = await inGameModel.findOne({where: {"id": idGame}})
+                if (session.moment != "N") {
+                    res.json({status: false, message: 'You cannot send a message'})
+                    return
+                }
+                res.json({status: true, message: 'You can send a message !'})
+                return
+            } else {
+                res.json({status: false, message: 'You cannot send a message'})
+                return
+            }
+        }
+    },
+
+    async canISendAMessageToSpiritismRoom (req, res) {
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        const Lieu = await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "E"}})
+        if (!Lieu) throw new CodeError('No spiritism room in game ' + idGame, status.NOT_FOUND)
+
+        if (userInGame.vie == "M") {
+            res.json({status: false, message: 'You cannot send a message'})
+            return
+        } else {
+            if (userInGame.pouvoir == "S") {
+                const session = await inGameModel.findOne({where: {"id": idGame}})
+                if (session.moment != "N") {
+                    res.json({status: false, message: 'You cannot send a message'})
+                    return
+                }
+                res.json({status: true, message: 'You can send a message !'})
+                return
+            } else {
+                res.json({status: false, message: 'You cannot send a message'})
+                return
+            }
+        }
+    },
+
     async getMessagesFromPlace (req, res) {
         const username = req.login
         let {idGame} = req.params
@@ -305,7 +381,7 @@ module.exports = {
         if (userInTheGame.role == "LG"){
             throw new CodeError(victime + ' is already a werewolf', status.BAD_REQUEST)
         }
-        
+
         if (userInTheGame.pouvoir == "I") {
             await usersInGames.update({"role": "LG", "pouvoir": "R"}, {where: {"idUser": idVictime.id}})
         } else {
@@ -314,7 +390,7 @@ module.exports = {
         await usersInGames.update({"pouvoirUtilise": true}, {where: {"idUser": idContaminator}})
         res.json({status: true, message: 'Villager converted into werewolf'})
         await checkIfEndGame(idGame)
-        
+
     },
 
     async selectAVictimForSeer (req, res) {
@@ -355,12 +431,12 @@ module.exports = {
         if (userInTheGame == null) {
             throw new CodeError('This user is not in a game', status.BAD_REQUEST)
         }
-        
+
         const role = userInTheGame.role
         const pouvoir = userInTheGame.pouvoir
         await usersInGames.update({"pouvoirUtilise": true}, {where: {"idUser": idSeer}})
         res.json({status: true, message: 'This is the role and power of ' + victime, role, pouvoir})
-        
+
     },
 
     async getInfos (req, res) {
@@ -376,7 +452,7 @@ module.exports = {
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
             throw new CodeError('You have not specified a victim !', status.BAD_REQUEST)
         }
-        
+
         const data = JSON.parse(req.body.data)
         const victime = data.victime
         const username = req.login
@@ -415,7 +491,7 @@ module.exports = {
         } else {
             nbJoueurs = (await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V", "role": "LG"}})).length
             if (userInTheGame.role != "LG") {
-                throw new CodeError('Only werewolfs can vote now', status.FORBIDDEN)
+                throw new CodeError('Only werewolves can vote now', status.FORBIDDEN)
             }
         }
 
@@ -441,7 +517,7 @@ module.exports = {
             throw new CodeError('You have not specified an answer to the vote !', status.BAD_REQUEST)
         }
         let {idGame} = req.params
-        
+
         const data = JSON.parse(req.body.data)
         const victime = data.victime
 
@@ -474,7 +550,7 @@ module.exports = {
         }
 
         if (game.moment == "N" && userInTheGame.role != "LG") {
-            throw new CodeError('Only werewolfs can vote now', status.FORBIDDEN)
+            throw new CodeError('Only werewolves can vote now', status.FORBIDDEN)
         }
 
         let seuil = Math.floor(urne.nbUsersVote / 2)
@@ -493,9 +569,39 @@ module.exports = {
         }
     },
 
+    async canIVote(req, res) {
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        if (userInGame.vie == "M") {
+            res.json({status: false, message: 'You cannot vote, you are dead'})
+            return
+        } else {
+            const game = await inGameModel.findOne({where: {"id": idGame}})
+            if (game.voted) {
+                res.json({status: false, message: 'A vote has already been decided'})
+                return 
+            }
+            if (game.moment != "J") {
+                res.json({status: true, message: 'You can vote now !'})
+                return
+            } else {
+                if (userInGame.role == "LG") {
+                    res.json({status: true, message: 'You can vote now !'})
+                    return
+                } else {
+                    res.json({status: false, message: 'You cannot vote, it is not the right moment'})
+                    return
+                }
+            }
+        }
+    },
+
     async getInfoVotes (req, res) {
         let {idGame} = req.params
-        
+
         let urne = (await urneModel.findAll({where: {"idGame": parseInt(idGame)}, attributes: ['idVictime', 'votesPour', 'votesContre', 'nbUsersVote']}))
         if (urne == null) {
             throw new CodeError('There is no election in process', status.BAD_REQUEST)
@@ -513,11 +619,11 @@ module.exports = {
         res.json({status: true, message: 'Info about the votes in progress', victimes, votesPour, votesContre, nbUsersVote})
     },
 
-    async getWerewolfs (req, res) {
+    async getWerewolves(req, res) {
         let {idGame} = req.params
-        let werewolfs = await getLG(idGame)
-        let nbWerewolfs = werewolfs.length
-        res.json({status: true, message: 'Info about werewolves', werewolfs, nbWerewolfs})
+        let werewolves = await getLG(idGame)
+        let nbWerewolves = werewolves.length
+        res.json({ status: true, message: 'Info about werewolves', werewolves: werewolves, nbWerewolves: nbWerewolves })
     },
 
     async returnTimeLeft(req, res) {
@@ -525,7 +631,7 @@ module.exports = {
         if (await gameModel.findOne({where: {"id": idGame}})) {
             throw new CodeError('Game has not started yet !', status.BAD_REQUEST)
         }
-        
+
         if (await inGameModel.findOne({where: {"id": idGame}})) {
             const game = await gameModel.findOne({where: {"id": idGame}})
             const timeLeft = game.finTimer - new Date().getTime()
@@ -623,15 +729,19 @@ let finGame = async (idGame) => {
 let getLG = async (idGame) => {
     let playersLG = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V", "role": "LG"}})
     if (playersLG == null) {
-        return 0
+        return []
     }
-    return playersLG
+    let LGUsers = []
+    for (let i = 0; i < playersLG.length; i++) {
+        LGUsers.push(await userModel.findOne({where: {"id": playersLG[i].idUser}}))
+    }
+    return LGUsers
 }
 
 let checkIfEndGame = async (idGame) => {
-    let nbWerewolfs = getLG(idGame)
+    let nbWerewolves = getLG(idGame)
     let aliveUsers = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V"}})
-    if (aliveUsers == null || nbWerewolfs == 0 || nbWerewolfs >= aliveUsers.length) {
+    if (aliveUsers == null || nbWerewolves == 0 || nbWerewolves >= aliveUsers.length) {
         await finGame(idGame)
     }
 }

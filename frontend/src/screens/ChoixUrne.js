@@ -11,7 +11,7 @@ import { TokenContext, CurrentGameView } from '../constants/hooks';
 export default function ChoixUrne({idSession}) {
     const [proposes, setProposes] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
-    const [ratifie, setRatifie] = useState(true);
+    const [action, setAction] = useState(true);
     const [currentJSX, setJSX] = useState(null);
 
     const token = useContext(TokenContext).token;
@@ -20,7 +20,6 @@ export default function ChoixUrne({idSession}) {
     useEffect(() => {
         /**
          * Requête qui renvoie la liste des personnes proposées et les met dans proposes
-         * 
          */
         function fetchPropose(){
             fetch(`${BACKEND}/game/${idSession}/vote/`, {
@@ -50,14 +49,17 @@ export default function ChoixUrne({idSession}) {
          * Requête qui permet de voter pour le joueur sélectionné
          */
         function vote(){
-            fetch(`${BACKEND}/game/${idSession}/vote/`, {
-                method: 'POST',
-                headers: { 'x-access-token': token, 
-                'Content-Type': 'application/json' },
-                body: JSON.stringify({data: '{"victime": "'+ selectedUser +'", "decision":"true"}'})
-            })
-                .then(response => response.json())
-                .then(()=>setJSX(<StaticUrne idSession={idSession}/> ))
+            setAction(false);
+            if (selectedUser !== null){
+                fetch(`${BACKEND}/game/${idSession}/vote/`, {
+                    method: 'POST',
+                    headers: { 'x-access-token': token, 
+                    'Content-Type': 'application/json' },
+                    body: JSON.stringify({data: '{"victime": "'+ selectedUser +'", "decision":"true"}'})
+                })
+                    .then(response => response.json())
+                    .then(()=>setJSX(<StaticUrne idSession={idSession}/> ))
+            }
     
         }
     
@@ -65,8 +67,8 @@ export default function ChoixUrne({idSession}) {
          * Fonction qui indique que l'on va sur la page des propositions
          */
         function propose(){
-            setRatifie(false);
-            setJSX(<Proposition idSession={idSession} token={token}/>);
+            setAction(false);
+            setJSX(<Proposition idSession={idSession} />);
         }
     
         const renderItem = ({item}) => {
@@ -81,11 +83,11 @@ export default function ChoixUrne({idSession}) {
                 );
             } ;
     
-        if (ratifie){
+        // TODO : Rajouter un titre en haut
+        if (action){
             setJSX(
                 <SafeAreaView style={styles.container}>
                     <FlatList
-                        style
                         data={proposes}
                         keyExtractor={item => item.username}
                         renderItem={renderItem}
@@ -98,17 +100,16 @@ export default function ChoixUrne({idSession}) {
             );
         }
 
-    },[ratifie, selectedUser, currentGameView, proposes])
-
-
+    },[action, selectedUser, currentGameView, proposes]);
+    
     return(currentJSX);
 
 }
 
 
 const styles = StyleSheet.create({
-    bottom: {
-        position: 'absolute', // TODO  :ça marche paaaaaaas
+    bottom: { //!TODO: foutre ce bouton de ses grands-morts en bas
+        position: 'absolute', // TODO  : ça marche paaaaaaas
         bottom: 0,
         top: 90,
         width: '95%',

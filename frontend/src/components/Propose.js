@@ -5,7 +5,7 @@ import SizedText from "./SizedText";
 import { useState } from "react";
 
 /**
- * TODO : tester affichage de une personne
+ * 
  * @param {string} name 
  * @param {int} votes
  * @param {boolean} selected
@@ -14,7 +14,6 @@ import { useState } from "react";
  */
 export default function Propose({name, votes='0', selected}) {
 
-    console.log(name, votes);
     if (selected && votes !== '0'){
         return(
             <View style={styles.container}>

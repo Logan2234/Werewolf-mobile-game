@@ -3,15 +3,15 @@ import Propose from "../components/Propose";
 import { BACKEND } from '../constants/backend';
 import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 import { TokenContext, CurrentGameView } from '../constants/hooks';
+import Title from "../components/Title";
 
 
 export default function StaticUrne({idSession}) {
     const token = useContext(TokenContext).token;
     const currentGameView = useContext(CurrentGameView);
-
-
+        
+    const [currentJSX, setJSX] = useState(null);
     const [proposes, setProposes] = useState([]);
-    const [selectedUser, setSelectedUser] = useState(null);
 
     useEffect(() => {
         /**
@@ -26,7 +26,7 @@ export default function StaticUrne({idSession}) {
             })
                 .then(response => response.json())
                 .then((data) => {
-                    //setProposes(data.victimes);
+                    setProposes([]);
                     for (const i in data.victimes){
                         const newVictim = {
                             username: data.victimes[i],
@@ -40,26 +40,36 @@ export default function StaticUrne({idSession}) {
         fetchPropose();
     },[currentGameView]);
 
-    
-    const renderItem = ({item}) => {
-            <Propose 
-                name={item.username} 
-                votes={item.votes} 
-                selected={item.username === selectedUser}
-                />
-    };
-        
+    useEffect(()=>{
+        console.log(proposes);
+        if (proposes.length > 0){
+            const renderItem = ({item}) => {
+                return (
+                  <Propose 
+                    name={item.username} 
+                    votes={item.votes} 
+                    selected={false}
+                    />
+                );
+            } ;
+                
+            // TODO : Rajouter un titre en haut
+            setJSX(
+                <SafeAreaView style={styles.container}>
+                    <FlatList
+                    data={proposes}
+                    keyExtractor={item => item.username}
+                    renderItem={renderItem}
+                    />
+                </SafeAreaView>
+            );
+        } else {
+            setJSX(<Title label='Aucun villageois proposé pour le moment'/>);
+        }
 
-    return(
-        <SafeAreaView style={styles.container}>
-            <FlatList
-            style
-            data={proposes}
-            keyExtractor={item => item.username}
-            renderItem={renderItem}
-            />
-        </SafeAreaView>
-    );
+    },[proposes, currentGameView]);
+
+    return (currentJSX);
 
 }
 

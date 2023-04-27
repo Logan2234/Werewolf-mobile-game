@@ -1,21 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Propose from "../components/Propose";
 import { FlatList, SafeAreaView } from "react-native";
 import Bouton from "../components/Bouton";
-import SizedText from "../components/SizedText";
 import { BACKEND } from "../constants/backend";
 import { Pressable } from "react-native";
 import ChoixUrne from "./ChoixUrne";
+import { TokenContext, CurrentGameView } from '../constants/hooks';
+
 
 /**
  * Ecran où on peut choisir de ratifier une proposition
  * @param {*} param0 
  * @returns 
  */
-export default function Proposition({idSession, token}) {
+export default function Proposition({idSession}) {
     const [proposes, setProposes] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [currentJSX, setJSX] = useState(null);
+
+    const token = useContext(TokenContext).token;
+    // TODO : Rajouter un backhandler
 
 
     useEffect(()=>{
@@ -48,7 +52,7 @@ export default function Proposition({idSession, token}) {
               </Pressable>
             );
           };
-        
+        //TODO : ajouter un titre en haut
         setJSX(
             <SafeAreaView>
                 <FlatList
@@ -56,7 +60,7 @@ export default function Proposition({idSession, token}) {
                     renderItem={renderItem}
                 />
                 <SafeAreaView>
-                    <Bouton label='Choisir' onPress={choisir}/>
+                    <Bouton label='Choisir' onPress={choisir}/> //TODO : foutre ce bouton en bas
                 </SafeAreaView>
             </SafeAreaView>
         )

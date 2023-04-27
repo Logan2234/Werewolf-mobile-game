@@ -4,6 +4,7 @@ import { useEffect, useState, useContext } from 'react';
 import ChoixUrne from './ChoixUrne';
 import StaticUrne from './StaticUrne';
 import { TokenContext, CurrentGameView } from '../constants/hooks';
+import { BACKEND } from '../constants/backend';
 
 
 export default function VoteView({idSession}) {
@@ -13,6 +14,7 @@ export default function VoteView({idSession}) {
     const currentGameView = useContext(CurrentGameView);
     const token = useContext(TokenContext).token;
 
+    // TODO : Gérer le cas où la décision a déjà été prise
 
     useEffect (()=>{
         function setViewVote(){
@@ -38,19 +40,26 @@ export default function VoteView({idSession}) {
         }
 
         /**
-         * TODO : Fonction qui indique si j'ai le droit de voter
+         * Fonction qui indique si j'ai le droit de voter
+         * TODO :  requête pétée mais ok?
          */
-        function canIVote(){
-            fetch(`${BACKEND}/game/${idSession}/vote/check`, {
+        async function canIVote(){
+            let canVote = false;
+            await fetch(`${BACKEND}/game/${idSession}/vote/check`, {
                 method: 'GET',
                 headers: { 'x-access-token': token, 
                 'Content-Type': 'application/json' }
             })
                 .then(response => response.json())
                 .then(data => {
-                    if()
+                    console.log(data);
+                    if (data.status == true){
+                        canVote = true;
+                    } else {
+                       canVote = false;
+                    }
                 });
-    
+            return(canVote);
         }
 
         if (canISeeVotes()){
@@ -60,6 +69,7 @@ export default function VoteView({idSession}) {
                 setVoteState(1);
             }
         } else {
+            console.log("wtf")
             setVoteState(2);
         }
         setViewVote();

@@ -1,7 +1,7 @@
 
 
 // Patches
-const {inject, errorHandler} = require('express-custom-error');
+const { inject, errorHandler } = require('express-custom-error');
 inject(); // Patch express in order to use async / await syntax
 
 // Require Dependencies
@@ -10,6 +10,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const helmet = require('helmet');
+const http = require('http');
 
 
 const logger = require('./util/logger');
@@ -29,10 +30,9 @@ const { PORT } = process.env;
 // Instantiate an Express Application
 const app = express();
 
-
 // Configure Express App Instance
-app.use(express.json( { limit: '50mb' } ));
-app.use(express.urlencoded( { extended: true, limit: '10mb' } ));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Configure custom logger middleware
 app.use(logger.dev, logger.combined);
@@ -63,8 +63,8 @@ app.use(errorHandler());
 // Handle not valid route
 app.use('*', (req, res) => {
     res
-    .status(404)
-    .json( {status: false, message: 'Endpoint Not Found'} );
+        .status(404)
+        .json({ status: false, message: 'Endpoint Not Found' });
 })
 
 // Open Server on selected Port
@@ -72,3 +72,15 @@ app.listen(
     PORT,
     () => console.info('Server listening on port ', PORT)
 );
+
+const ws = require("ws");
+const wss = new ws.Server({ port: 8080 });
+
+wss.on('connection', function (socket) {
+    socket.on('message', (msg) => {
+        wss.clients.forEach((client) => {
+            if (client.readyState === ws.OPEN)
+                client.send(msg.toString())
+        });
+    });
+});

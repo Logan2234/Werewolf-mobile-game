@@ -66,7 +66,7 @@ export default function InfoView({ idSession }) {
                 method: 'GET',
             })
                 .then(response => response.json())
-                .then(data => setAliveWerewolves(data.nbWerewolfs))
+                .then(data => setAliveWerewolves(data.nbWerewolves))
                 .then(() => setCanShow(true))
                 .catch(error => alert(error.message));
         }
@@ -80,9 +80,6 @@ export default function InfoView({ idSession }) {
             fetchAliveWerewolves();
         }
     }, [currentGameView, idSession, token]);
-
-    const dayOrNight = (gameData.moment === 'N') ? 'Nuit' : 'Jour';
-    const role = (userData.role === 'V') ? 'Villageois' : 'Loup-garou';
 
     let pouvoir;
     switch (userData.pouvoir) {
@@ -98,18 +95,16 @@ export default function InfoView({ idSession }) {
             pouvoir = 'Aucun'; break;
     }
 
-    const vie = (userData.vie === 'V') ? 'Vivant' : 'Mort';
-
     return (
         <View style={[commonStyles.container, styles.infoView]}>
             {
                 (canShow)
                     ? <>
-                        <Title style={styles.title} label={dayOrNight} />
+                        <Title label={(gameData.moment === 'N') ? 'Nuit' : 'Jour'} />
                         <View style={styles.status}>
-                            <SizedText label={`Rôle: ${role}`} />
+                            <SizedText label={`Rôle: ${(userData.role === 'V') ? 'Villageois' : 'Loup-garou'}`} />
                             <SizedText label={`Pouvoir: ${pouvoir}`} />
-                            <SizedText label={`Vie: ${vie}`} />
+                            <SizedText label={`Vie: ${(userData.vie === 'V') ? 'Vivant' : 'Mort'}`} />
                         </View>
 
                         <View style={styles.time}>
@@ -137,27 +132,24 @@ export default function InfoView({ idSession }) {
 }
 
 const styles = StyleSheet.create({
-    title: {
-        backgroundColor: 'grey',
-    },
     infoView: {
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'center',
     },
     status: {
-        backgroundColor: 'red',
         display: 'flex',
+        alignItems: 'center',
         gap: 20
     },
     time: {
-        backgroundColor: 'green',
         display: 'flex',
+        alignItems: 'center',
         gap: 20
     },
     gameStatus: {
-        backgroundColor: 'purple',
         display: 'flex',
+        alignItems: 'center',
         gap: 20
     }
 });

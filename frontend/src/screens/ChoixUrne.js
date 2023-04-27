@@ -40,7 +40,12 @@ export default function ChoixUrne({idSession}) {
                     }
                 })
         }
-
+        
+        
+        fetchPropose();
+    },[currentGameView]);
+    
+    useEffect(()=>{
         /**
          * Requête qui permet de voter pour le joueur sélectionné
          */
@@ -92,11 +97,8 @@ export default function ChoixUrne({idSession}) {
                 </SafeAreaView>
             );
         }
-        
-        fetchPropose();
-    },[currentGameView]);
 
-    useEffect
+    },[ratifie, selectedUser, currentGameView, proposes])
 
 
     return(currentJSX);

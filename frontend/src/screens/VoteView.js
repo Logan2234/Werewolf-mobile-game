@@ -41,7 +41,16 @@ export default function VoteView({idSession}) {
          * TODO : Fonction qui indique si j'ai le droit de voter
          */
         function canIVote(){
-            return true;
+            fetch(`${BACKEND}/game/${idSession}/vote/check`, {
+                method: 'GET',
+                headers: { 'x-access-token': token, 
+                'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if()
+                });
+    
         }
 
         if (canISeeVotes()){

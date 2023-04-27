@@ -54,7 +54,7 @@ export default function Discussion({idDiscussion, token, idSession}) {
         canIWriteHere();
         getMessages();
 
-    },[token, currentGameView, canWrite])
+    },[token, currentGameView, canWrite]);
     // TODO: rafraichissement actuellement au changement de page
     
 
@@ -73,7 +73,7 @@ export default function Discussion({idDiscussion, token, idSession}) {
             }}
           />
         );
-      }
+      };
 
 
 
@@ -100,7 +100,7 @@ export default function Discussion({idDiscussion, token, idSession}) {
                     />
                 </SafeAreaView>
             </SafeAreaView>
-        )
+        );
     } else {
         return (
             <SafeAreaView style={styles.container}>
@@ -111,7 +111,7 @@ export default function Discussion({idDiscussion, token, idSession}) {
                     ItemSeparatorComponent={ItemDivider}
                 />
             </SafeAreaView>
-        )
+        );
     }
 
 

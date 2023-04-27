@@ -1,19 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Propose from "../components/Propose";
 import Proposition from "./Proposition";
 import { BACKEND } from '../constants/backend';
-import { FlatList, Pressable, SafeAreaView, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, SafeAreaView, StyleSheet } from "react-native";
 import Bouton from "../components/Bouton";
+import StaticUrne from "./StaticUrne";
+import { TokenContext, CurrentGameView } from '../constants/hooks';
 
-export default function ChoixUrne({idSession, token, canVote}) {
+
+export default function ChoixUrne({idSession}) {
     const [proposes, setProposes] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [ratifie, setRatifie] = useState(true);
+    const [currentJSX, setJSX] = useState(null);
+
+    const token = useContext(TokenContext).token;
+    const currentGameView = useContext(CurrentGameView);
 
     useEffect(() => {
         /**
          * Requête qui renvoie la liste des personnes proposées et les met dans proposes
-         * !TODO : à fix (faire fonction pour reformatter le data avec username et nb de vote)
+         * 
          */
         function fetchPropose(){
             fetch(`${BACKEND}/game/${idSession}/vote/`, {
@@ -23,48 +30,54 @@ export default function ChoixUrne({idSession, token, canVote}) {
             })
                 .then(response => response.json())
                 .then((data) => {
-                    setProposes(data.victimes);
+                    setProposes([]);
+                    for (const i in data.victimes){
+                        const newVictim = {
+                            username: data.victimes[i],
+                            votes: data.votesPour[i] - data.votesContre[i]
+                        };
+                        setProposes(proposes => [...proposes, newVictim]);
+                    }
                 })
         }
 
-        fetchPropose();
-    },[]);
-
-    /**
-     * TODO : requête qui permet de voter pour le joueur sélectionné
-     */
-    async function vote(){}
-
-    /**
-     * TODO : fonction qui envoie sur la page des propositions
-     */
-    function propose(){
-        setRatifie(false);
-    }
-
-    const renderItem = ({item}) => {
-        if (canVote){
-            return (
-            <Pressable onPress={() => setSelectedUser(item.username)} >
-              <Propose 
-                name={item.username} 
-                votes={item.votes} 
-                selected={item.username === selectedUser}
-                />
-            </Pressable>
-            );
-        } else {
-            return (<Propose 
-                name={item.username} 
-                votes={item.votes} 
-                selected={item.username === selectedUser}
-                />
-            );
+        /**
+         * Requête qui permet de voter pour le joueur sélectionné
+         */
+        function vote(){
+            fetch(`${BACKEND}/game/${idSession}/vote/`, {
+                method: 'POST',
+                headers: { 'x-access-token': token, 
+                'Content-Type': 'application/json' },
+                body: JSON.stringify({data: '{"victime": "'+ selectedUser +'", "decision":"true"}'})
+            })
+                .then(response => response.json())
+                .then(()=>setJSX(<StaticUrne idSession={idSession}/> ))
+    
         }
-      };
-    if (ratifie){
-        if (canVote){
-            return(
+    
+        /**
+         * Fonction qui indique que l'on va sur la page des propositions
+         */
+        function propose(){
+            setRatifie(false);
+            setJSX(<Proposition idSession={idSession} token={token}/>);
+        }
+    
+        const renderItem = ({item}) => {
+                return (
+                <Pressable onPress={() => setSelectedUser(item.username)} >
+                  <Propose 
+                    name={item.username} 
+                    votes={item.votes} 
+                    selected={item.username === selectedUser}
+                    />
+                </Pressable>
+                );
+            } ;
+    
+        if (ratifie){
+            setJSX(
                 <SafeAreaView style={styles.container}>
                     <FlatList
                         style
@@ -78,23 +91,15 @@ export default function ChoixUrne({idSession, token, canVote}) {
                     </SafeAreaView>
                 </SafeAreaView>
             );
-        } else {
-            return (
-                <SafeAreaView style={styles.container}>
-                    <FlatList
-                    style
-                    data={proposes}
-                    keyExtractor={item => item.username}
-                    renderItem={renderItem}
-                    />
-                </SafeAreaView>
-            );
         }
-    } else {
-        return(
-            <Proposition idSession={idSession} token={token}/>
-        );
-    }
+        
+        fetchPropose();
+    },[currentGameView]);
+
+    useEffect
+
+
+    return(currentJSX);
 
 }
 

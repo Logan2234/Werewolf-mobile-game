@@ -2,6 +2,7 @@ import { View } from 'react-native';
 import Title from '../components/Title';
 import { useEffect, useState, useContext } from 'react';
 import ChoixUrne from './ChoixUrne';
+import StaticUrne from './StaticUrne';
 import { TokenContext, CurrentGameView } from '../constants/hooks';
 
 
@@ -18,10 +19,10 @@ export default function VoteView({idSession}) {
             switch (voteState) {
                 case 0:
                     //0:en attente de vote => Urne + boutons d'envoi/propose
-                    setVoteJSX(<ChoixUrne idSession={idSession} token={token} canVote={true}/>); break;
+                    setVoteJSX(<ChoixUrne idSession={idSession} token={token} />); break;
                 case 1:
                     //1:ne peut pas/plus voter => Urne visible
-                    setVoteJSX(<ChoixUrne idSession={idSession} token={token} canVote={false}/>); break;
+                    setVoteJSX(<StaticUrne idSession={idSession} />); break;
                 case 2:
                     //2:ne peut pas voir
                     setVoteJSX(<Title label='Pas de vote disponible pour le moment'/>); break;

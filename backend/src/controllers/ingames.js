@@ -599,6 +599,36 @@ module.exports = {
         }
     },
 
+    async canISeeTheVote(req, res) {
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        if (userInGame.vie == "M") {
+            res.json({status: true, message: 'You can see the vote !'})
+            return
+        } else {
+            const game = await inGameModel.findOne({where: {"id": idGame}})
+            if (game.voted) {
+                res.json({status: false, message: 'Too much votes for this night !'})
+                return 
+            }
+            if (game.moment != "N") {
+                res.json({status: true, message: 'You can see the vote !'})
+                return
+            } else {
+                if (userInGame.role == "LG" || userInGame.pouvoir == "I") {
+                    res.json({status: true, message: 'You can see the vote !'})
+                    return
+                } else {
+                    res.json({status: false, message: 'You cannot see the vote...'})
+                    return
+                }
+            }
+        }
+    },
+
     async getInfoVotes (req, res) {
         let {idGame} = req.params
 

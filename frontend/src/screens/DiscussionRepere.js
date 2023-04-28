@@ -1,6 +1,4 @@
 import Discussion from "../components/Discussion";
-import { commonStyles } from "../constants/style";
-import { vues } from "../constants/screens";
 import Title from "../components/Title";
 import { View, StyleSheet } from "react-native";
 

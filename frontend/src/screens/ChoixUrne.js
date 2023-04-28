@@ -6,7 +6,9 @@ import { FlatList, Pressable, SafeAreaView, StyleSheet } from "react-native";
 import Bouton from "../components/Bouton";
 import StaticUrne from "./StaticUrne";
 import { TokenContext, CurrentGameView } from '../constants/hooks';
-import { commonStyles } from "../constants/style";
+import { commonStyles, fontSize } from "../constants/style";
+import SizedText from "../components/SizedText";
+import Title from "../components/Title";
 
 
 export default function ChoixUrne({idSession}) {
@@ -21,6 +23,7 @@ export default function ChoixUrne({idSession}) {
     useEffect(() => {
         /**
          * Requête qui renvoie la liste des personnes proposées et les met dans proposes
+         *  TODO : actualiser l'affichage via websocket sur l'ajout des votes
          */
         function fetchPropose(){
             fetch(`${BACKEND}/game/${idSession}/vote/`, {
@@ -84,10 +87,10 @@ export default function ChoixUrne({idSession}) {
                 );
             } ;
     
-        // TODO : Rajouter un titre en haut
         if (action){
             setJSX(
                 <SafeAreaView style={styles.container}>
+                    <Title label='Ratifer une décision'/>
                     <FlatList
                         data={proposes}
                         keyExtractor={item => item.username}

@@ -7,6 +7,7 @@ import { Pressable } from "react-native";
 import ChoixUrne from "./ChoixUrne";
 import { TokenContext, CurrentGameView } from '../constants/hooks';
 import { commonStyles } from "../constants/style";
+import Title from "../components/Title";
 
 /**
  * Ecran où on peut choisir de ratifier une proposition
@@ -19,7 +20,7 @@ export default function Proposition({idSession}) {
     const [currentJSX, setJSX] = useState(null);
 
     const token = useContext(TokenContext).token;
-    // TODO : Rajouter un backhandler pour retourner au vote
+    // TODO : Rajouter un backhandler pour retourner à la ratification
 
 
     useEffect(()=>{
@@ -52,10 +53,9 @@ export default function Proposition({idSession}) {
               </Pressable>
             );
           };
-        //TODO : ajouter un titre en haut
-        //TODO : foutre ce bouton en bas
         setJSX(
             <SafeAreaView style={styles.container}>
+                <Title label='Proposer un joueur'/>
                 <FlatList
                     data={proposes}
                     renderItem={renderItem}
@@ -73,15 +73,16 @@ export default function Proposition({idSession}) {
      * Fonction qui envoie sur la page des votes
      */
     function choisir(){
-        fetch(`${BACKEND}/game/${idSession}/vote/start`, {
-            method: 'POST',
-            headers: { 'x-access-token': token, 
-            'Content-Type': 'application/json' },
-            body: JSON.stringify({data: '{"victime": "'+ selectedUser +'"}'})
-        })
-            .then(response => response.json())
-            .then(()=>setJSX(<ChoixUrne idSession={idSession} token={token} canVote={false}/> ))
-
+        if (selectedUser !== null){
+            fetch(`${BACKEND}/game/${idSession}/vote/start`, {
+                method: 'POST',
+                headers: { 'x-access-token': token, 
+                'Content-Type': 'application/json' },
+                body: JSON.stringify({data: '{"victime": "'+ selectedUser +'"}'})
+            })
+                .then(response => response.json())
+                .then(()=>setJSX(<ChoixUrne idSession={idSession} token={token} canVote={false}/> ));
+        }
     }
 
 

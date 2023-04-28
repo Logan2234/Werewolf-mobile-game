@@ -53,9 +53,9 @@ export default function StaticUrne({idSession}) {
                 );
             } ;
                 
-            // TODO : Rajouter un titre en haut
             setJSX(
                 <SafeAreaView style={styles.container}>
+                    <Title label='Etat actuel des votes'/>
                     <FlatList
                     data={proposes}
                     keyExtractor={item => item.username}

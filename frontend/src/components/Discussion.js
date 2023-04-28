@@ -2,16 +2,17 @@ import Message from "./Message"
 import InputMessage from "./InputMessage";
 import { BACKEND } from '../constants/backend';
 import { useEffect, useState, useContext } from 'react';
-import { StyleSheet, View, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, View, SafeAreaView, FlatList, BackHandler } from "react-native";
 import { secondaryColor } from "../constants/colors";
 import { TokenContext, CurrentGameView } from '../constants/hooks';
+import VoteView from "../screens/VoteView";
 
 
 export default function Discussion({idDiscussion, token, idSession}) {
     const currentGameView = useContext(CurrentGameView);
     const [canWrite, setWriting] = useState(false);
     const [messages, setMessages] = useState([]);
-
+    const [currentJSX, setJSX] = useState(null);
 
 
     useEffect(()=>{
@@ -48,70 +49,78 @@ export default function Discussion({idDiscussion, token, idSession}) {
                 })
         }
 
+        // TODO : tester avec téléphone (oupsi)
+        const backActionHandler = () => {
+            setJSX(<VoteView idSession={idSession}/>);
+            return true;
+        };
+        BackHandler.addEventListener('hardwareBackPress', backActionHandler);
         canIWriteHere();
         getMessages();
+        return () => BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
 
-    },[token, currentGameView, canWrite]);
+    },[currentGameView]);
     // TODO: rafraichissement actuellement au changement de page => websocket sur les nouveaux messages
     
 
-    /**
-     * 
-     * @returns cute JSX Divider between messages
-     */
-    const ItemDivider = () => {
-        return (
-          <View
-            style={{
-              height: 1,
-              width: "100%",
-              backgroundColor: secondaryColor,
-              marginVertical: 5
-            }}
-          />
-        );
-      };
-
-
-
-    /**
-     * Renvoie l'affichage
-     * 
-     */
-    // TODO : rajouter un retour en arrière
-    if (canWrite) {
-        return (
-            <SafeAreaView style={styles.container}>
-                <FlatList
-                    style = {styles.flat}
-                    data = {messages}
-                    renderItem={({item}) => <Message pseudo={item.username} text={item.message} />}
-                    keyExtractor={item => item.timePosted}
-                    ItemSeparatorComponent={ItemDivider}
-                />
-                <SafeAreaView>
-                    <InputMessage 
-                        token={token} 
-                        idDiscussion={idDiscussion} 
-                        idSession={idSession}
+    useEffect(()=>{
+        /**
+         * 
+         * @returns cute JSX Divider between messages
+         */
+        const ItemDivider = () => {
+            return (
+              <View
+                style={{
+                  height: 1,
+                  width: "100%",
+                  backgroundColor: secondaryColor,
+                  marginVertical: 5
+                }}
+              />
+            );
+          };
+    
+    
+    
+        /**
+         * Renvoie l'affichage
+         * 
+         */
+        if (canWrite) {
+            setJSX (
+                <SafeAreaView style={styles.container}>
+                    <FlatList
+                        style = {styles.flat}
+                        data = {messages}
+                        renderItem={({item}) => <Message pseudo={item.username} text={item.message} />}
+                        keyExtractor={item => item.timePosted}
+                        ItemSeparatorComponent={ItemDivider}
+                    />
+                    <SafeAreaView>
+                        <InputMessage 
+                            token={token} 
+                            idDiscussion={idDiscussion} 
+                            idSession={idSession}
+                        />
+                    </SafeAreaView>
+                </SafeAreaView>
+            );
+        } else {
+            setJSX (
+                <SafeAreaView style={styles.container}>
+                    <FlatList
+                        data = {messages}
+                        renderItem={({item}) => <Message pseudo={item.username} text={item.message} />}
+                        keyExtractor={item => item.timePosted}
+                        ItemSeparatorComponent={ItemDivider}
                     />
                 </SafeAreaView>
-            </SafeAreaView>
-        );
-    } else {
-        return (
-            <SafeAreaView style={styles.container}>
-                <FlatList
-                    data = {messages}
-                    renderItem={({item}) => <Message pseudo={item.username} text={item.message} />}
-                    keyExtractor={item => item.timePosted}
-                    ItemSeparatorComponent={ItemDivider}
-                />
-            </SafeAreaView>
-        );
-    }
+            );
+        }
+    }, [messages, currentGameView, canWrite])
 
-
+    return(currentJSX);
 }
 
 

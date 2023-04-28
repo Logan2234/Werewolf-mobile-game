@@ -6,6 +6,7 @@ import { FlatList, Pressable, SafeAreaView, StyleSheet } from "react-native";
 import Bouton from "../components/Bouton";
 import StaticUrne from "./StaticUrne";
 import { TokenContext, CurrentGameView } from '../constants/hooks';
+import { commonStyles } from "../constants/style";
 
 
 export default function ChoixUrne({idSession}) {
@@ -92,7 +93,7 @@ export default function ChoixUrne({idSession}) {
                         keyExtractor={item => item.username}
                         renderItem={renderItem}
                     />
-                    <SafeAreaView  style={styles.bottom} >
+                    <SafeAreaView  style={[commonStyles.bottom, styles.bottom]} >
                             <Bouton label='Voter' onPress={vote}/>
                             <Bouton label='Proposer' onPress={propose}/>
                     </SafeAreaView>
@@ -108,18 +109,10 @@ export default function ChoixUrne({idSession}) {
 
 
 const styles = StyleSheet.create({
-    bottom: { //!TODO: foutre ce bouton de ses grands-morts en bas
-        position: 'absolute', // TODO  : ça marche paaaaaaas
-        bottom: 0,
-        top: 90,
-        width: '95%',
-        flex: 1,
-        justifyContent: 'space-between',
+    bottom: {
         flexDirection: 'column',
         margin: 2,
-        gap: 10,
-        alignSelf: 'center',
-        backgroundColor: 'blue',
+        gap: 10
     },
     
     

@@ -53,11 +53,7 @@ const styles = StyleSheet.create({
     },
 
     pseudoSel: {
-        fontWeight: 'bold',
-        color: 'red' //TODO : meilleure couleur 
-    },
-
-    pseudoSel: {
         fontWeight: 'bold'
     },
+
 })

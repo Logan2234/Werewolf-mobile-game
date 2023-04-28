@@ -7,7 +7,7 @@ import { View, StyleSheet } from "react-native";
 
 export default function DiscussionRepere({ token, idSession }) {
 
-    // TODO : rajouter la liste des loups-garous dans un menu dépliant pour savoir avec qui on est
+    // TODO : rajouter la liste des loups-garous pour savoir avec qui on est
     return(
         <View style={styles.container}>
             <Title label='Repère des Loups-Garous' />

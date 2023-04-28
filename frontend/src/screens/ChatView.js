@@ -27,7 +27,7 @@ export default function ChatView({idSession}) {
     // ------------------------ Fonction pour factorise le code -------------------------
     /**
      * Récupère les constantes dans le back
-     * TODO : réussir à faire trois appels avant le premier affichage + actualiser l'affichage
+     * TODO : actualiser l'affichage via websocket sur l'ajout des votes
      */
     useEffect(()=>{
         function setViewChat() {

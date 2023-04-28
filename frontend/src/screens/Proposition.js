@@ -1,12 +1,12 @@
 import { useEffect, useState, useContext } from "react";
 import Propose from "../components/Propose";
-import { FlatList, SafeAreaView } from "react-native";
+import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 import Bouton from "../components/Bouton";
 import { BACKEND } from "../constants/backend";
 import { Pressable } from "react-native";
 import ChoixUrne from "./ChoixUrne";
 import { TokenContext, CurrentGameView } from '../constants/hooks';
-
+import { commonStyles } from "../constants/style";
 
 /**
  * Ecran où on peut choisir de ratifier une proposition
@@ -19,7 +19,7 @@ export default function Proposition({idSession}) {
     const [currentJSX, setJSX] = useState(null);
 
     const token = useContext(TokenContext).token;
-    // TODO : Rajouter un backhandler
+    // TODO : Rajouter un backhandler pour retourner au vote
 
 
     useEffect(()=>{
@@ -39,7 +39,7 @@ export default function Proposition({idSession}) {
         }
         
         fetchEligible();
-    } ,[]);
+    } ,[CurrentGameView]);
 
     useEffect(() => { 
         const renderItem = ({item}) => {
@@ -53,14 +53,17 @@ export default function Proposition({idSession}) {
             );
           };
         //TODO : ajouter un titre en haut
+        //TODO : foutre ce bouton en bas
         setJSX(
-            <SafeAreaView>
+            <SafeAreaView style={styles.container}>
                 <FlatList
                     data={proposes}
                     renderItem={renderItem}
                 />
                 <SafeAreaView>
-                    <Bouton label='Choisir' onPress={choisir}/> //TODO : foutre ce bouton en bas
+                    <SafeAreaView style={[commonStyles.bottom, styles.bottom]}>
+                        <Bouton label='Choisir' onPress={choisir} />
+                    </SafeAreaView>
                 </SafeAreaView>
             </SafeAreaView>
         )
@@ -85,3 +88,19 @@ export default function Proposition({idSession}) {
 
     return(currentJSX);
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'space-between',
+        paddingTop: 5,
+        flexDirection: 'column',
+        flexGrow: 1
+    },
+
+    bottom: {
+        justifyContent: 'space-between',
+        margin: 2
+    }
+
+})

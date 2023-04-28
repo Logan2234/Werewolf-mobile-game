@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Title from '../components/Title';
 import { useEffect, useState, useContext } from 'react';
 import ChoixUrne from './ChoixUrne';
@@ -78,7 +78,16 @@ export default function VoteView({idSession}) {
 
 
     return (
-        <View>
+        <View style={styles.container}>
             {voteJSX}
         </View>);
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 10,
+        flexDirection: 'column',
+      },
+    
+})

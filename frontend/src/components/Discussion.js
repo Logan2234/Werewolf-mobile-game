@@ -126,7 +126,6 @@ const styles = StyleSheet.create({
 
     flat: {
         margin: 50 //pour laisse la place à l'input si nécessaire 
-        //TODO : à opti plus tard
     }
     
 })

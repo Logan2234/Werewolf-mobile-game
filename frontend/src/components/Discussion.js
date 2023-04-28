@@ -17,22 +17,19 @@ export default function Discussion({idDiscussion, token, idSession}) {
     useEffect(()=>{
         /**
          * Renvoie un booléen pour indiquer si on peut envoyer des messages 
-         * !TODO Requête sera à revoir (:
          */
         function canIWriteHere(){
-            // fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}`, {
-            //     method: 'POST',
-            //     headers: {'x-access-token': {token},
-            //             'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ data: '{"message": "a"}' })
-            // })
-            // .then(response => response.json())
-            // .then (() => {
-            //     setWriting(true);
-            //     console.log("I am allowed write here");})
-            // .catch( error => {
-            //     setWriting(false);
-            //     console.log("I am not allowed write here")});
+            console.log(token);
+            fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}/check`, {
+                method: 'GET',
+                headers: {'x-access-token': token,
+                        'Content-Type': 'application/json' }})
+            .then(response => response.json())
+            .then ((data) => {
+                setWriting(data.status);})
+            .catch( error => {
+                setWriting(false);
+                console.log(error)});
             setWriting(true);        
         };
 
@@ -55,7 +52,7 @@ export default function Discussion({idDiscussion, token, idSession}) {
         getMessages();
 
     },[token, currentGameView, canWrite]);
-    // TODO: rafraichissement actuellement au changement de page
+    // TODO: rafraichissement actuellement au changement de page => websocket sur les nouveaux messages
     
 
     /**

@@ -584,7 +584,7 @@ module.exports = {
                 res.json({status: false, message: 'A vote has already been decided'})
                 return 
             }
-            if (game.moment != "J") {
+            if (game.moment != "N") {
                 res.json({status: true, message: 'You can vote now !'})
                 return
             } else {

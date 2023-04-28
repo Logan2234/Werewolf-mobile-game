@@ -37,7 +37,7 @@ module.exports = {
             throw new CodeError('Your specifications must be integers', status.BAD_REQUEST)
 
         if (nbMinJoueurs < 5)
-        throw new CodeError('The minimum number of players must be at least 5', status.BAD_REQUEST)
+            throw new CodeError('The minimum number of players must be at least 5', status.BAD_REQUEST)
 
         if (nbMaxJoueurs > 100)
             throw new CodeError('The maximum number of players must be at most 100', status.BAD_REQUEST)

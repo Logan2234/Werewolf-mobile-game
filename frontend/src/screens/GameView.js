@@ -43,7 +43,7 @@ export default function GameView({ idSession }) {
                         <ChatView idSession={idSession}  />
                     </TabView.Item>
                     <TabView.Item style={{ width: '100%' }}>
-                        <VoteView />
+                        <VoteView idSession={idSession}/>
                     </TabView.Item>
                     <TabView.Item style={{ width: '100%' }}>
                         <PlayerView idSession={idSession} />

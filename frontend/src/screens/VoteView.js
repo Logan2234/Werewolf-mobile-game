@@ -35,13 +35,26 @@ export default function VoteView({idSession}) {
         /**
          * TODO : Fonction qui indique si on a accès aux votes
          */
-        function canISeeVotes(){
-            return true;
+        async function canISeeVotes(){
+            let canSeeVote = false;
+            await fetch(`${BACKEND}/game/${idSession}/vote/check-see`, {
+                method: 'GET',
+                headers: { 'x-access-token': token, 
+                'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == true){
+                        canSeeVote = true;
+                    } else {
+                        canSeeVote = false;
+                    }
+                });
+            return(canSeeVote);
         }
 
         /**
          * Fonction qui indique si j'ai le droit de voter
-         * TODO :  requête pétée mais ok?
          */
         async function canIVote(){
             let canVote = false;
@@ -52,7 +65,6 @@ export default function VoteView({idSession}) {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
                     if (data.status == true){
                         canVote = true;
                     } else {
@@ -62,14 +74,16 @@ export default function VoteView({idSession}) {
             return(canVote);
         }
 
-        if (canISeeVotes()){
-            if (canIVote()){
+        if (canISeeVotes()===true){ //! NE PAS ENLEVER LA COMPARAISON (sinon regarde si l'appel fonctionne seulement)
+            if (canIVote()===true){
+                console.log("Allowed to vote");
                 setVoteState(0);
             } else {
+                console.log("Not allowed to vote");
                 setVoteState(1);
             }
         } else {
-            console.log("wtf")
+            console.log("Not allowed to see the vote");
             setVoteState(2);
         }
         setViewVote();

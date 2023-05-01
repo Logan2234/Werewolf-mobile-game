@@ -27,7 +27,7 @@ export default function VoteView({idSession}) {
                     setVoteJSX(<StaticUrne idSession={idSession} />); break;
                 case 2:
                     //2:ne peut pas voir
-                    setVoteJSX(<Title label='Pas de vote disponible pour le moment'/>); break;
+                    setVoteJSX(<Title label='AUCUN VOTE DISPONIBLE POUR L&apos;INSTANT'/>); break;
             }
         }
     

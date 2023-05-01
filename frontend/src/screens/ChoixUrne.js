@@ -7,7 +7,6 @@ import Bouton from "../components/Bouton";
 import StaticUrne from "./StaticUrne";
 import { TokenContext, CurrentGameView } from '../constants/hooks';
 import { commonStyles, fontSize } from "../constants/style";
-import SizedText from "../components/SizedText";
 import Title from "../components/Title";
 
 

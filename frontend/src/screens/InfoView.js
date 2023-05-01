@@ -81,6 +81,7 @@ export default function InfoView({ idSession }) {
         }
     }, [currentGameView, idSession, token]);
 
+
     let pouvoir;
     switch (userData.pouvoir) {
         case 'V':

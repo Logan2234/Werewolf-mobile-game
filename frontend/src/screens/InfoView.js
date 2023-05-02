@@ -8,6 +8,8 @@ import { primaryColor } from '../constants/colors';
 import { CurrentGameView, TokenContext } from '../constants/hooks';
 import { gameViews } from '../constants/screens';
 import { commonStyles } from '../constants/style';
+import ChoixVoyance from './Voyance';
+import ChoixSpiritisme from './Spiritisme';
 
 export default function InfoView({ idSession }) {
     const [alivePlayers, setAlivePlayers] = useState({});
@@ -83,15 +85,22 @@ export default function InfoView({ idSession }) {
 
 
     let pouvoir;
+    let onPress;
     switch (userData.pouvoir) {
         case 'V':
-            pouvoir = 'Voyance'; break;
+            pouvoir = 'Voyance'; 
+            onPress = () => {return(<ChoixVoyance idSession={idSession}/>);};
+            break;
         case 'S':
-            pouvoir = 'Spiritisme'; break;
+            pouvoir = 'Spiritisme'; 
+            onPress = () => {return(<ChoixSpiritisme idSession={idSession}/>);};
+            break;
         case 'I':
             pouvoir = 'Insomnie'; break;
         case 'C':
-            pouvoir = 'Contamination'; break;
+            pouvoir = 'Contamination'; 
+            onPress = () => {return(<Contamination idSession={idSession}/>);};
+            break;
         default:
             pouvoir = 'Aucun'; break;
     }
@@ -122,8 +131,8 @@ export default function InfoView({ idSession }) {
                             <SizedText label={`Nombre de loups-garou: ${aliveWerewolves} / ${gameData.nbLG}`} />
                         </View>
                         {
-                            (userData.role !== 'R' && userData.vivant === 'V')
-                                ? <Bouton style={styles.bouton} label='Utiliser pouvoir' />
+                            ((userData.pouvoir === 'V' || userData.pouvoir === 'C' || userData.pouvoir === 'S')&& userData.vivant === 'V')
+                                ? <Bouton style={styles.bouton} label='Utiliser pouvoir' onPress={onPress} />
                                 : null
                         }
                     </>

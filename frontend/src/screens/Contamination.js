@@ -5,7 +5,7 @@ import { FlatList, Pressable, SafeAreaView } from "react-native/types";
 import Title from "../components/Title";
 
 
-export default function ChoixVoyance({idSession}) {
+export default function Contamination({idSession}) {
     const [proposes, setProposes] = useState([]); //liste des sélectionnables
     const [selectedUser, setSelectedUser] = useState(null); //utilisateur sélectionné
     const [utilise, setUtilise] = useState(false); //précédent usage du pouvoir pendant la nuit
@@ -16,10 +16,10 @@ export default function ChoixVoyance({idSession}) {
 
     useEffect(()=>{
         /**
-         * TODO: Requête qui renvoie la liste des joueurs (cf StaticUrne)
+         * TODO: Requête qui renvoie la liste des joueurs humains (cf StaticUrne)
          * Pour set proposes
          */
-        function fetchJoueurs(){}
+        function fetchHumains(){}
 
         /**
          * TODO : Requete qui vérifie si le pouvoir a déjà été utilisé
@@ -28,16 +28,16 @@ export default function ChoixVoyance({idSession}) {
         function fetchUsage(){}
 
         fetchUsage();
-        fetchJoueurs();
+        fetchHumains();
 
     },[currentGameView]);
 
     useEffect(()=>{
         /**
-         * TODO : Requête qui va récupérer l'ensemble des informations sur le joueur sélectionné
+         * TODO : Requête qui va contaminer le joueur
          * (action lorsque l'on valide le choix du joueur)
          */
-        function seePlayerInfo(){}
+        function contaminer(){}
 
 
         if(utilise === false){
@@ -54,14 +54,14 @@ export default function ChoixVoyance({idSession}) {
 
             setJSX(
                 <SafeAreaView>
-                    <Title label='Voir un joueur'/>
+                    <Title label='Contaminer un joueur'/>
                     <FlatList
                         data={proposes}
                         keyExtractor={item => item.username}
                         renderItem={renderItem}
                     />
                     <SafeAreaView  style={[commonStyles.bottom, styles.bottom]} >
-                            <Bouton label='Sélectionner' onPress={seePlayerInfo}/>
+                            <Bouton label='Sélectionner' onPress={contaminer}/>
                     </SafeAreaView>
                 </SafeAreaView>
             );

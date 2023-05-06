@@ -18,21 +18,24 @@ var timers = {}
 module.exports = {
 
     async canISendAMessageToPlace(req, res) {
+        // #swagger.tags = ['InGames']
+        // #swagger.summary = 'Return if the user can send a message to the main place.'
+
         const username = req.login
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
         const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
         if (userInGame.vie == "M") {
-            res.json({status: false, message: 'You cannot send a message'})
+            res.json({status: false, message: 'You cannot send a message to the main place'})
             return
         } else {
             const session = await inGameModel.findOne({where: {"id": idGame}})
             if (session.moment != "J") {
-                res.json({status: false, message: 'You cannot send a message'})
+                res.json({status: false, message: 'You cannot send a message to the main place'})
                 return
             }
-            res.json({status: true, message: 'You can send a message !'})
+            res.json({status: true, message: 'You can send a message to the main !'})
             return
         }
     },
@@ -563,6 +566,66 @@ module.exports = {
         }
         if (urne.votesContre + urne.votesPour + 1 == urne.nbUsersVote) {
             await finUrne(urne.idUrne, idGame)
+        }
+    },
+
+    async canIVote(req, res) {
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        if (userInGame.vie == "M") {
+            res.json({status: false, message: 'You cannot vote, you are dead'})
+            return
+        } else {
+            const game = await inGameModel.findOne({where: {"id": idGame}})
+            if (game.voted) {
+                res.json({status: false, message: 'A vote has already been decided'})
+                return 
+            }
+            if (game.moment != "N") {
+                res.json({status: true, message: 'You can vote now !'})
+                return
+            } else {
+                if (userInGame.role == "LG") {
+                    res.json({status: true, message: 'You can vote now !'})
+                    return
+                } else {
+                    res.json({status: false, message: 'You cannot vote, it is not the right moment'})
+                    return
+                }
+            }
+        }
+    },
+
+    async canISeeTheVote(req, res) {
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        if (userInGame.vie == "M") {
+            res.json({status: true, message: 'You can see the vote !'})
+            return
+        } else {
+            const game = await inGameModel.findOne({where: {"id": idGame}})
+            if (game.voted) {
+                res.json({status: false, message: 'Too much votes for this night !'})
+                return 
+            }
+            if (game.moment != "N") {
+                res.json({status: true, message: 'You can see the vote !'})
+                return
+            } else {
+                if (userInGame.role == "LG" || userInGame.pouvoir == "I") {
+                    res.json({status: true, message: 'You can see the vote !'})
+                    return
+                } else {
+                    res.json({status: false, message: 'You cannot see the vote...'})
+                    return
+                }
+            }
         }
     },
 

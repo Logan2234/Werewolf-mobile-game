@@ -44,7 +44,7 @@ export default function CreateSessionForm({ setIdSession }) {
         const timer = subDates(startDate, new Date());
 
         if (startDate.getTime() <= new Date().getTime()){
-            Alert.alert('Erreur de données rentrées', 'La date ne peut pas être déjà passée')
+            Alert.alert('Erreur de données rentrées', 'La date ne peut pas être déjà passée');
             return;
         }
 

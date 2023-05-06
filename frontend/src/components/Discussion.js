@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
+import { BackHandler, FlatList, SafeAreaView, View } from 'react-native';
 import { BACKEND } from '../constants/backend';
-import { secondaryColor } from "../constants/colors";
+import { secondaryColor } from '../constants/colors';
 import { CurrentGameView, TokenContext } from '../constants/hooks';
-import InputMessage from "./InputMessage";
-import Message from "./Message";
+import VoteView from '../screens/VoteView';
+import InputMessage from './InputMessage';
+import Message from './Message';
 
 
 export default function Discussion({ idDiscussion, idSession }) {
@@ -13,109 +14,122 @@ export default function Discussion({ idDiscussion, idSession }) {
 
     const [canWrite, setWriting] = useState(false);
     const [messages, setMessages] = useState([]);
+    const [currentJSX, setJSX] = useState(null);
 
-    useEffect(()=>{
+
+    useEffect(() => {
         /**
          * Renvoie un booléen pour indiquer si on peut envoyer des messages
-         * ! Requête sera à revoir (:
          */
-        function canIWriteHere(){
-            // fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}`, {
-            //     method: 'POST',
-            //     headers: {'x-access-token': {token},
-            //             'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ data: '{"message": "a"}' })
-            // })
-            // .then(response => response.json())
-            // .then (() => {
-            //     setWriting(true);
-            //     console.log("I am allowed write here");})
-            // .catch( error => {
-            //     setWriting(false);
-            //     console.log("I am not allowed write here")});
+        function canIWriteHere() {
+            console.log(token);
+            fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}/check`, {
+                method: 'GET',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then((data) => {
+                    setWriting(data.status);
+                })
+                .catch(error => {
+                    setWriting(false);
+                    console.log(error);
+                });
             setWriting(true);
-        };
+        }
 
         /**
          * Lance une requête pour récupérer l'ensemble des messages pour une discussion donnée
          */
-        function getMessages(){
+        function getMessages() {
             fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}`, {
                 method: 'GET',
                 headers: {
                     'x-access-token': token,
-                'Content-Type': 'application/json' }
+                    'Content-Type': 'application/json'
+                }
             })
                 .then(response => response.json())
                 .then((data) => {
                     setMessages(data.messages);
-                })
+                });
         }
 
+        // TODO : tester avec téléphone (oupsi)
+        const backActionHandler = () => {
+            setJSX(<VoteView idSession={idSession} />);
+            return true;
+        };
+        BackHandler.addEventListener('hardwareBackPress', backActionHandler);
         canIWriteHere();
         getMessages();
+        return () => BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
 
-    },[token, currentGameView, canWrite])
-    // TODO: rafraichissement actuellement au changement de page
-
-;
-
-    /**
-     *
-     * @returns cute JSX Divider between messages
-     */
-    const ItemDivider = () => {
-        return (
-          <View
-            style={{
-              height: 1,
-              width: "100%",
-              backgroundColor: secondaryColor,
-              marginVertical: 5
-            }}
-          />
-        );
-      }
+    }, [currentGameView]);
+    // TODO: rafraichissement actuellement au changement de page => websocket sur les nouveaux messages
 
 
-
-    /**
-     * Renvoie l'affichage
-     *
-     */
-    // TODO : rajouter un retour en arrière
-    if (canWrite) {
-        return (
-            <SafeAreaView style={styles.container}>
-                <FlatList
-                    style = {styles.flat}
-                    data = {messages}
-                    renderItem={({item}) => <Message pseudo={item.username} text={item.message} />}
-                    keyExtractor={item => item.timePosted}
-                    ItemSeparatorComponent={ItemDivider}
+    useEffect(() => {
+        /**
+         *
+         * @returns cute JSX Divider between messages
+         */
+        const ItemDivider = () => {
+            return (
+                <View
+                    style={{
+                        height: 1,
+                        width: '100%',
+                        backgroundColor: secondaryColor,
+                        marginVertical: 5
+                    }}
                 />
-                <SafeAreaView>
-                    <InputMessage
-                        idDiscussion={idDiscussion}
-                        idSession={idSession}
+            );
+        };
+
+
+
+        /**
+         * Renvoie l'affichage
+         *
+         */
+        if (canWrite) {
+            setJSX(
+                <SafeAreaView style={styles.container}>
+                    <FlatList
+                        style={styles.flat}
+                        data={messages}
+                        renderItem={({ item }) => <Message pseudo={item.username} text={item.message} />}
+                        keyExtractor={item => item.timePosted}
+                        ItemSeparatorComponent={ItemDivider}
+                    />
+                    <SafeAreaView>
+                        <InputMessage
+                            token={token}
+                            idDiscussion={idDiscussion}
+                            idSession={idSession}
+                        />
+                    </SafeAreaView>
+                </SafeAreaView>
+            );
+        } else {
+            setJSX(
+                <SafeAreaView style={styles.container}>
+                    <FlatList
+                        data={messages}
+                        renderItem={({ item }) => <Message pseudo={item.username} text={item.message} />}
+                        keyExtractor={item => item.timePosted}
+                        ItemSeparatorComponent={ItemDivider}
                     />
                 </SafeAreaView>
-            </SafeAreaView>
-        )
-    } else {
-        return (
-            <SafeAreaView style={styles.container}>
-                <FlatList
-                    data = {messages}
-                    renderItem={({item}) => <Message pseudo={item.username} text={item.message} />}
-                    keyExtractor={item => item.timePosted}
-                    ItemSeparatorComponent={ItemDivider}
-                />
-            </SafeAreaView>
-        )
-    }
+            );
+        }
+    }, [messages, currentGameView, canWrite]);
 
-
+    return (currentJSX);
 }
 
 
@@ -133,4 +147,4 @@ const styles = StyleSheet.create({
         //TODO : à opti plus tard
     }
 
-})
+});

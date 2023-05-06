@@ -5,6 +5,8 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { BACKEND } from '../constants/backend';
 import { placeholderColor, primaryColor, secondaryColor, textColor } from '../constants/colors';
 import { TokenContext } from '../constants/hooks';
+import { commonStyles } from '../constants/style';
+
 
 export default function InputMessage({ idDiscussion, idSession }) {
     const [text, setText]=useState('');
@@ -12,7 +14,6 @@ export default function InputMessage({ idDiscussion, idSession }) {
 
     /**
      * Requête qui envoie le message au serveur et nettoyer l'entrée une fois fait
-     * TODO : A tester -> requete a priori ok mais reste à tester efficacement
      */
     function sendMessage(){
         console.log('Message en cours d\'envoi : ', text);
@@ -35,10 +36,9 @@ export default function InputMessage({ idDiscussion, idSession }) {
 
     /**
      * Renvoyer un affichage sympatique pour l'entrée de texte
-     * TODO : A tester
      */
     return (
-        <View style={styles.bottom}>
+        <View style={[commonStyles.bottom, styles.field]}>
             <TextInput placeholder="Message"
                 placeholderTextColor={placeholderColor}
                 style={styles.input}
@@ -57,15 +57,10 @@ export default function InputMessage({ idDiscussion, idSession }) {
 }
 
 const styles = StyleSheet.create({
-    bottom: {
-        position: 'absolute',
-        bottom: 0,
-        width: '95%',
+    field: {
         borderWidth: 1,
         borderRadius: 5,
         borderColor: secondaryColor,
-        left: 0,
-        flex:1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         height: 40,

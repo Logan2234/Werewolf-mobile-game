@@ -1,24 +1,22 @@
-import Message from "./Message"
-import InputMessage from "./InputMessage";
+import { useContext, useEffect, useState } from 'react';
+import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
 import { BACKEND } from '../constants/backend';
-import { FlatList } from "react-native";
-import { useEffect, useState, useContext } from 'react';
-import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
-import { commonStyles } from "../constants/style";
 import { secondaryColor } from "../constants/colors";
-import { TokenContext, CurrentGameView } from '../constants/hooks';
+import { CurrentGameView, TokenContext } from '../constants/hooks';
+import InputMessage from "./InputMessage";
+import Message from "./Message";
 
 
-export default function Discussion({idDiscussion, token, idSession}) {
+export default function Discussion({ idDiscussion, idSession }) {
     const currentGameView = useContext(CurrentGameView);
+    const token = useContext(TokenContext).token;
+
     const [canWrite, setWriting] = useState(false);
     const [messages, setMessages] = useState([]);
 
-
-
     useEffect(()=>{
         /**
-         * Renvoie un booléen pour indiquer si on peut envoyer des messages 
+         * Renvoie un booléen pour indiquer si on peut envoyer des messages
          * ! Requête sera à revoir (:
          */
         function canIWriteHere(){
@@ -35,7 +33,7 @@ export default function Discussion({idDiscussion, token, idSession}) {
             // .catch( error => {
             //     setWriting(false);
             //     console.log("I am not allowed write here")});
-            setWriting(true);        
+            setWriting(true);
         };
 
         /**
@@ -44,7 +42,8 @@ export default function Discussion({idDiscussion, token, idSession}) {
         function getMessages(){
             fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}`, {
                 method: 'GET',
-                headers: { 'x-access-token': token, 
+                headers: {
+                    'x-access-token': token,
                 'Content-Type': 'application/json' }
             })
                 .then(response => response.json())
@@ -58,11 +57,11 @@ export default function Discussion({idDiscussion, token, idSession}) {
 
     },[token, currentGameView, canWrite])
     // TODO: rafraichissement actuellement au changement de page
-    
+
 ;
 
     /**
-     * 
+     *
      * @returns cute JSX Divider between messages
      */
     const ItemDivider = () => {
@@ -82,7 +81,7 @@ export default function Discussion({idDiscussion, token, idSession}) {
 
     /**
      * Renvoie l'affichage
-     * 
+     *
      */
     // TODO : rajouter un retour en arrière
     if (canWrite) {
@@ -96,9 +95,8 @@ export default function Discussion({idDiscussion, token, idSession}) {
                     ItemSeparatorComponent={ItemDivider}
                 />
                 <SafeAreaView>
-                    <InputMessage 
-                        token={token} 
-                        idDiscussion={idDiscussion} 
+                    <InputMessage
+                        idDiscussion={idDiscussion}
                         idSession={idSession}
                     />
                 </SafeAreaView>
@@ -131,8 +129,8 @@ const styles = StyleSheet.create({
     },
 
     flat: {
-        margin: 50 //pour laisse la place à l'input si nécessaire 
+        margin: 50 //pour laisse la place à l'input si nécessaire
         //TODO : à opti plus tard
     }
-    
+
 })

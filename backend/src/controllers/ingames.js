@@ -700,7 +700,7 @@ let getLG = async (idGame) => {
     }
     let LGUsers = []
     for (let i = 0; i < playersLG.length; i++) {
-        LGUsers.push(await userModel.findOne({where: {"id": playersLG[i].idUser}}))
+        LGUsers.push((await userModel.findOne({ where: { "id": playersLG[i].idUser } })).username)
     }
     return LGUsers
 }

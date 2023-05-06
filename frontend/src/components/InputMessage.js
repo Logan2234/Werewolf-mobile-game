@@ -1,13 +1,14 @@
 //InputMesssage.js
-import { useState } from "react";
-import { TextInput, StyleSheet, View, Alert } from "react-native";
-import { secondaryColor, textColor, placeholderColor } from "../constants/colors";
-import { primaryColor } from "../constants/colors";
-import { Icon } from "@rneui/base";
-import { BACKEND } from "../constants/backend";
+import { Icon } from '@rneui/base';
+import { useContext, useState } from 'react';
+import { StyleSheet, TextInput, View } from 'react-native';
+import { BACKEND } from '../constants/backend';
+import { placeholderColor, primaryColor, secondaryColor, textColor } from '../constants/colors';
+import { TokenContext } from '../constants/hooks';
 
-export default function InputMessage({token, idDiscussion, idSession}){
+export default function InputMessage({ idDiscussion, idSession }) {
     const [text, setText]=useState('');
+    const token = useContext(TokenContext).token;
 
     /**
      * Requête qui envoie le message au serveur et nettoyer l'entrée une fois fait
@@ -19,12 +20,15 @@ export default function InputMessage({token, idDiscussion, idSession}){
             fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}`, {
                 method: 'POST',
                 headers: {'x-access-token': token,
-                         'Content-Type': 'application/json' },
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({ data: '{"message": "' + text + '"}' })
             })
-            .then (() => {setText('');
-                        console.log('Message envoyé')})
-            .catch( error =>
+                .then(() => {
+                    setText('');
+                    console.log('Message envoyé');
+                })
+                .catch(error =>
                 {alert('Message non envoyé') + error;});
         }
     }
@@ -36,10 +40,10 @@ export default function InputMessage({token, idDiscussion, idSession}){
     return (
         <View style={styles.bottom}>
             <TextInput placeholder="Message"
-            placeholderTextColor={placeholderColor}
-            style={styles.input}
-            value={text}
-            onChangeText={setText}
+                placeholderTextColor={placeholderColor}
+                style={styles.input}
+                value={text}
+                onChangeText={setText}
             />
             <Icon
                 style={styles.button}
@@ -78,4 +82,4 @@ const styles = StyleSheet.create({
     button: {
         margin:5
     }
-})
+});

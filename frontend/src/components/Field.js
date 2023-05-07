@@ -1,7 +1,7 @@
 //Field.js
 import { StyleSheet, TextInput, View } from 'react-native';
-import SizedText from './SizedText';
 import { placeholderColor, secondaryColor, textColor } from '../constants/colors';
+import SizedText from './SizedText';
 
 export default function Field({ inputStyle, onSubmitEditing, fieldStyle, label, onChangeText, value, pad, placeholder, secureTextEntry, editable, labelSize }) {
     return (
@@ -16,7 +16,6 @@ export default function Field({ inputStyle, onSubmitEditing, fieldStyle, label, 
                 keyboardType={pad}
                 placeholderTextColor={placeholderColor}
                 placeholder={placeholder}
-                
                 editable={editable} />
         </View>
     );
@@ -33,6 +32,7 @@ const styles = StyleSheet.create({
         color: textColor,
         fontSize: 15
     },
+
     textAndInput: {
         display: 'flex',
         justifyContent: 'space-evenly',

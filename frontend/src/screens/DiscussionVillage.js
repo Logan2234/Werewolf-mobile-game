@@ -1,6 +1,6 @@
-import { StyleSheet, View } from "react-native";
-import Discussion from "../components/Discussion";
-import Title from "../components/Title";
+import { StyleSheet, View } from 'react-native';
+import Discussion from '../components/Discussion';
+import Title from '../components/Title';
 
 export default function DiscussionVillage({ idGame }) {
     return(
@@ -8,7 +8,7 @@ export default function DiscussionVillage({ idGame }) {
             <Title label='Place du village' />
             <Discussion idDiscussion={'place'} idGame={idGame} />
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -17,6 +17,5 @@ const styles = StyleSheet.create({
         padding: 10,
         flexDirection: 'column',
         justifyContent: 'space-between'
-    },
-
-})
+    }
+});

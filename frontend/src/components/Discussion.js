@@ -2,27 +2,23 @@ import { useContext, useEffect, useState } from 'react';
 import { BackHandler, FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import { BACKEND } from '../constants/backend';
 import { secondaryColor } from '../constants/colors';
-import { CurrentGameView, TokenContext } from '../constants/hooks';
+import { TokenContext } from '../constants/hooks';
 import VoteView from '../screens/VoteView';
 import InputMessage from './InputMessage';
 import Message from './Message';
 
-
 export default function Discussion({ idDiscussion, idSession }) {
-    const currentGameView = useContext(CurrentGameView);
     const token = useContext(TokenContext).token;
 
     const [canWrite, setWriting] = useState(false);
     const [messages, setMessages] = useState([]);
     const [currentJSX, setJSX] = useState(null);
 
-
     useEffect(() => {
         /**
          * Renvoie un booléen pour indiquer si on peut envoyer des messages
          */
         function canIWriteHere() {
-            console.log(token);
             fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}/check`, {
                 method: 'GET',
                 headers: {
@@ -31,9 +27,7 @@ export default function Discussion({ idDiscussion, idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then((data) => {
-                    setWriting(data.status);
-                })
+                .then(data => setWriting(data.status))
                 .catch(error => {
                     setWriting(false);
                     console.log(error);
@@ -53,9 +47,7 @@ export default function Discussion({ idDiscussion, idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then((data) => {
-                    setMessages(data.messages);
-                });
+                .then(data => setMessages(data.messages));
         }
 
         // TODO : tester avec téléphone (oupsi)
@@ -68,13 +60,11 @@ export default function Discussion({ idDiscussion, idSession }) {
         getMessages();
         return () => BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
 
-    }, [currentGameView]);
+    }, [token, idSession, idDiscussion]);
     // TODO: rafraichissement actuellement au changement de page => websocket sur les nouveaux messages
-
 
     useEffect(() => {
         /**
-         *
          * @returns cute JSX Divider between messages
          */
         const ItemDivider = () => {
@@ -90,11 +80,8 @@ export default function Discussion({ idDiscussion, idSession }) {
             );
         };
 
-
-
         /**
          * Renvoie l'affichage
-         *
          */
         if (canWrite) {
             setJSX(
@@ -107,11 +94,7 @@ export default function Discussion({ idDiscussion, idSession }) {
                         ItemSeparatorComponent={ItemDivider}
                     />
                     <SafeAreaView>
-                        <InputMessage
-                            token={token}
-                            idDiscussion={idDiscussion}
-                            idSession={idSession}
-                        />
+                        <InputMessage token={token} idDiscussion={idDiscussion} idSession={idSession} />
                     </SafeAreaView>
                 </SafeAreaView>
             );
@@ -127,14 +110,12 @@ export default function Discussion({ idDiscussion, idSession }) {
                 </SafeAreaView>
             );
         }
-    }, [messages, currentGameView, canWrite]);
+    }, [token, idSession, idDiscussion, messages, canWrite]);
 
     return (currentJSX);
 }
 
-
 const styles = StyleSheet.create({
-
     container: {
         flex: 1,
         paddingTop: 5,
@@ -146,5 +127,4 @@ const styles = StyleSheet.create({
         margin: 50 //pour laisse la place à l'input si nécessaire
         //TODO : à opti plus tard
     }
-
 });

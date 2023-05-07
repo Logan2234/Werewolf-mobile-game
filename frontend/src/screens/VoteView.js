@@ -22,7 +22,6 @@ export default function VoteView({ idSession }) {
          * TODO : Fonction qui indique si on a accès aux votes
          */
         function canISeeVotes() {
-            let canSeeVote = false;
             fetch(`${BACKEND}/game/${idSession}/vote/check-see`, {
                 method: 'GET',
                 headers: {
@@ -31,15 +30,13 @@ export default function VoteView({ idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then(data => canSeeVote = data.status);
-            return canSeeVote;
+                .then(data => (data.status) ? canIVote() : setVoteState(2)); //canSeeVote = data.status);
         }
 
         /**
          * Fonction qui indique si j'ai le droit de voter
          */
         function canIVote() {
-            let canVote = false;
             fetch(`${BACKEND}/game/${idSession}/vote/check`, {
                 method: 'GET',
                 headers: {
@@ -48,24 +45,11 @@ export default function VoteView({ idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then(data => canVote = data.status);
-            return canVote;
+                .then(data => (data.status) ? setVoteState(0) : setVoteState(1));
         }
 
-        if (currentGameView == gameViews.VOTE) {
-            if (canISeeVotes() === true) { //! NE PAS ENLEVER LA COMPARAISON (sinon regarde si l'appel fonctionne seulement)
-                if (canIVote() === true) {
-                    console.log('Allowed to vote');
-                    setVoteState(0);
-                } else {
-                    console.log('Not allowed to vote');
-                    setVoteState(1);
-                }
-            } else {
-                console.log('Not allowed to see the vote');
-                setVoteState(2);
-            }
-        }
+        if (currentGameView == gameViews.VOTE)
+            canISeeVotes();
 
     }, [currentGameView, idSession, token]);
 

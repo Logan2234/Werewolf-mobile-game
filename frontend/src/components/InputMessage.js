@@ -9,28 +9,24 @@ import { commonStyles } from '../constants/style';
 
 
 export default function InputMessage({ idDiscussion, idSession }) {
-    const [text, setText]=useState('');
+    const [text, setText] = useState('');
     const token = useContext(TokenContext).token;
 
     /**
      * Requête qui envoie le message au serveur et nettoyer l'entrée une fois fait
      */
-    function sendMessage(){
-        console.log('Message en cours d\'envoi : ', text);
-        if (text != null){
+    function sendMessage() {
+        if (text != null) {
             fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}`, {
                 method: 'POST',
-                headers: {'x-access-token': token,
+                headers: {
+                    'x-access-token': token,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ data: '{"message": "' + text + '"}' })
             })
-                .then(() => {
-                    setText('');
-                    console.log('Message envoyé');
-                })
-                .catch(error =>
-                {alert('Message non envoyé') + error;});
+                .then(() => setText(''))
+                .catch(error => alert('Message non envoyé') + error);
         }
     }
 
@@ -44,6 +40,7 @@ export default function InputMessage({ idDiscussion, idSession }) {
                 style={styles.input}
                 value={text}
                 onChangeText={setText}
+                onKeyPress={(event) => (event.key == 'Enter') ? sendMessage() : null}
             />
             <Icon
                 style={styles.button}
@@ -67,14 +64,16 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         margin: 2
     },
+
     input: {
-        borderWidth:0,
-        width:'100%',
+        borderWidth: 0,
+        width: '100%',
         margin: 10,
         color: textColor,
         fontSize: 15
     },
+
     button: {
-        margin:5
+        margin: 5
     }
 });

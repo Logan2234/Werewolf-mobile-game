@@ -19,6 +19,5 @@ const styles = StyleSheet.create({
         padding: 10,
         flexDirection: 'column',
         justifyContent: 'space-between',
-    },
-
+    }
 });

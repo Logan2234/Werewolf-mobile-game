@@ -1,6 +1,6 @@
-import { StyleSheet, View } from "react-native";
-import Discussion from "../components/Discussion";
-import Title from "../components/Title";
+import { StyleSheet, View } from 'react-native';
+import Discussion from '../components/Discussion';
+import Title from '../components/Title';
 
 
 export default function DiscussionSpiritisme({ idGame }) {
@@ -11,7 +11,7 @@ export default function DiscussionSpiritisme({ idGame }) {
             <Title label='Salle de spiritisme' />
             <Discussion idDiscussion={'place'} idGame={idGame} />
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -21,4 +21,4 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-between'
     }
-})
+});

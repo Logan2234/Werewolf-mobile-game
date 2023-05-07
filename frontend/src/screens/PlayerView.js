@@ -76,8 +76,7 @@ export default function PlayerView({ idSession }) {
             setCanShow(false);
             fetchAliveData();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentGameView]);
+    }, [currentGameView, idSession, token]);
 
     return (
         (canShow)

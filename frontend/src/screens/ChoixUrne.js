@@ -1,15 +1,13 @@
-import { useEffect, useState, useContext } from "react";
-import Propose from "../components/Propose";
-import Proposition from "./Proposition";
+import { useContext, useEffect, useState } from 'react';
+import { FlatList, Pressable, SafeAreaView, StyleSheet } from 'react-native';
+import Bouton from '../components/Bouton';
+import Propose from '../components/Propose';
+import Title from '../components/Title';
 import { BACKEND } from '../constants/backend';
-import { FlatList, Pressable, SafeAreaView, StyleSheet } from "react-native";
-import Bouton from "../components/Bouton";
-import StaticUrne from "./StaticUrne";
-import { TokenContext, CurrentGameView } from '../constants/hooks';
-import { commonStyles, fontSize } from "../constants/style";
-import SizedText from "../components/SizedText";
-import Title from "../components/Title";
-
+import { TokenContext } from '../constants/hooks';
+import { commonStyles } from '../constants/style';
+import Proposition from './Proposition';
+import StaticUrne from './StaticUrne';
 
 export default function ChoixUrne({idSession}) {
     const [proposes, setProposes] = useState([]);
@@ -18,7 +16,6 @@ export default function ChoixUrne({idSession}) {
     const [currentJSX, setJSX] = useState(null);
 
     const token = useContext(TokenContext).token;
-    const currentGameView = useContext(CurrentGameView);
 
     useEffect(() => {
         /**
@@ -28,8 +25,10 @@ export default function ChoixUrne({idSession}) {
         function fetchPropose(){
             fetch(`${BACKEND}/game/${idSession}/vote/`, {
                 method: 'GET',
-                headers: { 'x-access-token': token, 
-                'Content-Type': 'application/json' }
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                }
             })
                 .then(response => response.json())
                 .then((data) => {
@@ -41,13 +40,11 @@ export default function ChoixUrne({idSession}) {
                         };
                         setProposes(proposes => [...proposes, newVictim]);
                     }
-                })
+                });
         }
-        
-        
         fetchPropose();
-    },[currentGameView]);
-    
+    }, [idSession, token]);
+
     useEffect(()=>{
         /**
          * Requête qui permet de voter pour le joueur sélectionné
@@ -57,16 +54,18 @@ export default function ChoixUrne({idSession}) {
             if (selectedUser !== null){
                 fetch(`${BACKEND}/game/${idSession}/vote/`, {
                     method: 'POST',
-                    headers: { 'x-access-token': token, 
-                    'Content-Type': 'application/json' },
+                    headers: {
+                        'x-access-token': token,
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({data: '{"victime": "'+ selectedUser +'", "decision":"true"}'})
                 })
                     .then(response => response.json())
-                    .then(()=>setJSX(<StaticUrne idSession={idSession}/> ))
+                    .then(() => setJSX(<StaticUrne idSession={idSession} />));
             }
-    
+
         }
-    
+
         /**
          * Fonction qui indique que l'on va sur la page des propositions
          */
@@ -74,42 +73,32 @@ export default function ChoixUrne({idSession}) {
             setAction(false);
             setJSX(<Proposition idSession={idSession} />);
         }
-    
+
         const renderItem = ({item}) => {
-                return (
+            return (
                 <Pressable onPress={() => setSelectedUser(item.username)} >
-                  <Propose 
-                    name={item.username} 
-                    votes={item.votes} 
-                    selected={item.username === selectedUser}
-                    />
+                    <Propose name={item.username} votes={item.votes} selected={item.username === selectedUser} />
                 </Pressable>
-                );
-            } ;
-    
-        if (action){
+            );
+        };
+
+        if (action) {
             setJSX(
                 <SafeAreaView style={styles.container}>
                     <Title label='Ratifer une décision'/>
-                    <FlatList
-                        data={proposes}
-                        keyExtractor={item => item.username}
-                        renderItem={renderItem}
-                    />
+                    <FlatList data={proposes} keyExtractor={item => item.username} renderItem={renderItem} />
                     <SafeAreaView  style={[commonStyles.bottom, styles.bottom]} >
-                            <Bouton label='Voter' onPress={vote}/>
-                            <Bouton label='Proposer' onPress={propose}/>
+                        <Bouton label='Voter' onPress={vote} />
+                        <Bouton label='Proposer' onPress={propose} />
                     </SafeAreaView>
                 </SafeAreaView>
             );
         }
 
-    },[action, selectedUser, currentGameView, proposes]);
-    
-    return(currentJSX);
+    }, [idSession, token, action, selectedUser, proposes]);
 
+    return (currentJSX);
 }
-
 
 const styles = StyleSheet.create({
     bottom: {
@@ -117,8 +106,7 @@ const styles = StyleSheet.create({
         margin: 2,
         gap: 10
     },
-    
-    
+
     container: {
         paddingTop: 5,
         flex: 1,
@@ -126,5 +114,4 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'space-around'
     }
-    
 });

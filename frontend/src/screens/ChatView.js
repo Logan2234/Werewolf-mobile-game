@@ -59,35 +59,30 @@ export default function ChatView({ idSession }) {
             fetchUserData();
             fetchMomentData();
         }
-    }, [currentGameView, token, idSession, selectedChat]);
+    }, [currentGameView, token, idSession]);
 
     useEffect(() => {
         switch (selectedChat) {
-        case 0: //vue des chats disponibles
-            changeChatJSX(<FlatList data={listeChats}
-                renderItem={(item) => { return (<Bouton style={styles.bouton} label={item.item.nom} onPress={item.item.affichage} />); }}
-                keyExtractor={chat => chat.id} />); break;
-        case 1:
-            changeChatJSX(<DiscussionRepere idSession={idSession} />); break;
-        case 2:
-            changeChatJSX(<DiscussionSpiritisme idSession={idSession} />); break;
-        case 3:
-            changeChatJSX(<DiscussionVillage idSession={idSession} />); break;
+            case 0: //vue des chats disponibles
+                changeChatJSX(<FlatList data={listeChats}
+                    renderItem={(item) => { return (<Bouton style={styles.bouton} label={item.item.nom} onPress={item.item.affichage} />); }}
+                    keyExtractor={chat => chat.id} />); break;
+            case 1:
+                changeChatJSX(<DiscussionRepere idSession={idSession} />); break;
+            case 2:
+                changeChatJSX(<DiscussionSpiritisme idSession={idSession} />); break;
+            case 3:
+                changeChatJSX(<DiscussionVillage idSession={idSession} />); break;
         }
     }, [idSession, listeChats, selectedChat]);
 
     useEffect(() => {
         /**
-     * Ajoute le fil à listeChats sans écraser ce qui a été précédemment demander
-    */
+         * Ajoute le fil à listeChats sans écraser ce qui a été précédemment demander
+         */
         function addChat(nom, id, onPress) {
             const elementToAdd = { id: id, nom: nom, affichage: onPress };
-            // if (listeChats.includes({ elementToAdd })) {
-            //     console.log(nom + ' already added');
-            //     return;
-            // }
             setChats((chat) => [...chat, elementToAdd]);
-            console.log(nom + ' added to seeable chats');
         }
 
         /**

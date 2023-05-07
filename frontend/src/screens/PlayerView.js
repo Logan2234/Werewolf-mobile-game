@@ -8,6 +8,7 @@ import { gameViews } from '../constants/screens';
 
 export default function PlayerView({ idSession }) {
     const [players, setPlayers] = useState(new Set());
+    const [players_array, setPlayers_array] = useState([]);
     const [canShow, setCanShow] = useState(false);
 
     const token = useContext(TokenContext).token;
@@ -19,6 +20,7 @@ export default function PlayerView({ idSession }) {
                 method: 'GET',
             })
                 .then(response => response.json())
+                .then(data => { setPlayers(new Set()); return data; })
                 .then(data => {
                     for (let user of data.aliveUsers)
                         players.add({ key: user, color: primaryColor });
@@ -50,7 +52,8 @@ export default function PlayerView({ idSession }) {
             })
                 .then(response => response.json())
                 .then(data => (data.role == 'LG') ? fetchAliveWerewolves() : null)
-                .then(setCanShow(true))
+                .then(() => setPlayers_array(Array.from(players)))
+                .then(() => setCanShow(true))
                 .catch(error => alert(error.message));
         }
 
@@ -64,14 +67,13 @@ export default function PlayerView({ idSession }) {
                         players.forEach(item => { if (item.key == user) players.delete(item); });
                         players.add({ key: user, color: 'orange' });
                     }
-                    setPlayers(Array.from(null));
                 })
+                .then(() => setPlayers_array(Array.from(players)))
                 .catch(error => alert(error.message));
         }
 
         if (currentGameView == gameViews.PLAYERS) {
             setCanShow(false);
-            setPlayers(new Set());
             fetchAliveData();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,7 +81,7 @@ export default function PlayerView({ idSession }) {
 
     return (
         (canShow)
-            ? <FlatList data={players}
+            ? <FlatList data={players_array}
                 renderItem={({ item }) => <SizedText size={20} label={item.key} style={{ color: item.color }} />}
                 contentContainerStyle={styles.flatListContainer} style={styles.flatList} />
             : <ActivityIndicator style={{ height: '100%' }} size={100} color={primaryColor} />

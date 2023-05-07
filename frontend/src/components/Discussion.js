@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { BackHandler, FlatList, SafeAreaView, View } from 'react-native';
+import { BackHandler, FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import { BACKEND } from '../constants/backend';
 import { secondaryColor } from '../constants/colors';
 import { CurrentGameView, TokenContext } from '../constants/hooks';

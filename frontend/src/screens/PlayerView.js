@@ -51,25 +51,28 @@ export default function PlayerView({ idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then(data => (data.role == 'LG') ? fetchAliveWerewolves() : null)
+                .then(data => fetchAliveWerewolves(data.role))
                 .then(() => setPlayers_array(Array.from(players)))
-                .then(() => setCanShow(true))
                 .catch(error => alert(error.message));
         }
 
-        function fetchAliveWerewolves() {
-            fetch(`${BACKEND}/game/${idSession}/werewolves`, {
-                method: 'GET',
-            })
-                .then(response => response.json())
-                .then(data => {
-                    for (let user of data.werewolves) {
-                        players.forEach(item => { if (item.key == user) players.delete(item); });
-                        players.add({ key: user, color: 'orange' });
-                    }
+        function fetchAliveWerewolves(role) {
+            if (role == 'LG') {
+                fetch(`${BACKEND}/game/${idSession}/werewolves`, {
+                    method: 'GET',
                 })
-                .then(() => setPlayers_array(Array.from(players)))
-                .catch(error => alert(error.message));
+                    .then(response => response.json())
+                    .then(data => {
+                        for (let user of data.werewolves) {
+                            players.forEach(item => { if (item.key == user) players.delete(item); });
+                            players.add({ key: user, color: 'orange' });
+                        }
+                    })
+                    .then(() => setPlayers_array(Array.from(players)))
+                    .then(() => setCanShow(true))
+                    .catch(error => alert(error.message));
+            } else
+                setCanShow(true);
         }
 
         if (currentGameView == gameViews.PLAYERS) {

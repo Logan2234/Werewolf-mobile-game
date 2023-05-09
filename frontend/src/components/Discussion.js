@@ -1,18 +1,35 @@
-import { useContext, useEffect, useState } from 'react';
-import { BackHandler, FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
-import { BACKEND } from '../constants/backend';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { BACKEND, WEBSOCKET } from '../constants/backend';
 import { secondaryColor } from '../constants/colors';
 import { TokenContext } from '../constants/hooks';
-import VoteView from '../screens/VoteView';
+import { commonStyles } from '../constants/style';
 import InputMessage from './InputMessage';
 import Message from './Message';
+import Title from './Title';
 
-export default function Discussion({ idDiscussion, idSession }) {
+export default function Discussion({ title, idDiscussion, idSession }) {
     const token = useContext(TokenContext).token;
 
     const [canWrite, setWriting] = useState(false);
     const [messages, setMessages] = useState([]);
-    const [currentJSX, setJSX] = useState(null);
+    const [reference, setReference] = useState(null);
+
+    const ws = useRef(new WebSocket(WEBSOCKET)).current;
+
+    useEffect(() => {
+        ws.onerror = (e) => {
+            console.log(e);
+        };
+        ws.onmessage = (e) => {
+            let data = JSON.parse(e.data);
+            console.log(data);
+            if (parseInt(data.idSession) == idSession && data.idDiscussion == idDiscussion)
+                setMessages(messages => [...messages, { username: data.username, message: data.message, timePosted: new Date() }]);
+            // let newUser = (JSON.parse(e.data).idSession == idSession.toString()) ? JSON.parse(e.data).player : null;
+            // if (newUser != null && !users.includes(newUser))
+        };
+    }, []);
 
     useEffect(() => {
         /**
@@ -47,84 +64,69 @@ export default function Discussion({ idDiscussion, idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then(data => setMessages(data.messages));
+                .then(data => setMessages(data.messages))
+                .catch(error => alert(error.message));
         }
 
-        // TODO : tester avec téléphone (oupsi)
-        const backActionHandler = () => {
-            setJSX(<VoteView idSession={idSession} />);
-            return true;
-        };
-        BackHandler.addEventListener('hardwareBackPress', backActionHandler);
+        // TODO : backhandler
+        // const backActionHandler = () => {
+        //     setJSX(<VoteView idSession={idSession} />);
+        //     return true;
+        // };
+        // BackHandler.addEventListener('hardwareBackPress', backActionHandler);
         canIWriteHere();
         getMessages();
-        return () => BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
-
+        // return () => BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
     }, [token, idSession, idDiscussion]);
     // TODO: rafraichissement actuellement au changement de page => websocket sur les nouveaux messages
 
+    /**
+     * @returns cute JSX Divider between messages
+     */
+    const ItemDivider = () => {
+        return (
+            <View
+                style={{
+                    height: 1,
+                    width: '100%',
+                    backgroundColor: secondaryColor,
+                    marginVertical: 5
+                }}
+            />
+        );
+    };
+
     useEffect(() => {
-        /**
-         * @returns cute JSX Divider between messages
-         */
-        const ItemDivider = () => {
-            return (
-                <View
-                    style={{
-                        height: 1,
-                        width: '100%',
-                        backgroundColor: secondaryColor,
-                        marginVertical: 5
-                    }}
+        if (reference != null && messages.length != 0)
+            reference.scrollToEnd({ animated: false });
+    }, [reference, messages]);
+
+    return (
+        <View style={[commonStyles.container, styles.container]}>
+            <Title label={title} style={{ marginTop: 0 }} />
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flatlist_container}>
+                <FlatList
+                    ref={ref => setReference(ref)}
+                    data={messages}
+                    renderItem={({ item }) => <Message pseudo={item.username} text={item.message} />}
+                    keyExtractor={item => item.timePosted}
+                    ItemSeparatorComponent={ItemDivider}
                 />
-            );
-        };
-
-        /**
-         * Renvoie l'affichage
-         */
-        if (canWrite) {
-            setJSX(
-                <SafeAreaView style={styles.container}>
-                    <FlatList
-                        style={styles.flat}
-                        data={messages}
-                        renderItem={({ item }) => <Message pseudo={item.username} text={item.message} />}
-                        keyExtractor={item => item.timePosted}
-                        ItemSeparatorComponent={ItemDivider}
-                    />
-                    <SafeAreaView>
-                        <InputMessage token={token} idDiscussion={idDiscussion} idSession={idSession} />
-                    </SafeAreaView>
-                </SafeAreaView>
-            );
-        } else {
-            setJSX(
-                <SafeAreaView style={styles.container}>
-                    <FlatList
-                        data={messages}
-                        renderItem={({ item }) => <Message pseudo={item.username} text={item.message} />}
-                        keyExtractor={item => item.timePosted}
-                        ItemSeparatorComponent={ItemDivider}
-                    />
-                </SafeAreaView>
-            );
-        }
-    }, [token, idSession, idDiscussion, messages, canWrite]);
-
-    return (currentJSX);
+            </KeyboardAvoidingView>
+            {
+                (canWrite)
+                    ? <InputMessage idDiscussion={idDiscussion} idSession={idSession} ws={ws} />
+                    : null
+            }
+        </View>);
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        paddingTop: 5,
-        flexDirection: 'column',
-        flexGrow: 1
+        justifyContent: 'space-between',
     },
 
-    flat: {
-        margin: 50 //pour laisse la place à l'input si nécessaire
-        //TODO : à opti plus tard
+    flatlist_container: {
+        height: '78%'
     }
 });

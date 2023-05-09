@@ -9,7 +9,7 @@ import { commonStyles } from '../constants/style';
 import Proposition from './Proposition';
 import StaticUrne from './StaticUrne';
 
-export default function ChoixUrne({idSession}) {
+export default function ChoixUrne({ idSession }) {
     const [proposes, setProposes] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [action, setAction] = useState(true);
@@ -22,7 +22,7 @@ export default function ChoixUrne({idSession}) {
          * Requête qui renvoie la liste des personnes proposées et les met dans proposes
          *  TODO : actualiser l'affichage via websocket sur l'ajout des votes
          */
-        function fetchPropose(){
+        function fetchPropose() {
             fetch(`${BACKEND}/game/${idSession}/vote/`, {
                 method: 'GET',
                 headers: {
@@ -33,7 +33,7 @@ export default function ChoixUrne({idSession}) {
                 .then(response => response.json())
                 .then((data) => {
                     setProposes([]);
-                    for (const i in data.victimes){
+                    for (const i in data.victimes) {
                         const newVictim = {
                             username: data.victimes[i],
                             votes: data.votesPour[i] - data.votesContre[i]
@@ -45,20 +45,20 @@ export default function ChoixUrne({idSession}) {
         fetchPropose();
     }, [idSession, token]);
 
-    useEffect(()=>{
+    useEffect(() => {
         /**
          * Requête qui permet de voter pour le joueur sélectionné
          */
-        function vote(){
+        function vote() {
             setAction(false);
-            if (selectedUser !== null){
+            if (selectedUser !== null) {
                 fetch(`${BACKEND}/game/${idSession}/vote/`, {
                     method: 'POST',
                     headers: {
                         'x-access-token': token,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({data: '{"victime": "'+ selectedUser +'", "decision":"true"}'})
+                    body: JSON.stringify({ data: '{"victime": "' + selectedUser + '", "decision":"true"}' })
                 })
                     .then(response => response.json())
                     .then(() => setJSX(<StaticUrne idSession={idSession} />));
@@ -69,12 +69,12 @@ export default function ChoixUrne({idSession}) {
         /**
          * Fonction qui indique que l'on va sur la page des propositions
          */
-        function propose(){
+        function propose() {
             setAction(false);
             setJSX(<Proposition idSession={idSession} />);
         }
 
-        const renderItem = ({item}) => {
+        const renderItem = ({ item }) => {
             return (
                 <Pressable onPress={() => setSelectedUser(item.username)} >
                     <Propose name={item.username} votes={item.votes} selected={item.username === selectedUser} />
@@ -85,9 +85,9 @@ export default function ChoixUrne({idSession}) {
         if (action) {
             setJSX(
                 <SafeAreaView style={styles.container}>
-                    <Title label='Ratifer une décision'/>
+                    <Title label='Ratifer une décision' />
                     <FlatList data={proposes} keyExtractor={item => item.username} renderItem={renderItem} />
-                    <SafeAreaView  style={[commonStyles.bottom, styles.bottom]} >
+                    <SafeAreaView style={[commonStyles.bottom, styles.bottom]} >
                         <Bouton label='Voter' onPress={vote} />
                         <Bouton label='Proposer' onPress={propose} />
                     </SafeAreaView>

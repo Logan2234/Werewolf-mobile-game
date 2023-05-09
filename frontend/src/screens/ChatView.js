@@ -91,13 +91,13 @@ export default function ChatView({ idSession }) {
         */
         setChats([]); // On vide dans le cas où les constantes ont changé depuis le dernier appel
         if (userData.statut === 'M') { // si on est mort, on a les trois salons disponibles (avec ou sans accès)
-            addChat('Repère des Loups-garous', 1, () => selectChat(1));
+            addChat('Repère des loups-garous', 1, () => selectChat(1));
             addChat('Salle de spiritisme', 2, () => selectChat(2));
             addChat('Place du village', 3, () => selectChat(3));
         } else { // si on est vivant
             if (moment === 'N') { // la nuit, deux salons sont disponibles
                 if (userData.role === 'LG' || userData.pouvoir === 'I')
-                    addChat('Repère des Loups-garous', 1, () => selectChat(1));
+                    addChat('Repère des loups-garous', 1, () => selectChat(1));
                 if (userData.pouvoir === 'S')
                     addChat('Salle de spiritisme', 2, () => selectChat(2));
             } else  // le jour, seule la place du village est accessible

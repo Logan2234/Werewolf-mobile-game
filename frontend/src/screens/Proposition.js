@@ -65,7 +65,7 @@ export default function Proposition({ idSession }) {
                     body: JSON.stringify({ data: '{"victime": "' + selectedUser + '"}' })
                 })
                     .then(response => response.json())
-                    .then(() => setJSX(<ChoixUrne idSession={idSession} token={token} canVote={false} />));
+                    .then(() => setJSX(<ChoixUrne idSession={idSession} canVote={false} />));
             }
         }
 

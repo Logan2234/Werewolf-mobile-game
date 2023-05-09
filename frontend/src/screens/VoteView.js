@@ -57,13 +57,13 @@ export default function VoteView({ idSession }) {
         switch (voteState) {
             case 0:
                 // 0: en attente de vote => Urne + boutons d'envoi/propose
-                setVoteJSX(<ChoixUrne idSession={idSession} token={token} />); break;
+                setVoteJSX(<ChoixUrne idSession={idSession} />); break;
             case 1:
                 // 1: ne peut pas/plus voter => Urne visible
                 setVoteJSX(<StaticUrne idSession={idSession} />); break;
             case 2:
                 // 2:ne peut pas voir
-                setVoteJSX(<Title label='AUCUN VOTE DISPONIBLE POUR L&apos;INSTANT' />); break;
+                setVoteJSX(<Title label='Aucun vote disponible pour le moment' />); break;
         }
     }, [idSession, token, voteState]);
 

@@ -171,7 +171,7 @@ export default function ShareSession({ idSession }) {
                             <SizedText label={donnees.probaS / 100} />
                         </View>
                         <View style={styles.res}>
-                            <SizedText label={'Ratio de loups-garou:'} />
+                            <SizedText label={'Ratio de loups-garous:'} />
                             <SizedText label={donnees.probaLG / 100} />
                         </View>
                         <View style={styles.res}>
@@ -190,7 +190,6 @@ export default function ShareSession({ idSession }) {
                                 renderItem={({ item }) => <SizedText size={20} label={item.key} />}
                                 data={connectedUsers}
                                 contentContainerStyle={styles.flatListContainer}
-                            // onTouchStart={() => (showUsers == false) ? ws.send('coucou') : null}
                             />
                         </View>
                     </View>

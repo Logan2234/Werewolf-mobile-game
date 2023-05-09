@@ -5,10 +5,9 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { BACKEND } from '../constants/backend';
 import { placeholderColor, primaryColor, secondaryColor, textColor } from '../constants/colors';
 import { TokenContext } from '../constants/hooks';
-import { commonStyles } from '../constants/style';
 
 
-export default function InputMessage({ idDiscussion, idSession }) {
+export default function InputMessage({ idDiscussion, idSession, ws }) {
     const [text, setText] = useState('');
     const token = useContext(TokenContext).token;
 
@@ -16,7 +15,7 @@ export default function InputMessage({ idDiscussion, idSession }) {
      * Requête qui envoie le message au serveur et nettoyer l'entrée une fois fait
      */
     function sendMessage() {
-        if (text != null) {
+        if (text != '') {
             fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}`, {
                 method: 'POST',
                 headers: {
@@ -24,7 +23,18 @@ export default function InputMessage({ idDiscussion, idSession }) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ data: '{"message": "' + text + '"}' })
+            }).catch(error => alert('Message non envoyé') + error);
+
+            fetch(`${BACKEND}/whoami`, {
+                method: 'GET',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                },
             })
+                .then(response => response.json())
+                .then(data => { return data.username; })
+                .then(username => ws.send(JSON.stringify({ idSession: idSession, username: username, idDiscussion: idDiscussion, message: text })))
                 .then(() => setText(''))
                 .catch(error => alert('Message non envoyé') + error);
         }
@@ -34,13 +44,13 @@ export default function InputMessage({ idDiscussion, idSession }) {
      * Renvoyer un affichage sympatique pour l'entrée de texte
      */
     return (
-        <View style={[commonStyles.bottom, styles.field]}>
+        <View style={styles.field}>
             <TextInput placeholder="Message"
                 placeholderTextColor={placeholderColor}
                 style={styles.input}
                 value={text}
                 onChangeText={setText}
-                onKeyPress={(event) => (event.key == 'Enter') ? sendMessage() : null}
+                onSubmitEditing={() => sendMessage()}
             />
             <Icon
                 style={styles.button}
@@ -61,19 +71,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         height: 40,
-        paddingLeft: 10,
-        margin: 2
     },
 
     input: {
-        borderWidth: 0,
-        width: '100%',
-        margin: 10,
+        paddingLeft: 10,
+        height: '100%',
+        width: '90%',
         color: textColor,
         fontSize: 15
     },
 
     button: {
-        margin: 5
+        margin: 6,
     }
 });

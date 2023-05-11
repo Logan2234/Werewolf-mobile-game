@@ -457,6 +457,12 @@ module.exports = {
         const victime = data.victime
         const username = req.login
         let {idGame} = req.params
+        const idUser = await userModel.findOne({where: {"username": username}})
+        const vote = await voteModel.findOne({where: {"idUser": idUser}})
+
+        if (vote != null) {
+            throw new CodeError('You have already voted', status.FORBIDDEN)
+        }
 
         const idVictime = await userModel.findOne({where: {"username": victime}})
         if (idVictime == null) {
@@ -476,7 +482,6 @@ module.exports = {
             throw new CodeError('A vote has already been submitted', status.BAD_REQUEST)
         }
 
-        const idUser = await userModel.findOne({where: {"username": username}})
         const userInTheGame = await usersInGames.findOne({where: {"idUser": idUser.id, "idGame": parseInt(idGame)}})
         if (userInTheGame == null) {
             throw new CodeError('You are not in game ' + idGame, status.FORBIDDEN)
@@ -520,6 +525,14 @@ module.exports = {
 
         const data = JSON.parse(req.body.data)
         const victime = data.victime
+        const username = req.login
+        const idUser = await userModel.findOne({where: {"username": username}})
+
+        const vote = await voteModel.findOne({where: {"idUser": idUser}})
+
+        if (vote != null) {
+            throw new CodeError('You have already voted', status.FORBIDDEN)
+        }
 
         let victimeModel = await userModel.findOne({where: {"username": victime}})
         if (victimeModel == null) {
@@ -533,10 +546,8 @@ module.exports = {
         }
 
         const decision = data.decision
-        const username = req.login
         const game = await inGameModel.findOne({where: {"id": idGame}})
 
-        const idUser = await userModel.findOne({where: {"username": username}})
         const userInTheGame = await usersInGames.findOne({where: {"idUser": idUser.id, "idGame": parseInt(idGame)}})
         if (userInTheGame == null) {
             throw new CodeError('You are not in game ' + idGame, status.FORBIDDEN)
@@ -575,6 +586,12 @@ module.exports = {
         const userId = (await userModel.findOne({where: {username}})).id
         const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
+        const vote = await voteModel.findOne({where: {"idUser": userId}})
+
+        if (vote != null) {
+            throw new CodeError('You have already voted', status.FORBIDDEN)
+        }
+
         if (userInGame.vie == "M") {
             res.json({status: false, message: 'You cannot vote, you are dead'})
             return
@@ -647,6 +664,31 @@ module.exports = {
             nbUsersVote.push(urne[i].nbUsersVote)
         }
         res.json({status: true, message: 'Info about the votes in progress', victimes, votesPour, votesContre, nbUsersVote})
+    },
+
+    async myVoteInfo (req, res) {
+        const username = req.login
+        let {idGame} = req.params
+        const userId = (await userModel.findOne({where: {username}})).id
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+
+        if (game.voted) {
+            throw new CodeError('A vote has already been submitted', status.BAD_REQUEST)
+        }
+
+        const vote = await voteModel.findOne({where: {"idUser": userId}})
+
+        if (vote != null) {
+            const urne = (await urneModel.findOne({where: {"idUrne": vote.idUrne}}))
+            const victime = (await userModel.findOne({where: {"id": urne.idVictime}})).username
+            if (vote.decision) {
+                res.json({status: true, message: 'You have voted to kill ' + victime, victime})
+            } else {
+                res.json({status: true, message: 'You have voted not to kill ' + victime, victime})
+            }
+        } else {
+            res.json({ status: false, message: 'You have not voted, yet'})
+        }
     },
 
     async getWerewolves(req, res) {

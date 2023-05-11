@@ -40,5 +40,6 @@ router.post('/game/:idGame/vote', user.verificationUser, inGames.vote);
 router.get('/game/:idGame/vote/free-users', inGames.notVictimsYet)
 router.get('/game/:idGame/vote/check', user.verificationUser, inGames.canIVote)
 router.get('/game/:idGame/vote/check-see', user.verificationUser, inGames.canISeeTheVote)
+router.get('/game/:idGame/vote/info', user.verificationUser, inGames.myVoteInfo)
 
 module.exports = router

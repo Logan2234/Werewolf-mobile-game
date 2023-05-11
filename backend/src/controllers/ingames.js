@@ -275,6 +275,23 @@ module.exports = {
         res.json({status: true, message: 'List of alive users', aliveUsers})
     },
 
+    async getAliveHumans (req, res) {
+        let {idGame} = req.params
+        const users = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V", "role": "V"}, attributes: ['idUser']})
+        var aliveUsers = []
+        let aux = ""
+        for (let i = 0; i < users.length; i++) {
+            aux = (await userModel.findOne({where: {"id": users[i].idUser}})).username
+            aliveUsers.push(aux)
+        }
+        res.json({status: true, message: 'List of alive villagers', aliveUsers})
+    },
+
+    async checkActionUsed (req, res) {
+        let {idGame} = req.params
+
+    },
+
     async getDeadUsers (req, res) {
         let {idGame} = req.params
         const users = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "M"}, attributes: ['idUser']})
@@ -430,6 +447,9 @@ module.exports = {
         const userInTheGame = await usersInGames.findOne({where: {"idUser": idVictime.id}})
         if (userInTheGame == null) {
             throw new CodeError('This user is not in a game', status.BAD_REQUEST)
+        }
+        if (userInTheGame.vie == "M") {
+            throw new CodeError('You cannot look for dead people', status.BAD_REQUEST)
         }
 
         const role = userInTheGame.role

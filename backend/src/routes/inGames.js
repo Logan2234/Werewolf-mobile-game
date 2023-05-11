@@ -21,6 +21,7 @@ router.get('/game/:idGame/messages/spiritism/check', user.verificationUser, inGa
 // État de la partie
 
 router.get('/game/:idGame/alives', inGames.getAliveUsers);
+router.get('/game/:idGame/humans/alive', inGames.getAliveHumans);
 router.get('/game/:idGame/deads', inGames.getDeadUsers);
 router.get('/game/:idGame/werewolves', inGames.getWerewolves);
 router.get('/game/:idGame/info', inGames.getInfos);
@@ -31,6 +32,7 @@ router.get('/game/:idGame/time', inGames.returnTimeLeft);
 router.post('/game/:idGame/actions/spiritism', user.verificationUser, inGames.selectAVictimForSpiritism);
 router.post('/game/:idGame/actions/contamination', user.verificationUser, inGames.selectAVictimForContaminator);
 router.post('/game/:idGame/actions/voyance', user.verificationUser, inGames.selectAVictimForSeer);
+router.get('/game/:idGame/actions/check', user.verificationUser, inGames.checkActionUsed);
 
 // Vote
 

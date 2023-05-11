@@ -26,21 +26,9 @@ export default function ChoixVoyance({idSession}) {
             })
                 .then(response => response.json())
                 .then(data => {setProposes(data.aliveUsers)})
-                .then(fetchDeadData)
                 .catch(error => alert(error.message));
         }
 
-        function fetchDeadData() {
-            fetch(`${BACKEND}/game/${idSession}/deads`, {
-                method: 'GET',
-            })
-                .then(response => response.json())
-                .then(data => {
-                    for (const user of data.deadUsers)
-                        setProposes(proposes => [...proposes, user]);
-                })
-                .catch(error => alert(error.message));
-        }
 
         /**
          * TODO : Requete qui vérifie si le pouvoir a déjà été utilisé

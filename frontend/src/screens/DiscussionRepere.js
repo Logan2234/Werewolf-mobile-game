@@ -1,25 +1,7 @@
-import Discussion from "../components/Discussion";
-import Title from "../components/Title";
-import { View, StyleSheet } from "react-native";
+import Discussion from '../components/Discussion';
 
-
-export default function DiscussionRepere({ token, idSession }) {
-
-    // TODO : rajouter la liste des loups-garous pour savoir avec qui on est
-    return(
-        <View style={styles.container}>
-            <Title label='Repère des Loups-Garous' />
-            <Discussion token={token} idDiscussion={'repere'} idSession={idSession}/>
-        </View>
+export default function DiscussionRepere({ idSession }) {
+    return (
+        <Discussion title={'Repère des loups-garous'} idDiscussion={'repere'} idSession={idSession} />
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      },
-    
-})

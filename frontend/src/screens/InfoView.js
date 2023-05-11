@@ -128,7 +128,7 @@ export default function InfoView({ idSession }) {
 
                         <View style={styles.gameStatus}>
                             <SizedText label={`Nombre de joueurs vivants: ${alivePlayers.length} / ${alivePlayers.length + deadPlayers.length}`} />
-                            <SizedText label={`Nombre de loups-garou: ${aliveWerewolves} / ${gameData.nbLG}`} />
+                            <SizedText label={`Nombre de loups-garous: ${aliveWerewolves} / ${gameData.nbLG}`} />
                         </View>
                         {
                             ((userData.pouvoir === 'V' || userData.pouvoir === 'C' || userData.pouvoir === 'S')&& userData.vivant === 'V')

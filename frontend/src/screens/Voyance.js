@@ -19,7 +19,28 @@ export default function ChoixVoyance({idSession}) {
          * TODO: Requête qui renvoie la liste des joueurs (cf StaticUrne)
          * Pour set proposes
          */
-        function fetchJoueurs(){}
+        function fetchJoueurs(){
+            setProposes([]);
+            fetch(`${BACKEND}/game/${idSession}/alives`, {
+                method: 'GET',
+            })
+                .then(response => response.json())
+                .then(data => {setProposes(data.aliveUsers)})
+                .then(fetchDeadData)
+                .catch(error => alert(error.message));
+        }
+
+        function fetchDeadData() {
+            fetch(`${BACKEND}/game/${idSession}/deads`, {
+                method: 'GET',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    for (const user of data.deadUsers)
+                        setProposes(proposes => [...proposes, user]);
+                })
+                .catch(error => alert(error.message));
+        }
 
         /**
          * TODO : Requete qui vérifie si le pouvoir a déjà été utilisé
@@ -34,10 +55,27 @@ export default function ChoixVoyance({idSession}) {
 
     useEffect(()=>{
         /**
-         * TODO : Requête qui va récupérer l'ensemble des informations sur le joueur sélectionné
+         * Requête qui va récupérer l'ensemble des informations sur le joueur sélectionné
          * (action lorsque l'on valide le choix du joueur)
          */
-        function seePlayerInfo(){}
+        function seePlayerInfo(){
+            if (selectedUser !== null) {
+                fetch(`${BACKEND}/game/${idSession}/actions/voyance`, {
+                    method: 'POST',
+                    headers: {
+                        'x-access-token': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: '{"victime": "' + selectedUser + '"}' })
+                })
+                    .then(response => response.json())
+                    .then( data => {
+                        // TODO : afficher les infos T.T
+                    }
+                    )
+                    .catch(error => alert(error.message));
+            }
+        }
 
 
         if(utilise === false){

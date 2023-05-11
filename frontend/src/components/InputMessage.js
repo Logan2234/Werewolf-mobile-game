@@ -1,32 +1,42 @@
 //InputMesssage.js
-import { useState } from "react";
-import { TextInput, StyleSheet, View, Alert } from "react-native";
-import { secondaryColor, textColor, placeholderColor } from "../constants/colors";
-import { primaryColor } from "../constants/colors";
-import { Icon } from "@rneui/base";
-import { BACKEND } from "../constants/backend";
-import { commonStyles } from "../constants/style";
+import { Icon } from '@rneui/base';
+import { useContext, useState } from 'react';
+import { StyleSheet, TextInput, View } from 'react-native';
+import { BACKEND } from '../constants/backend';
+import { placeholderColor, primaryColor, secondaryColor, textColor } from '../constants/colors';
+import { TokenContext } from '../constants/hooks';
 
 
-export default function InputMessage({token, idDiscussion, idSession}){
-    const [text, setText]=useState('');
+export default function InputMessage({ idDiscussion, idSession, ws }) {
+    const [text, setText] = useState('');
+    const token = useContext(TokenContext).token;
 
     /**
      * Requête qui envoie le message au serveur et nettoyer l'entrée une fois fait
      */
-    function sendMessage(){
-        console.log('Message en cours d\'envoi : ', text);
-        if (text != null){
+    function sendMessage() {
+        if (text != '') {
             fetch(`${BACKEND}/game/${idSession}/messages/${idDiscussion}`, {
                 method: 'POST',
-                headers: {'x-access-token': token,
-                         'Content-Type': 'application/json' },
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({ data: '{"message": "' + text + '"}' })
+            }).catch(error => alert('Message non envoyé') + error);
+
+            fetch(`${BACKEND}/whoami`, {
+                method: 'GET',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                },
             })
-            .then (() => {setText('');
-                        console.log('Message envoyé')})
-            .catch( error =>
-                {alert('Message non envoyé') + error;});
+                .then(response => response.json())
+                .then(data => { return data.username; })
+                .then(username => ws.send(JSON.stringify({ idSession: idSession, username: username, idDiscussion: idDiscussion, message: text })))
+                .then(() => setText(''))
+                .catch(error => alert('Message non envoyé') + error);
         }
     }
 
@@ -34,12 +44,13 @@ export default function InputMessage({token, idDiscussion, idSession}){
      * Renvoyer un affichage sympatique pour l'entrée de texte
      */
     return (
-        <View style={[commonStyles.bottom, styles.field]}>
+        <View style={styles.field}>
             <TextInput placeholder="Message"
-            placeholderTextColor={placeholderColor}
-            style={styles.input}
-            value={text}
-            onChangeText={setText}
+                placeholderTextColor={placeholderColor}
+                style={styles.input}
+                value={text}
+                onChangeText={setText}
+                onSubmitEditing={() => sendMessage()}
             />
             <Icon
                 style={styles.button}
@@ -60,17 +71,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         height: 40,
-        paddingLeft: 10,
-        margin: 2
     },
+
     input: {
-        borderWidth:0,
-        width:'100%',
-        margin: 10,
+        paddingLeft: 10,
+        height: '100%',
+        width: '90%',
         color: textColor,
         fontSize: 15
     },
+
     button: {
-        margin:5
+        margin: 6,
     }
-})
+});

@@ -34,10 +34,23 @@ export default function Contamination({idSession}) {
 
     useEffect(()=>{
         /**
-         * TODO : Requête qui va contaminer le joueur
+         * Requête qui va contaminer le joueur
          * (action lorsque l'on valide le choix du joueur)
          */
-        function contaminer(){}
+        function contaminer(){
+            if (selectedUser !== null) {
+                fetch(`${BACKEND}/game/${idSession}/actions/contamination`, {
+                    method: 'POST',
+                    headers: {
+                        'x-access-token': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: '{"victime": "' + selectedUser + '"}' })
+                })
+                    .then(response => response.json())
+                    .catch(error => alert(error.message));
+            }
+        }
 
 
         if(utilise === false){

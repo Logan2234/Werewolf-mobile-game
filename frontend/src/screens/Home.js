@@ -21,20 +21,20 @@ export default function Home() {
     useEffect(() => {
         function setJSX() {
             switch (currentView) {
-            case views.LOGIN:
-                setCurrentViewJSX(<LoginForm setIdSession={setIdSession} />); break;
-            case views.REGISTER:
-                setCurrentViewJSX(<RegisterForm />); break;
-            case views.CREATE_OR_JOIN:
-                setCurrentViewJSX(<CreateOrJoin />); break;
-            case views.JOIN_SESSION:
-                setCurrentViewJSX(<JoinSession idSession={idSession} setIdSession={setIdSession} />); break;
-            case views.CREATE_SESSION:
-                setCurrentViewJSX(<CreateSessionForm setIdSession={setIdSession} />); break;
-            case views.SHARE_SESSION:
-                setCurrentViewJSX(<ShareSession idSession={idSession} />); break;
-            case views.IN_GAME:
-                setCurrentViewJSX(<GameView idSession={idSession} />); break;
+                case views.LOGIN:
+                    setCurrentViewJSX(<LoginForm setIdSession={setIdSession} />); break;
+                case views.REGISTER:
+                    setCurrentViewJSX(<RegisterForm />); break;
+                case views.CREATE_OR_JOIN:
+                    setCurrentViewJSX(<CreateOrJoin />); break;
+                case views.JOIN_SESSION:
+                    setCurrentViewJSX(<JoinSession idSession={idSession} setIdSession={setIdSession} />); break;
+                case views.CREATE_SESSION:
+                    setCurrentViewJSX(<CreateSessionForm setIdSession={setIdSession} />); break;
+                case views.SHARE_SESSION:
+                    setCurrentViewJSX(<ShareSession idSession={idSession} />); break;
+                case views.IN_GAME:
+                    setCurrentViewJSX(<GameView idSession={idSession} />); break;
             }
         }
 

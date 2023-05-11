@@ -1,8 +1,8 @@
 import { Tab, TabView } from '@rneui/base';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
 import { textColor } from '../constants/colors';
-import { CurrentGameView, ScreenContext } from '../constants/hooks';
+import { CurrentGameView } from '../constants/hooks';
 import { commonStyles, fontSize } from '../constants/style';
 import ChatView from './ChatView';
 import InfoView from './InfoView';
@@ -11,7 +11,6 @@ import VoteView from './VoteView';
 
 export default function GameView({ idSession }) {
     const [index, setIndex] = useState(0);
-    const changeView = useContext(ScreenContext);
 
     return (
         <View style={commonStyles.container}>

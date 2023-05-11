@@ -11,7 +11,7 @@ export default function Title({ style, label }) {
 const styles = StyleSheet.create({
     titre: {
         fontWeight: 'bold',
-        marginTop: 50,
+        marginTop: 30,
         marginBottom: 10,
         textAlign: 'center'
     }

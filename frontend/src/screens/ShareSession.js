@@ -171,7 +171,7 @@ export default function ShareSession({ idSession }) {
                             <SizedText label={donnees.probaS / 100} />
                         </View>
                         <View style={styles.res}>
-                            <SizedText label={'Ratio de loups-garou:'} />
+                            <SizedText label={'Ratio de loups-garous:'} />
                             <SizedText label={donnees.probaLG / 100} />
                         </View>
                         <View style={styles.res}>
@@ -190,7 +190,6 @@ export default function ShareSession({ idSession }) {
                                 renderItem={({ item }) => <SizedText size={20} label={item.key} />}
                                 data={connectedUsers}
                                 contentContainerStyle={styles.flatListContainer}
-                            // onTouchStart={() => (showUsers == false) ? ws.send('coucou') : null}
                             />
                         </View>
                     </View>
@@ -211,33 +210,40 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'space-between'
     },
+
     input: {
         height: 35,
         width: 60,
     },
+
     field: {
         justifyContent: 'space-between',
         paddingHorizontal: '15%'
     },
+
     bouton: {
         marginTop: 10,
         height: 50
     },
+
     res: {
         display: 'flex',
         justifyContent: 'space-between',
         paddingHorizontal: '20%',
         flexDirection: 'row'
     },
+
     idSection: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         marginBottom: 20
     },
+
     id: {
         fontWeight: 'bold'
     },
+
     usersContainer: {
         position: 'absolute',
         bottom: 5,
@@ -247,9 +253,11 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(1, 1, 1, 0.1)',
         borderWidth: 3,
     },
+
     usersButton: {
         backgroundColor: backgroundColor,
     },
+
     users: {
         position: 'absolute',
         width: '100%',
@@ -257,11 +265,13 @@ const styles = StyleSheet.create({
         backgroundColor: backgroundColor,
         zIndex: 0
     },
+
     list: {
         marginTop: 25,
         height: '75%',
         width: '100%',
     },
+
     flatListContainer: {
         display: 'flex',
         alignItems: 'center',

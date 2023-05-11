@@ -44,11 +44,10 @@ export default function ChoixSpiritisme({idSession}) {
         /**
          * Requête qui va sélectionner un joueur pour parler la nuit
          * (action lorsque l'on valide le choix du joueur)
-         * TODO : à tester 
          */
         function discute(){
             if (selectedUser !== null){
-                fetch(`${BACKEND}/game/${idSession}/action/spiritism`, {
+                fetch(`${BACKEND}/game/${idSession}/actions/spiritism`, {
                     method: 'POST',
                     headers: { 'x-access-token': token, 
                     'Content-Type': 'application/json' },

@@ -1,21 +1,21 @@
 //Bouton.js
+import { Button } from '@rneui/base';
 import { StyleSheet, Vibration } from 'react-native';
 import { primaryColor, textColor } from '../constants/colors';
 import { fontSize } from '../constants/style';
-import { Button } from '@rneui/base';
 
-export default function Bouton({ style, label, onPress, labelSize = fontSize}) {
+export default function Bouton({ style, label, onPress, labelSize = fontSize }) {
     function onPressFunc() {
         Vibration.vibrate(20);
         onPress();
     }
 
     return (
-        <Button onPress={onPressFunc} 
-        size='lg' 
-        buttonStyle={[styles.button, style]} 
-        title={label} 
-        titleStyle={[styles.label, { fontSize: parseFloat(labelSize) }]} 
+        <Button onPress={onPressFunc}
+            buttonStyle={[styles.button, style]}
+            titleStyle={[styles.label, { fontSize: parseFloat(labelSize) }]}
+            size='lg'
+            title={label}
         />
     );
 }
@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         justifyContent: 'center',
     },
+
     label: {
         textAlign: 'center',
         color: textColor,

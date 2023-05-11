@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet } from 'react-native';
 import SizedText from '../components/SizedText';
 import { BACKEND } from '../constants/backend';
 import { primaryColor } from '../constants/colors';
@@ -7,8 +7,9 @@ import { CurrentGameView, TokenContext } from '../constants/hooks';
 import { gameViews } from '../constants/screens';
 
 export default function PlayerView({ idSession }) {
-    const [alivePlayers, setAlivePlayers] = useState([]);
-    const [deadPlayers, setDeadPlayers] = useState([]);
+    const [players, setPlayers] = useState(new Set());
+    const [players_array, setPlayers_array] = useState([]);
+    const [canShow, setCanShow] = useState(false);
 
     const token = useContext(TokenContext).token;
     const currentGameView = useContext(CurrentGameView);
@@ -19,12 +20,12 @@ export default function PlayerView({ idSession }) {
                 method: 'GET',
             })
                 .then(response => response.json())
+                .then(data => { setPlayers(new Set()); return data; })
                 .then(data => {
-                    let users = [];
                     for (let user of data.aliveUsers)
-                        users.push({ key: user, color: primaryColor });
-                    setAlivePlayers(users);
+                        players.add({ key: user, color: primaryColor });
                 })
+                .then(fetchDeadData)
                 .catch(error => alert(error.message));
         }
 
@@ -34,11 +35,10 @@ export default function PlayerView({ idSession }) {
             })
                 .then(response => response.json())
                 .then(data => {
-                    let users = [];
                     for (let user of data.deadUsers)
-                        users.push({ key: user, color: 'red' });
-                    setDeadPlayers(users);
+                        players.add({ key: user, color: 'red' });
                 })
+                .then(fetchUserRole)
                 .catch(error => alert(error.message));
         }
 
@@ -51,41 +51,42 @@ export default function PlayerView({ idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then(data => (data.role == 'LG') ? fetchAliveWerewolves() : null)
+                .then(data => fetchAliveWerewolves(data.role))
+                .then(() => setPlayers_array(Array.from(players)))
                 .catch(error => alert(error.message));
         }
 
-        function fetchAliveWerewolves() {
-            fetch(`${BACKEND}/game/${idSession}/werewolves`, {
-                method: 'GET',
-            })
-                .then(response => response.json())
-                .then(data => {
-                    let users = alivePlayers; // TODO: ATTENTION ON GET LES ID AU LIEU DES USERNAME POUR LE MOMENT
-                    for (let user of data.werewolves)
-                        if (users.includes({ key: user, color: 'green' })) {
-                            let index = users.indexOf({ key: user, color: 'green' });
-                            users[index].color = 'orange';
-                        }
-                    setAlivePlayers(users);
+        function fetchAliveWerewolves(role) {
+            if (role == 'LG') {
+                fetch(`${BACKEND}/game/${idSession}/werewolves`, {
+                    method: 'GET',
                 })
-
-                .catch(error => alert(error.message));
+                    .then(response => response.json())
+                    .then(data => {
+                        for (let user of data.werewolves) {
+                            players.forEach(item => { if (item.key == user) players.delete(item); });
+                            players.add({ key: user, color: 'orange' });
+                        }
+                    })
+                    .then(() => setPlayers_array(Array.from(players)))
+                    .then(() => setCanShow(true))
+                    .catch(error => alert(error.message));
+            } else
+                setCanShow(true);
         }
 
         if (currentGameView == gameViews.PLAYERS) {
+            setCanShow(false);
             fetchAliveData();
-            fetchDeadData();
-            fetchUserRole();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentGameView]);
+    }, [currentGameView, idSession, token]);
 
     return (
-        <FlatList
-            renderItem={({ item }) => <SizedText size={20} label={item.key} style={{ color: item.color }} />}
-            data={alivePlayers.concat(deadPlayers)}
-            contentContainerStyle={styles.flatListContainer} style={styles.flatList} />
+        (canShow)
+            ? <FlatList data={players_array}
+                renderItem={({ item }) => <SizedText size={20} label={item.key} style={{ color: item.color }} />}
+                contentContainerStyle={styles.flatListContainer} style={styles.flatList} />
+            : <ActivityIndicator style={{ height: '100%' }} size={100} color={primaryColor} />
     );
 }
 

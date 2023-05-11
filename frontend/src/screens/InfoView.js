@@ -10,6 +10,7 @@ import { gameViews } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 import ChoixVoyance from './Voyance';
 import ChoixSpiritisme from './Spiritisme';
+import ChoixContamination from './Contamination';
 
 export default function InfoView({ idSession }) {
     const [alivePlayers, setAlivePlayers] = useState({});
@@ -18,6 +19,8 @@ export default function InfoView({ idSession }) {
     const [gameData, setGameData] = useState({});
     const [aliveWerewolves, setAliveWerewolves] = useState(0);
     const [canShow, setCanShow] = useState(false);
+    const [currentJSX, setJSX] = useState(null); 
+
 
     const currentGameView = useContext(CurrentGameView);
     const token = useContext(TokenContext).token;
@@ -83,29 +86,29 @@ export default function InfoView({ idSession }) {
         }
     }, [currentGameView, idSession, token]);
 
-
+    useEffect(()=>{
     let pouvoir;
     let onPress;
     switch (userData.pouvoir) {
         case 'V':
             pouvoir = 'Voyance'; 
-            onPress = () => {return(<ChoixVoyance idSession={idSession}/>);};
+            onPress = () => {setJSX(<ChoixVoyance idSession={idSession}/>);};
             break;
         case 'S':
             pouvoir = 'Spiritisme'; 
-            onPress = () => {return(<ChoixSpiritisme idSession={idSession}/>);};
+            onPress = () => {setJSX(<ChoixSpiritisme idSession={idSession}/>);};
             break;
         case 'I':
             pouvoir = 'Insomnie'; break;
         case 'C':
             pouvoir = 'Contamination'; 
-            onPress = () => {return(<Contamination idSession={idSession}/>);};
+            onPress = () => {setJSX(<ChoixContamination idSession={idSession}/>);};
             break;
         default:
             pouvoir = 'Aucun'; break;
     }
 
-    return (
+    setJSX (
         <View style={[commonStyles.container, styles.infoView]}>
             {
                 (canShow)
@@ -131,7 +134,7 @@ export default function InfoView({ idSession }) {
                             <SizedText label={`Nombre de loups-garous: ${aliveWerewolves} / ${gameData.nbLG}`} />
                         </View>
                         {
-                            ((userData.pouvoir === 'V' || userData.pouvoir === 'C' || userData.pouvoir === 'S')&& userData.vivant === 'V')
+                            ((userData.pouvoir === 'V' || userData.pouvoir === 'C' || userData.pouvoir === 'S')&& userData.vie === 'V')
                                 ? <Bouton style={styles.bouton} label='Utiliser pouvoir' onPress={onPress} />
                                 : null
                         }
@@ -139,6 +142,11 @@ export default function InfoView({ idSession }) {
                     : <ActivityIndicator style={{ height: '100%' }} size={100} color={primaryColor} />
             }
         </View>);
+        },[currentGameView, alivePlayers]);
+
+        return(
+            <View style={styles.container}>{currentJSX}</View>
+        );
 }
 
 const styles = StyleSheet.create({
@@ -161,5 +169,10 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         gap: 20
+    },
+    container: {
+        flex: 1,
+        padding: 10,
+        flexDirection: 'column',
     }
 });

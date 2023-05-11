@@ -2,6 +2,8 @@
 
 import { StyleSheet, View } from 'react-native';
 import SizedText from './SizedText';
+import { commonStyles } from '../constants/style';
+import { primaryColor } from '../constants/colors';
 
 /**
  *
@@ -47,7 +49,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         margin: 5,
-        height: 40
+        height: 40,
+        color: primaryColor
     },
 
     pseudoSel: {

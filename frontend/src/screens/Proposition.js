@@ -6,7 +6,7 @@ import Title from '../components/Title';
 import { BACKEND } from '../constants/backend';
 import { TokenContext } from '../constants/hooks';
 import { commonStyles } from '../constants/style';
-import ChoixUrne from './ChoixUrne';
+import StaticUrne from './StaticUrne';
 
 /**
  * Ecran où on peut choisir de ratifier une proposition
@@ -65,7 +65,7 @@ export default function Proposition({ idSession }) {
                     body: JSON.stringify({ data: '{"victime": "' + selectedUser + '"}' })
                 })
                     .then(response => response.json())
-                    .then(() => setJSX(<ChoixUrne idSession={idSession} canVote={false} />));
+                    .then(() => setJSX(<StaticUrne idSession={idSession}/>));
             }
         }
 

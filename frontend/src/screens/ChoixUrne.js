@@ -1,15 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 import { FlatList, Pressable, SafeAreaView, StyleSheet } from 'react-native';
-import Bouton from '../components/Bouton';
 import Propose from '../components/Propose';
-import Title from '../components/Title';
 import { BACKEND } from '../constants/backend';
-import { FlatList, Pressable, SafeAreaView, StyleSheet } from "react-native";
 import Bouton from "../components/Bouton";
 import StaticUrne from "./StaticUrne";
 import { TokenContext, CurrentGameView } from '../constants/hooks';
 import { commonStyles, fontSize } from "../constants/style";
 import Title from "../components/Title";
+import Proposition from './Proposition'
 
 export default function ChoixUrne({ idSession }) {
     const [proposes, setProposes] = useState([]);
@@ -79,7 +77,9 @@ export default function ChoixUrne({ idSession }) {
         const renderItem = ({ item }) => {
             return (
                 <Pressable onPress={() => setSelectedUser(item.username)} >
-                    <Propose name={item.username} votes={item.votes} selected={item.username === selectedUser} />
+                    <Propose name={item.username} 
+                    votes={item.votes} 
+                    selected={item.username === selectedUser} />
                 </Pressable>
             );
         };

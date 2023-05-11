@@ -1,8 +1,11 @@
 import { useEffect, useContext, useState } from "react";
 import Propose from "../components/Propose";
 import { TokenContext, CurrentGameView } from '../constants/hooks';
-import { FlatList, Pressable, SafeAreaView } from "react-native/types";
+import { FlatList, Pressable, SafeAreaView, StyleSheet } from "react-native";
 import Title from "../components/Title";
+import { BACKEND } from "../constants/backend";
+import { commonStyles } from "../constants/style";
+import Bouton from "../components/Bouton";
 
 
 export default function ChoixSpiritisme({idSession}) {
@@ -18,7 +21,6 @@ export default function ChoixSpiritisme({idSession}) {
         /**
          * Requête qui renvoie la liste des joueurs morts
          * Pour set proposes
-         * TODO : à tester
          */
         function fetchDeads(){
             fetch(`${BACKEND}/game/${idSession}/deads`, {
@@ -33,7 +35,17 @@ export default function ChoixSpiritisme({idSession}) {
          * TODO : Requete qui vérifie si le pouvoir a déjà été utilisé
          * Pour set utilise
          */
-        function fetchUsage(){}
+        function fetchUsage(){
+            // fetch(`${BACKEND}/game/${idSession}/actions/check`, {
+            //     method: 'GET',
+            //     headers: {
+            //         'x-access-token': token,
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
+            //     .then(response => response.json())
+            //     .then(data => setUtilise(data.status));
+        }
 
         fetchUsage();
         fetchDeads();
@@ -55,6 +67,8 @@ export default function ChoixSpiritisme({idSession}) {
                 })
                     .then(response => response.json())
                     .catch(error => alert(error.message));
+            } else {
+                alert('Merci de choisir un mort à qui parler.')
             }
         }
 
@@ -64,21 +78,21 @@ export default function ChoixSpiritisme({idSession}) {
             if (proposes.length > 0){
                 const renderItem = ({item}) => {
                     return (
-                    <Pressable onPress={() => setSelectedUser(item.username)} >
+                    <Pressable onPress={() => setSelectedUser(item)} >
                       <Propose 
-                        name={item.username} 
-                        selected={item.username === selectedUser}
+                        name={item} 
+                        selected={item === selectedUser}
                         />
                     </Pressable>
                     );
                 } ;
     
                 setJSX(
-                    <SafeAreaView>
+                    <SafeAreaView style={styles.container}>
                         <Title label='Parler à un joueur mort'/>
                         <FlatList
                             data={proposes}
-                            keyExtractor={item => item.username}
+                            keyExtractor={item => item}
                             renderItem={renderItem}
                         />
                         <SafeAreaView  style={[commonStyles.bottom, styles.bottom]} >
@@ -102,7 +116,11 @@ export default function ChoixSpiritisme({idSession}) {
 }
 
 const styles = StyleSheet.create({
-    
+    bottom: {
+        flexDirection: 'column',
+        margin: 2,
+        gap: 10
+    },
     
     container: {
         paddingTop: 5,

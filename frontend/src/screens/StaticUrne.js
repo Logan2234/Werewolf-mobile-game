@@ -17,7 +17,7 @@ export default function StaticUrne({ idSession }) {
          * Requête qui renvoie la liste des personnes proposées pour l'instant
          */
         function fetchPropose() {
-            fetch(`${BACKEND}/game/${idSession}/vote/`, {
+            fetch(`${BACKEND}/game/${idSession}/vote`, {
                 method: 'GET',
                 headers: {
                     'x-access-token': token,

@@ -431,6 +431,9 @@ module.exports = {
         if (userInTheGame == null) {
             throw new CodeError('This user is not in a game', status.BAD_REQUEST)
         }
+        if (userInTheGame.vie == "M") {
+            throw new CodeError('You cannot look for dead people', status.BAD_REQUEST)
+        }
 
         const role = userInTheGame.role
         const pouvoir = userInTheGame.pouvoir

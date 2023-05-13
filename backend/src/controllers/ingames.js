@@ -787,7 +787,7 @@ let startNight = async (idGame) => {
     await finUrneFinPeriode(idGame)
     await inGameModel.update({"moment": "N"}, {where: {"id": idGame}})
     await inGameModel.update({"finTimer": new Date().getTime() + game.dureeNuit}, {where: {"id": idGame}})
-    timers[idGame] = setTimeout(() => {await startDay(idGame)}, game.dureeNuit)
+    timers[idGame] = setTimeout(() => {startDay(idGame)}, game.dureeNuit)
 }
 
 let startDay = async (idGame) => {
@@ -797,7 +797,7 @@ let startDay = async (idGame) => {
     await inGameModel.update({"moment": "J"}, {where: {"id": idGame}})
     await usersInGames.update({"pouvoirUtilise": false}, {where: {"idGame": idGame}})
     await inGameModel.update({"finTimer": new Date().getTime() + game.dureeJour}, {where: {"id": idGame}})
-    timers[idGame] = setTimeout(() => {await startNight(idGame)}, game.dureeJour)
+    timers[idGame] = setTimeout(() => {startNight(idGame)}, game.dureeJour)
 }
 
 let finGame = async (idGame) => {

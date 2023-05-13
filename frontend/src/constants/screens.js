@@ -1,3 +1,6 @@
+/**
+ * Liste des vues disponibles dans l'application
+ */
 export const views = {
     LOGIN: 0,
     REGISTER: 1,
@@ -8,6 +11,9 @@ export const views = {
     IN_GAME: 6
 };
 
+/**
+ * Liste des vues disponibles dans le jeu
+ */
 export const gameViews = {
     INFO: 0,
     CHAT: 1,

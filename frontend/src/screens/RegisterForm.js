@@ -12,6 +12,10 @@ import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 import { verifyString } from '../utils/verifyData';
 
+/**
+ * Vue pour s'inscrire sur l'application
+ * @returns 
+ */
 export default function RegisterForm() {
     const [pseudo, setPseudo] = useState('');
     const [password, setPassword] = useState('');

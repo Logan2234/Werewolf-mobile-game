@@ -5,6 +5,11 @@ import { ScreenContext } from '../constants/hooks';
 import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 
+/**
+ * Vue qui gère l'accès aux parties (pour créer ou rejoindre)
+ * 
+ * @returns 
+ */
 export default function JoinSession() {
     const changeView = useContext(ScreenContext);
 

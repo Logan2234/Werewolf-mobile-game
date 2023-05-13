@@ -1,5 +1,8 @@
 import { StyleSheet } from 'react-native';
 
+/**
+ * Constante de style pour s'enregistrer et ce connecter
+ */
 export const loginAndRegisterStyle = StyleSheet.create({
     form: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
 

@@ -11,6 +11,12 @@ import { ScreenContext, TokenContext } from '../constants/hooks';
 import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 
+/**
+ * Vue pour se connecter à l'application
+ * 
+ * @param {string} setIdSession 
+ * @returns 
+ */
 export default function LoginForm({ setIdSession }) {
     const [pseudo, setPseudo] = useState('');
     const [password, setPassword] = useState('');

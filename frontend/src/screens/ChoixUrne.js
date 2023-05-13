@@ -9,6 +9,12 @@ import { commonStyles, fontSize } from "../constants/style";
 import Title from "../components/Title";
 import Proposition from './Proposition'
 
+/**
+ * Affichage pour voter ou proposer quelqu'un au vote
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function ChoixUrne({ idSession }) {
     const [proposes, setProposes] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);

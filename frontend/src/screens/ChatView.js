@@ -10,6 +10,12 @@ import DiscussionRepere from './DiscussionRepere';
 import DiscussionSpiritisme from './DiscussionSpiritisme';
 import DiscussionVillage from './DiscussionVillage';
 
+/**
+ * Vue qui gère l'accès aux différentes discussions.
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function ChatView({ idSession }) {
     // ------------------------ Constantes -------------------------
     const currentGameView = useContext(CurrentGameView);
@@ -25,7 +31,6 @@ export default function ChatView({ idSession }) {
     // ------------------------ Fonction pour factoriser le code -------------------------
     /**
      * Récupère les constantes dans le back
-     * TODO : réussir à faire trois appels avant le premier affichage + actualiser l'affichage
      */
     useEffect(() => {
         function fetchUserData() {

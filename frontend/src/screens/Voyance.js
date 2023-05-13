@@ -7,7 +7,12 @@ import { BACKEND } from "../constants/backend";
 import { commonStyles } from "../constants/style";
 import Bouton from "../components/Bouton";
 
-
+/**
+ * Affichage qui permet à la voyante de choisir et voir le rôle et pouvoir pour un personnage de son choix
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function ChoixVoyance({idSession}) {
     const [proposes, setProposes] = useState([]); //liste des sélectionnables
     const [selectedUser, setSelectedUser] = useState(null); //utilisateur sélectionné

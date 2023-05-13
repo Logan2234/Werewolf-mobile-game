@@ -11,6 +11,12 @@ import { commonStyles } from '../constants/style';
 import subDates, { tomorrowDate } from '../utils/dates';
 import { verifyProba } from '../utils/verifyData';
 
+/**
+ * Vue pour créer une partie 
+ * 
+ * @param {function} setIdSession
+ * @returns 
+ */
 export default function CreateSessionForm({ setIdSession }) {
     // ------------------------ Constantes --------------------------------------
     const [minPlayer, setMinPlayer] = useState('5');

@@ -12,6 +12,10 @@ import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import ShareSession from './ShareSession';
 
+/**
+ * Vue principale qui va gérer dans quelle situation on est (inscription, connexion, creation de partie, dans la partie ...)
+ * @returns 
+ */
 export default function Home() {
     const [token, setToken] = useState(null);
     const [idSession, setIdSession] = useState('');

@@ -5,6 +5,14 @@ import SizedText from './SizedText';
 // Pour les dates
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
+/**
+ * Elément JSX avec un champ et de quoi sélectionner une date et une heure.
+ * 
+ * @param {Date} startDate date demandée
+ * @param {function} setStartDate 
+ * @param {string} label texte à coté des time picker
+ * @returns 
+ */
 export default function SelectDateHeure({ startDate, setStartDate, label }) {
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);

@@ -8,6 +8,16 @@ import InputMessage from './InputMessage';
 import Message from './Message';
 import Title from './Title';
 
+/**
+ * Element JSX qui va afficher une discussion pour une salle donnée.
+ * On affichera un titre, les messages et éventuellement la barre d'entrée de texte pour envoyer des messages.
+ * 
+ * @param {title} title titre de la discussion
+ * @param {string} idDiscussion correspond au salon souhaité, peut être 'place', 'repere' ou 'spiritisme'
+ * @param {string} idSession correspond à l'id de la session pour laquelle on souhaite accéder aux discssion (code à 6 chiffre attendu)
+ * @returns Un salon de discussion en format JSX.
+ */
+
 export default function Discussion({ title, idDiscussion, idSession }) {
     const token = useContext(TokenContext).token;
 
@@ -78,7 +88,6 @@ export default function Discussion({ title, idDiscussion, idSession }) {
         getMessages();
         // return () => BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
     }, [token, idSession, idDiscussion]);
-    // TODO: rafraichissement actuellement au changement de page => websocket sur les nouveaux messages
 
     /**
      * @returns cute JSX Divider between messages

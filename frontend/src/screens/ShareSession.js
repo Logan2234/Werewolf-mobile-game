@@ -10,6 +10,12 @@ import { ScreenContext, TokenContext } from '../constants/hooks';
 import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 
+/**
+ * Vues qui va gérer la salle d'attente d'une partie
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function ShareSession({ idSession }) {
     const [donnees, setDonnees] = useState({});
     const [users, setUsers] = useState([]);

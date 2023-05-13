@@ -5,7 +5,12 @@ import Title from '../components/Title';
 import { BACKEND } from '../constants/backend';
 import { TokenContext } from '../constants/hooks';
 
-
+/**
+ * Affichage de l'urne de vote statique avec uniquement les personnes proposées et le nombre de voies contre elles
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function StaticUrne({ idSession }) {
     const token = useContext(TokenContext).token;
 

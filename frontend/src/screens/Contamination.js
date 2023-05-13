@@ -7,7 +7,12 @@ import { BACKEND } from "../constants/backend";
 import { commonStyles } from "../constants/style";
 import Bouton from "../components/Bouton";
 
-
+/**
+ * Affichage pour contaminer un humain
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function Contamination({idSession}) {
     const [proposes, setProposes] = useState([]); //liste des sélectionnables
     const [selectedUser, setSelectedUser] = useState(null); //utilisateur sélectionné
@@ -38,19 +43,19 @@ export default function Contamination({idSession}) {
         }
 
         /**
-         * TODO : Requete qui vérifie si le pouvoir a déjà été utilisé
+         * Requete qui vérifie si le pouvoir a déjà été utilisé
          * Pour set utilise
          */
         function fetchUsage(){
-            // fetch(`${BACKEND}/game/${idSession}/actions/check`, {
-            //     method: 'GET',
-            //     headers: {
-            //         'x-access-token': token,
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            //     .then(response => response.json())
-            //     .then(data => setUtilise(data.status));
+            fetch(`${BACKEND}/game/${idSession}/actions/check`, {
+                method: 'GET',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => setUtilise(data.status));
         }
 
         fetchUsage();

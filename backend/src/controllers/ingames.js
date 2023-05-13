@@ -768,13 +768,15 @@ let finUrneFinPeriode = async (idGame) => {
     if (await urneModel.findOne({where: {"idGame": idGame}}) == null) {
         return
     }
-    let urne = await urneModel.findOne({where: {"idGame": idGame}})
-    let idVictime = urne.idVictime
-    let nbUsersVote = urne.nbUsersVote
-    let votesPour = urne.votesPour
+    let urnes = await urneModel.findAll({where: {"idGame": idGame}})
+    for (let i = 0; i < urnes.length; i++) {
+        let idVictime = urnes[i].idVictime
+        let nbUsersVote = urnes[i].nbUsersVote
+        let votesPour = urnes[i].votesPour
 
-    if (votesPour > Math.floor(nbUsersVote / 2)) {
-        await usersInGames.update({"vie": "M"}, {where: {"idUser": idVictime}})
+        if (votesPour > Math.floor(nbUsersVote / 2)) {
+            await usersInGames.update({"vie": "M"}, {where: {"idUser": idVictime}})
+        }
     }
     await urneModel.destroy({where: {"idGame": idGame}})
     await inGameModel.update({"voted": false}, {where: {"id": idGame}})
@@ -835,3 +837,4 @@ let checkIfEndGame = async (idGame) => {
         await finGame(idGame)
     }
 }
+

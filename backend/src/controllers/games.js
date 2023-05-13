@@ -6,6 +6,7 @@ const inGameModel = require('../models/inGames.js');
 const usersInQModel = require('../models/usersInQs.js');
 const lieuModel = require('../models/lieus.js');
 const CodeError = require('../util/CodeError.js')
+const inGameFonctions = require('../controllers/ingames.js')
 
 const has = require('has-keys');
 const usersInGames = require('../models/usersInGames.js');
@@ -233,6 +234,7 @@ let createGame = async (idSession) => {
         await lieuModel.create({"idPartie": idSession, "typeLieu": "P"})
         await lieuModel.create({"idPartie": idSession, "typeLieu": "R"})
         if (isThereAS) await lieuModel.create({"idPartie": idSession, "typeLieu": "E"})
+        await inGameFonctions.startNight(idSession)
     }
 
     // Indépendament de si la partie a été créée ou pas, on supprime la session de la queue.

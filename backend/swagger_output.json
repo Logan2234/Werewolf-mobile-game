@@ -13,6 +13,10 @@
   "paths": {
     "/signin": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Sign in a new user and return a token.",
         "description": "",
         "parameters": [
           {
@@ -37,6 +41,10 @@
     },
     "/login": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Log in a user and return a token.",
         "description": "",
         "parameters": [
           {
@@ -61,6 +69,10 @@
     },
     "/user/game": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Return the game or the session of the player.",
         "description": "",
         "parameters": [
           {
@@ -78,6 +90,10 @@
     },
     "/user/status": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Return the role of the player.",
         "description": "",
         "parameters": [
           {
@@ -95,6 +111,10 @@
     },
     "/whoami": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Return the username of the player from the token.",
         "description": "",
         "parameters": [
           {
@@ -112,6 +132,10 @@
     },
     "/createSession": {
       "post": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Create a new session.",
         "description": "",
         "parameters": [
           {
@@ -141,6 +165,10 @@
     },
     "/joinSession/{idSession}": {
       "get": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Return the parameters of a session, including the number of players in the session and the roles percentages",
         "description": "",
         "parameters": [
           {
@@ -162,6 +190,10 @@
         }
       },
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Join an existing session",
         "description": "",
         "parameters": [
           {
@@ -185,6 +217,10 @@
     },
     "/joinSession/{idSession}/users": {
       "get": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Get the list of users in a session",
         "description": "",
         "parameters": [
           {
@@ -203,6 +239,10 @@
     },
     "/joinSession/{idSession}/time": {
       "get": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Return the time left before the game starts",
         "description": "",
         "parameters": [
           {
@@ -221,6 +261,10 @@
     },
     "/game/{idGame}/messages/place": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -242,6 +286,10 @@
         }
       },
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -277,6 +325,10 @@
     },
     "/game/{idGame}/messages/repere": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -298,6 +350,10 @@
         }
       },
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -333,6 +389,10 @@
     },
     "/game/{idGame}/messages/spiritism": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -354,6 +414,10 @@
         }
       },
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -387,7 +451,106 @@
         }
       }
     },
+    "/game/{idGame}/messages/place/check": {
+      "get": {
+        "tags": [
+          "InGames"
+        ],
+        "summary": "Return if the user can send a message to the main place.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/game/{idGame}/messages/repere/check": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/game/{idGame}/messages/spiritism/check": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/game/{idGame}/alives": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/game/{idGame}/humans/alive": {
       "get": {
         "description": "",
         "parameters": [
@@ -479,6 +642,10 @@
     },
     "/game/{idGame}/actions/spiritism": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -514,6 +681,10 @@
     },
     "/game/{idGame}/actions/contamination": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -549,6 +720,10 @@
     },
     "/game/{idGame}/actions/voyance": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -582,6 +757,29 @@
         }
       }
     },
+    "/game/{idGame}/actions/check": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
+    },
     "/game/{idGame}/vote": {
       "get": {
         "description": "",
@@ -600,6 +798,10 @@
         }
       },
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -635,6 +837,10 @@
     },
     "/game/{idGame}/vote/start": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
         "description": "",
         "parameters": [
           {
@@ -676,6 +882,87 @@
             "name": "idGame",
             "in": "path",
             "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/game/{idGame}/vote/check": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/game/{idGame}/vote/check-see": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/game/{idGame}/vote/info": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Check if the token if the user is valid.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
             "type": "string"
           }
         ],

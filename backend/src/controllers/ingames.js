@@ -18,7 +18,7 @@ var timers = {}
 module.exports = {
 
     async canISendAMessageToPlace(req, res) {
-        // #swagger.tags = ['InGames']
+        // #swagger.tags = ['Messages']
         // #swagger.summary = 'Return if the user can send a message to the main place.'
 
         const username = req.login
@@ -42,6 +42,9 @@ module.exports = {
     },
 
     async canISendAMessageToRepere(req, res) {
+        // #swagger.tags = ['Messages']
+        // #swagger.summary = 'Return if the user can send a message to the lair of the werewolves'
+
         const username = req.login
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
@@ -68,6 +71,9 @@ module.exports = {
     },
 
     async canISendAMessageToSpiritismRoom (req, res) {
+        // #swagger.tags = ['Messages']
+        // #swagger.summary = 'Return if the user can send a message to the spiritism room'
+
         const username = req.login
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
@@ -97,6 +103,9 @@ module.exports = {
     },
 
     async getMessagesFromPlace (req, res) {
+        // #swagger.tags = ['Messages']
+        // #swagger.summary = 'Get the messages from the main place'
+
         const username = req.login
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
@@ -117,6 +126,9 @@ module.exports = {
     },
 
     async getMessagesFromRepere (req, res) {
+        // #swagger.tags = ['Messages']
+        // #swagger.summary = 'Get the messages from the lair of werewolves'
+
         const username = req.login
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
@@ -141,6 +153,9 @@ module.exports = {
     },
 
     async getMessagesFromSpiritismRoom (req, res) {
+        // #swagger.tags = ['Messages']
+        // #swagger.summary = 'Get the messages from the spiritism room'
+
         const username = req.login
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
@@ -168,6 +183,9 @@ module.exports = {
     },
 
     async sendMessageToPlace (req, res) {
+        // #swagger.tags = ['Messages']
+        // #swagger.summary = 'Send a message to the main place'
+
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message')) {
             throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
         }
@@ -199,6 +217,9 @@ module.exports = {
     },
 
     async sendMessageToRepere (req, res) {
+        // #swagger.tags = ['Messages']
+        // #swagger.summary = 'Send a message to the lair of werewolves'
+
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message')) {
             throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
         }
@@ -234,6 +255,9 @@ module.exports = {
     },
 
     async sendMessageToSpiritismRoom (req, res) {
+        // #swagger.tags = ['Messages']
+        // #swagger.summary = 'Send a message to the spiritism room'
+
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message')) {
             throw new CodeError('You have not specified a message !', status.BAD_REQUEST)
         }
@@ -270,6 +294,9 @@ module.exports = {
     },
 
     async getAliveUsers (req, res) {
+        // #swagger.tags = ['Game Info']
+        // #swagger.summary = 'Get a list of alive users'
+
         let {idGame} = req.params
         const users = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V"}, attributes: ['idUser']})
         var aliveUsers = []
@@ -282,6 +309,9 @@ module.exports = {
     },
 
     async getAliveHumans (req, res) {
+        // #swagger.tags = ['Game Info']
+        // #swagger.summary = 'Get a list of alive villagers'
+
         let {idGame} = req.params
         const users = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V", "role": "V"}, attributes: ['idUser']})
         var aliveUsers = []
@@ -294,6 +324,9 @@ module.exports = {
     },
 
     async checkActionUsed (req, res) {
+        // #swagger.tags = ['Actions']
+        // #swagger.summary = 'Return if a power has been used (true means yes)'
+
         let {idGame} = req.params
         const username = req.login
         const idUser = (await userModel.findOne({where: {"username": username}})).id
@@ -312,6 +345,9 @@ module.exports = {
     },
 
     async getDeadUsers (req, res) {
+        // #swagger.tags = ['Game Info']
+        // #swagger.summary = 'Get a list of dead users'
+
         let {idGame} = req.params
         const users = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "M"}, attributes: ['idUser']})
         var deadUsers = []
@@ -324,6 +360,9 @@ module.exports = {
     },
 
     async selectAVictimForSpiritism (req, res) {
+        // #swagger.tags = ['Actions']
+        // #swagger.summary = 'Select a dead person in order to talk to him/her'
+
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
             throw new CodeError('You have not specified a victim !', status.BAD_REQUEST)
         }
@@ -378,6 +417,9 @@ module.exports = {
     },
 
     async selectAVictimForContaminator (req, res) {
+        // #swagger.tags = ['Actions']
+        // #swagger.summary = 'Select a villager in order to turn him a werewolf'
+
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
             throw new CodeError('You have not specified a victim !', status.BAD_REQUEST)
         }
@@ -437,6 +479,9 @@ module.exports = {
     },
 
     async selectAVictimForSeer (req, res) {
+        // #swagger.tags = ['Actions']
+        // #swagger.summary = 'Select an alive person in order to know his role and power'
+
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
             throw new CodeError('You have not specified a victim !', status.BAD_REQUEST)
         }
@@ -489,6 +534,9 @@ module.exports = {
     },
 
     async getInfos (req, res) {
+        // #swagger.tags = ['Game Info']
+        // #swagger.summary = 'Get all the information of a game (number of players, duration of a day and a night, the number of werewolves, probabilities of each power and if we are during the day or the night)'
+
         let {idGame} = req.params
         let gameInfo = await inGameModel.findOne({where: {"id": parseInt(idGame)}, attributes: ['nbJoueurs', 'dureeJour', 'dureeNuit', 'nbLG', 'probaV', 'probaS', 'probaI', 'probaC', 'moment']})
         if (gameInfo == null) {
@@ -498,6 +546,9 @@ module.exports = {
     },
 
     async startUrne (req, res) {
+        // #swagger.tags = ['Election']
+        // #swagger.summary = 'Select a new person to vote'
+
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
             throw new CodeError('You have not specified a victim !', status.BAD_REQUEST)
         }
@@ -568,6 +619,9 @@ module.exports = {
     },
 
     async vote (req, res) {
+        // #swagger.tags = ['Election']
+        // #swagger.summary = 'Vote for a person in order to kill him/her'
+
         if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'decision') || !has(JSON.parse(req.body.data), 'victime')) {
             throw new CodeError('You have not specified an answer to the vote !', status.BAD_REQUEST)
         }
@@ -633,6 +687,9 @@ module.exports = {
     },
 
     async canIVote(req, res) {
+        // #swagger.tags = ['Election']
+        // #swagger.summary = 'Return if the user can vote or not (true mean yes)'
+
         const username = req.login
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
@@ -670,6 +727,9 @@ module.exports = {
     },
 
     async canISeeTheVote(req, res) {
+        // #swagger.tags = ['Election']
+        // #swagger.summary = 'Return if the user is able to see the vote or not (true mean yes)'
+
         const username = req.login
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
@@ -701,6 +761,9 @@ module.exports = {
     },
 
     async getInfoVotes (req, res) {
+        // #swagger.tags = ['Election']
+        // #swagger.summary = 'Return the information of the current elections'
+
         let {idGame} = req.params
         if ((await inGameModel.findOne({where: {"idGame": parseInt(idGame)}})).finished){
             throw new CodeError('The game has finished already', status.FORBIDDEN)
@@ -724,6 +787,9 @@ module.exports = {
     },
 
     async myVoteInfo (req, res) {
+        // #swagger.tags = ['Election']
+        // #swagger.summary = 'Return the information of a voted that you have submitted (or return false if you have not voted for the person)'
+
         const username = req.login
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
@@ -752,6 +818,9 @@ module.exports = {
     },
 
     async getWerewolves(req, res) {
+        // #swagger.tags = ['Game Info']
+        // #swagger.summary = 'Return the username of the werewolves'
+
         let {idGame} = req.params
         let werewolves = await getLG(idGame)
         let nbWerewolves = werewolves.length
@@ -759,6 +828,9 @@ module.exports = {
     },
 
     async returnTimeLeft(req, res) {
+        // #swagger.tags = ['Game Info']
+        // #swagger.summary = 'Return the time left in ms before the end of the period'
+
         let {idGame} = req.params
         if (await gameModel.findOne({where: {"id": idGame}})) {
             throw new CodeError('Game has not started yet !', status.BAD_REQUEST)
@@ -775,6 +847,9 @@ module.exports = {
     },
 
     async notVictimsYet(req, res) {
+        // #swagger.tags = ['Election']
+        // #swagger.summary = 'Return the name of the users that have not been voted yet'
+
         let {idGame} = req.params
         if ((await inGameModel.findOne({where: {"idGame": parseInt(idGame)}})).finished){
             throw new CodeError('The game has finished already', status.FORBIDDEN)

@@ -133,7 +133,7 @@
     "/createSession": {
       "post": {
         "tags": [
-          "Games"
+          "Session"
         ],
         "summary": "Create a new session.",
         "description": "",
@@ -166,7 +166,7 @@
     "/joinSession/{idSession}": {
       "get": {
         "tags": [
-          "Games"
+          "Session"
         ],
         "summary": "Return the parameters of a session, including the number of players in the session and the roles percentages",
         "description": "",
@@ -191,7 +191,7 @@
       },
       "post": {
         "tags": [
-          "Users"
+          "Session"
         ],
         "summary": "Join an existing session",
         "description": "",
@@ -218,7 +218,7 @@
     "/joinSession/{idSession}/users": {
       "get": {
         "tags": [
-          "Games"
+          "Session"
         ],
         "summary": "Get the list of users in a session",
         "description": "",
@@ -240,7 +240,7 @@
     "/joinSession/{idSession}/time": {
       "get": {
         "tags": [
-          "Games"
+          "Session"
         ],
         "summary": "Return the time left before the game starts",
         "description": "",
@@ -262,9 +262,9 @@
     "/game/{idGame}/messages/place": {
       "get": {
         "tags": [
-          "Users"
+          "Messages"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Get the messages from the main place",
         "description": "",
         "parameters": [
           {
@@ -287,9 +287,9 @@
       },
       "post": {
         "tags": [
-          "Users"
+          "Messages"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Send a message to the main place",
         "description": "",
         "parameters": [
           {
@@ -326,9 +326,9 @@
     "/game/{idGame}/messages/repere": {
       "get": {
         "tags": [
-          "Users"
+          "Messages"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Get the messages from the lair of werewolves",
         "description": "",
         "parameters": [
           {
@@ -351,9 +351,9 @@
       },
       "post": {
         "tags": [
-          "Users"
+          "Messages"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Send a message to the lair of werewolves",
         "description": "",
         "parameters": [
           {
@@ -390,9 +390,9 @@
     "/game/{idGame}/messages/spiritism": {
       "get": {
         "tags": [
-          "Users"
+          "Messages"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Get the messages from the spiritism room",
         "description": "",
         "parameters": [
           {
@@ -415,9 +415,9 @@
       },
       "post": {
         "tags": [
-          "Users"
+          "Messages"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Send a message to the spiritism room",
         "description": "",
         "parameters": [
           {
@@ -454,7 +454,7 @@
     "/game/{idGame}/messages/place/check": {
       "get": {
         "tags": [
-          "InGames"
+          "Messages"
         ],
         "summary": "Return if the user can send a message to the main place.",
         "description": "",
@@ -481,9 +481,9 @@
     "/game/{idGame}/messages/repere/check": {
       "get": {
         "tags": [
-          "Users"
+          "Messages"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Return if the user can send a message to the lair of the werewolves",
         "description": "",
         "parameters": [
           {
@@ -508,9 +508,9 @@
     "/game/{idGame}/messages/spiritism/check": {
       "get": {
         "tags": [
-          "Users"
+          "Messages"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Return if the user can send a message to the spiritism room",
         "description": "",
         "parameters": [
           {
@@ -534,6 +534,10 @@
     },
     "/game/{idGame}/alives": {
       "get": {
+        "tags": [
+          "Game Info"
+        ],
+        "summary": "Get a list of alive users",
         "description": "",
         "parameters": [
           {
@@ -552,6 +556,10 @@
     },
     "/game/{idGame}/humans/alive": {
       "get": {
+        "tags": [
+          "Game Info"
+        ],
+        "summary": "Get a list of alive villagers",
         "description": "",
         "parameters": [
           {
@@ -570,6 +578,10 @@
     },
     "/game/{idGame}/deads": {
       "get": {
+        "tags": [
+          "Game Info"
+        ],
+        "summary": "Get a list of dead users",
         "description": "",
         "parameters": [
           {
@@ -588,6 +600,10 @@
     },
     "/game/{idGame}/werewolves": {
       "get": {
+        "tags": [
+          "Game Info"
+        ],
+        "summary": "Return the username of the werewolves",
         "description": "",
         "parameters": [
           {
@@ -606,6 +622,10 @@
     },
     "/game/{idGame}/info": {
       "get": {
+        "tags": [
+          "Game Info"
+        ],
+        "summary": "Get all the information of a game (number of players, duration of a day and a night, the number of werewolves, probabilities of each power and if we are during the day or the night)",
         "description": "",
         "parameters": [
           {
@@ -624,6 +644,10 @@
     },
     "/game/{idGame}/time": {
       "get": {
+        "tags": [
+          "Game Info"
+        ],
+        "summary": "Return the time left in ms before the end of the period",
         "description": "",
         "parameters": [
           {
@@ -643,9 +667,9 @@
     "/game/{idGame}/actions/spiritism": {
       "post": {
         "tags": [
-          "Users"
+          "Actions"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Select a dead person in order to talk to him/her",
         "description": "",
         "parameters": [
           {
@@ -682,9 +706,9 @@
     "/game/{idGame}/actions/contamination": {
       "post": {
         "tags": [
-          "Users"
+          "Actions"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Select a villager in order to turn him a werewolf",
         "description": "",
         "parameters": [
           {
@@ -721,9 +745,9 @@
     "/game/{idGame}/actions/voyance": {
       "post": {
         "tags": [
-          "Users"
+          "Actions"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Select an alive person in order to know his role and power",
         "description": "",
         "parameters": [
           {
@@ -760,9 +784,9 @@
     "/game/{idGame}/actions/check": {
       "get": {
         "tags": [
-          "Users"
+          "Actions"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Return if a power has been used (true means yes)",
         "description": "",
         "parameters": [
           {
@@ -777,11 +801,19 @@
             "type": "string"
           }
         ],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/game/{idGame}/vote": {
       "get": {
+        "tags": [
+          "Election"
+        ],
+        "summary": "Return the information of the current elections",
         "description": "",
         "parameters": [
           {
@@ -799,9 +831,9 @@
       },
       "post": {
         "tags": [
-          "Users"
+          "Election"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Vote for a person in order to kill him/her",
         "description": "",
         "parameters": [
           {
@@ -838,9 +870,9 @@
     "/game/{idGame}/vote/start": {
       "post": {
         "tags": [
-          "Users"
+          "Election"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Select a new person to vote",
         "description": "",
         "parameters": [
           {
@@ -876,6 +908,10 @@
     },
     "/game/{idGame}/vote/free-users": {
       "get": {
+        "tags": [
+          "Election"
+        ],
+        "summary": "Return the name of the users that have not been voted yet",
         "description": "",
         "parameters": [
           {
@@ -895,9 +931,9 @@
     "/game/{idGame}/vote/check": {
       "get": {
         "tags": [
-          "Users"
+          "Election"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Return if the user can vote or not (true mean yes)",
         "description": "",
         "parameters": [
           {
@@ -922,9 +958,9 @@
     "/game/{idGame}/vote/check-see": {
       "get": {
         "tags": [
-          "Users"
+          "Election"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Return if the user is able to see the vote or not (true mean yes)",
         "description": "",
         "parameters": [
           {
@@ -949,9 +985,9 @@
     "/game/{idGame}/vote/info": {
       "get": {
         "tags": [
-          "Users"
+          "Election"
         ],
-        "summary": "Check if the token if the user is valid.",
+        "summary": "Return the information of a voted that you have submitted (or return false if you have not voted for the person)",
         "description": "",
         "parameters": [
           {

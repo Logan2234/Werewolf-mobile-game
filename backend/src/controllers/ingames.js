@@ -761,8 +761,6 @@ let finUrne = async (idUrne, idGame) => {
         await usersInGames.update({"vie": "M"}, {where: {"idUser": idVictime}})
         await inGameModel.update({"voted": true}, {where: {"id": idGame}})
     }
-    await voteModel.destroy({where: {"idGame": idGame}})
-    await urneModel.destroy({where: {"idGame": idGame}})
     await checkIfEndGame(idGame)
 }
 

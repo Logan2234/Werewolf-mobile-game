@@ -25,12 +25,13 @@ module.exports = {
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
         const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        const session = await inGameModel.findOne({where: {"id": idGame}})
+        if (session.finished) throw new CodeError('The game is finished', status.FORBIDDEN)
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
         if (userInGame.vie == "M") {
             res.json({status: false, message: 'You cannot send a message to the main place'})
             return
         } else {
-            const session = await inGameModel.findOne({where: {"id": idGame}})
             if (session.moment != "J") {
                 res.json({status: false, message: 'You cannot send a message to the main place'})
                 return
@@ -45,13 +46,14 @@ module.exports = {
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
         const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        const session = await inGameModel.findOne({where: {"id": idGame}})
+        if (session.finished) throw new CodeError('The game is finished', status.FORBIDDEN)
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
         if (userInGame.vie == "M") {
             res.json({status: false, message: 'You cannot send a message'})
             return
         } else {
             if (userInGame.role == "LG") {
-                const session = await inGameModel.findOne({where: {"id": idGame}})
                 if (session.moment != "N") {
                     res.json({status: false, message: 'You cannot send a message'})
                     return
@@ -70,6 +72,8 @@ module.exports = {
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
         const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        const session = await inGameModel.findOne({where: {"id": idGame}})
+        if (session.finished) throw new CodeError('The game is finished', status.FORBIDDEN)
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
         const Lieu = await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "E"}})
         if (!Lieu) throw new CodeError('No spiritism room in game ' + idGame, status.NOT_FOUND)
@@ -79,7 +83,6 @@ module.exports = {
             return
         } else {
             if (userInGame.pouvoir == "S") {
-                const session = await inGameModel.findOne({where: {"id": idGame}})
                 if (session.moment != "N") {
                     res.json({status: false, message: 'You cannot send a message'})
                     return
@@ -100,12 +103,12 @@ module.exports = {
         const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
         const idLieu = (await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "P"}})).idLieu
-        if (userInGame.vie == "M") {
+        const session = await inGameModel.findOne({where: {"id": idGame}})
+        if (userInGame.vie == "M" && !session.finished) {
             const messages = await messageModel.findAll({where: {"idLieu": idLieu}, attributes: ['username', 'message', 'timePosted']})
             res.json({status: true, message: 'Messages of the Central Place from the beginning', messages})
             return
         } else {
-            const session = await inGameModel.findOne({where: {"id": idGame}})
             if (session.moment != "J") throw new CodeError('You can\'t see the messages of the Central Place during the night', status.FORBIDDEN)
             const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}, attributes: ['username', 'message', 'timePosted']})
             res.json({status: true, message: 'Messages of the Central Place', messages})
@@ -120,13 +123,13 @@ module.exports = {
         const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
         const idLieu = (await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "R"}})).idLieu
-        if (userInGame.vie == "M") {
+        const session = await inGameModel.findOne({where: {"id": idGame}})
+        if (userInGame.vie == "M" && !session.finished) {
             const messages = await messageModel.findAll({where: {"idLieu": idLieu}, attributes: ['username', 'message', 'timePosted']})
             res.json({status: true, message: 'Messages of the lair of werewolves from the beginning', messages})
             return
         } else {
-            if (userInGame.role == "LG" || userInGame.pouvoir == "I") {
-                const session = await inGameModel.findOne({where: {"id": idGame}})
+            if (session.finished || userInGame.role == "LG" || userInGame.pouvoir == "I") {
                 if (session.moment != "N") throw new CodeError('You can\'t see the messages of the lair of werewolves during the day', status.FORBIDDEN)
                 const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}, attributes: ['username', 'message', 'timePosted']})
                 res.json({status: true, message: 'Messages of the lair of werewolves', messages})
@@ -146,14 +149,14 @@ module.exports = {
         const Lieu = await lieuModel.findOne({where: {"idPartie": idGame, "typeLieu": "E"}})
         if (!Lieu) throw new CodeError('No spiritism room in game ' + idGame, status.NOT_FOUND)
         const idLieu = Lieu.idLieu
+        const session = await inGameModel.findOne({where: {"id": idGame}})
 
-        if (userInGame.vie == "M") {
+        if (userInGame.vie == "M" && !session.finished) {
             const messages = await messageModel.findAll({where: {"idLieu": idLieu}, attributes: ['username', 'message', 'timePosted']})
             res.json({status: true, message: 'Messages of the spiritist room from the beginning', messages})
             return
         } else {
-            if (userInGame.pouvoir == "S") {
-                const session = await inGameModel.findOne({where: {"id": idGame}})
+            if (session.finished || userInGame.pouvoir == "S") {
                 if (session.moment != "N") throw new CodeError('You can\'t see the messages of the spiritism room during the day', status.FORBIDDEN)
                 const messages = await messageModel.findAll({where: {"idLieu": idLieu, "archive": false}, attributes: ['username', 'message', 'timePosted']})
                 res.json({status: true, message: 'Messages of the spiritism room', messages})
@@ -171,6 +174,8 @@ module.exports = {
 
         const data = JSON.parse(req.body.data)
         const message = data.message
+        const session = await inGameModel.findOne({where: {"id": parseInt(idGame)}})
+        if (session.finished) throw new CodeError('The game is finished', status.FORBIDDEN)
 
         if (message == "") {
             throw new CodeError('Your message can\'t be empty', status.BAD_REQUEST)
@@ -186,7 +191,6 @@ module.exports = {
         if (userInGame.vie == "M") {
             throw new CodeError(username + ' is dead in game ' + idGame, status.FORBIDDEN)
         } else {
-            const session = await inGameModel.findOne({where: {"id": parseInt(idGame)}})
             if (session.moment != "J") throw new CodeError('You can\'t send messages to the Central Place during the night', status.FORBIDDEN)
             await messageModel.create({"idLieu": idLieu, "username": username, "message": message, "archive": false})
             res.json({status: true, message: 'Message sent'})
@@ -201,6 +205,8 @@ module.exports = {
 
         const data = JSON.parse(req.body.data)
         const message = data.message
+        const session = await inGameModel.findOne({where: {"id": parseInt(idGame)}})
+        if (session.finished) throw new CodeError('The game is finished', status.FORBIDDEN)
 
         if (message == "") {
             throw new CodeError('Your message can\'t be empty', status.BAD_REQUEST)
@@ -217,7 +223,6 @@ module.exports = {
             throw new CodeError(username + ' is dead in game ' + idGame, status.FORBIDDEN)
         } else {
             if (userInGame.role == "LG") {
-                const session = await inGameModel.findOne({where: {"id": parseInt(idGame)}})
                 if (session.moment != "N") throw new CodeError('You can\'t send messages to the lair of werewolves during the day', status.FORBIDDEN)
                 await messageModel.create({"idLieu": idLieu, "username": username, "message": message, "archive": false})
                 res.json({status: true, message: 'Message sent'})
@@ -235,6 +240,8 @@ module.exports = {
 
         const data = JSON.parse(req.body.data)
         const message = data.message
+        const session = await inGameModel.findOne({where: {"id": idGame}})
+        if (session.finished) throw new CodeError('The game is finished', status.FORBIDDEN)
 
         if (message == "") {
             throw new CodeError('Your message can\'t be empty', status.BAD_REQUEST)
@@ -252,7 +259,6 @@ module.exports = {
             throw new CodeError(username + ' is dead in game ' + idGame, status.FORBIDDEN)
         } else {
             if (userInGame.pouvoir == "S" || (userInGame.vie == "M" && victime != null)) {
-                const session = await inGameModel.findOne({where: {"id": idGame}})
                 if (session.moment != "N") throw new CodeError('You can\'t send messages to the spiritism room during the day', status.FORBIDDEN)
                 await messageModel.create({"idLieu": idLieu, "username": username, "message": message, "archive": false})
                 res.json({status: true, message: 'Message sent'})
@@ -289,7 +295,20 @@ module.exports = {
 
     async checkActionUsed (req, res) {
         let {idGame} = req.params
-
+        const username = req.login
+        const idUser = (await userModel.findOne({where: {"username": username}})).id
+        if ((await inGameModel.findOne({where: {"idGame": parseInt(idGame)}})).finished){
+            throw new CodeError('The game has finished already', status.FORBIDDEN)
+        }
+        const userInGame = await usersInGames.findOne({where: {"idUser": idUser, "idGame": parseInt(idGame)}})
+        if (userInGame == null) {
+            throw new CodeError('You are not in the game', status.FORBIDDEN)
+        }
+        if (userInGame.pouvoirUtilise) {
+            res.json({status: true, message: 'Le pouvoir a déjà été utilisé'})
+        } else {
+            res.json({status: false, message: 'Le pouvoir n\'a pas été utilisé'})
+        }
     },
 
     async getDeadUsers (req, res) {
@@ -310,6 +329,10 @@ module.exports = {
         }
 
         const data = JSON.parse(req.body.data)
+
+        if ((await inGameModel.findOne({where: {"idGame": parseInt(idGame)}})).finished){
+            throw new CodeError('The game has finished already', status.FORBIDDEN)
+        }
 
         const username = req.login
         let idSpiritist = (await userModel.findOne({where: {"username": username}})).id
@@ -364,6 +387,10 @@ module.exports = {
         const username = req.login
         let idContaminator = (await userModel.findOne({where: {"username": username}})).id
         const contaminatorInGame = await usersInGames.findOne({where: {"idUser": idContaminator}})
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+        if (game.finished){
+            throw new CodeError('The game has finished already', status.FORBIDDEN)
+        }
         if (contaminatorInGame == null) {
             throw new CodeError('You are not in a game', status.BAD_REQUEST)
         }
@@ -376,7 +403,6 @@ module.exports = {
 
         let {idGame} = req.params
 
-        const game = await inGameModel.findOne({where: {"id": idGame}})
         if (game == null) {
             throw new CodeError('This game does not exist', status.BAD_REQUEST)
         }
@@ -420,6 +446,10 @@ module.exports = {
         const username = req.login
         let idSeer = (await userModel.findOne({where: {"username": username}})).id
         const seerInGame = await usersInGames.findOne({where: {"idUser": idSeer}})
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+        if (game.finished){
+            throw new CodeError('The game has finished already', status.FORBIDDEN)
+        }
         if (seerInGame == null) {
             throw new CodeError('You are not in a game', status.BAD_REQUEST)
         }
@@ -432,7 +462,6 @@ module.exports = {
 
         let {idGame} = req.params
 
-        const game = await inGameModel.findOne({where: {"id": idGame}})
         if (game == null) {
             throw new CodeError('This game does not exist', status.BAD_REQUEST)
         }
@@ -479,6 +508,8 @@ module.exports = {
         let {idGame} = req.params
         const idUser = await userModel.findOne({where: {"username": username}})
         const vote = await voteModel.findOne({where: {"idUser": idUser}})
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+        if (game.finished) throw new CodeError('The game has finished', status.FORBIDDEN)
 
         if (vote != null) {
             throw new CodeError('You have already voted', status.FORBIDDEN)
@@ -493,7 +524,6 @@ module.exports = {
             throw new CodeError('There is already an election in process against ' + victime, status.BAD_REQUEST)
         }
 
-        const game = await inGameModel.findOne({where: {"id": idGame}})
         if (game == null) {
             throw new CodeError('This game does not exist', status.NOT_FOUND)
         }
@@ -549,6 +579,9 @@ module.exports = {
         const idUser = await userModel.findOne({where: {"username": username}})
 
         const vote = await voteModel.findOne({where: {"idUser": idUser}})
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+
+        if (game.finished) throw new CodeError('The game has finished', status.FORBIDDEN)
 
         if (vote != null) {
             throw new CodeError('You have already voted', status.FORBIDDEN)
@@ -566,7 +599,6 @@ module.exports = {
         }
 
         const decision = data.decision
-        const game = await inGameModel.findOne({where: {"id": idGame}})
 
         const userInTheGame = await usersInGames.findOne({where: {"idUser": idUser.id, "idGame": parseInt(idGame)}})
         if (userInTheGame == null) {
@@ -605,6 +637,8 @@ module.exports = {
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
         const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+        if (game.finished) throw new CodeError('The game has finished', status.FORBIDDEN)
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
         const vote = await voteModel.findOne({where: {"idUser": userId}})
 
@@ -616,7 +650,6 @@ module.exports = {
             res.json({status: false, message: 'You cannot vote, you are dead'})
             return
         } else {
-            const game = await inGameModel.findOne({where: {"id": idGame}})
             if (game.voted) {
                 res.json({status: false, message: 'A vote has already been decided'})
                 return 
@@ -641,12 +674,13 @@ module.exports = {
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
         const userInGame = await usersInGames.findOne({where: {"idUser": userId, "idGame": parseInt(idGame)}})
+        const game = await inGameModel.findOne({where: {"id": idGame}})
+        if (game.finished) throw new CodeError('The game has finished', status.FORBIDDEN)
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN)
         if (userInGame.vie == "M") {
             res.json({status: true, message: 'You can see the vote !'})
             return
         } else {
-            const game = await inGameModel.findOne({where: {"id": idGame}})
             if (game.voted) {
                 res.json({status: false, message: 'Too much votes for this night !'})
                 return 
@@ -668,6 +702,9 @@ module.exports = {
 
     async getInfoVotes (req, res) {
         let {idGame} = req.params
+        if ((await inGameModel.findOne({where: {"idGame": parseInt(idGame)}})).finished){
+            throw new CodeError('The game has finished already', status.FORBIDDEN)
+        }
 
         let urne = (await urneModel.findAll({where: {"idGame": parseInt(idGame)}, attributes: ['idVictime', 'votesPour', 'votesContre', 'nbUsersVote']}))
         if (urne == null) {
@@ -691,6 +728,9 @@ module.exports = {
         let {idGame} = req.params
         const userId = (await userModel.findOne({where: {username}})).id
         const game = await inGameModel.findOne({where: {"id": idGame}})
+        if (game.finished){
+            throw new CodeError('The game has finished already', status.FORBIDDEN)
+        }
 
         if (game.voted) {
             throw new CodeError('A vote has already been submitted', status.BAD_REQUEST)
@@ -736,6 +776,9 @@ module.exports = {
 
     async notVictimsYet(req, res) {
         let {idGame} = req.params
+        if ((await inGameModel.findOne({where: {"idGame": parseInt(idGame)}})).finished){
+            throw new CodeError('The game has finished already', status.FORBIDDEN)
+        }
         let users = await usersInGames.findAll({where: {"idGame": idGame, "vie": "V"}})
         let usersNotVictims = []
         for (let i = 0; i < users.length; i++) {
@@ -803,16 +846,24 @@ let startDay = async (idGame) => {
 }
 
 let finGame = async (idGame) => {
+    clearTimeout(timers[idGame])
+    const game = await inGameModel.findOne({where: {"id": idGame}})
+    await inGameModel.update({"finished": true}, {where: {"id": idGame}})
+    timers[idGame] = setTimeout(() => {erraseAfterFinGame(idGame)}, 720000) // 12 heures pour voir les informations avant que la partie s'efface
+    await inGameModel.update({"finTimer": new Date().getTime() + 720000}, {where: {"id": idGame}})
+}
+
+let erraseAfterFinGame = async (idGame) => {
     const game = await inGameModel.findOne({where: {"id": idGame}})
     await inGameModel.destroy({where: {"id": idGame}})
     await usersInGames.destroy({where: {"idGame": idGame}})
     await urneModel.destroy({where: {"idGame": idGame}})
-
+    
     const lieux = await lieuModel.findAll({where: {"idGame": idGame}})
     for (let i = 0; i < lieux.length; i++) {
         await messageModel.destroy({where: {"idLieu": lieux[i].id}})
     }
-
+    
     await lieuModel.destroy({where: {"idPartie": idGame}})
     clearTimeout(timers[idGame])
     delete timers[idGame]

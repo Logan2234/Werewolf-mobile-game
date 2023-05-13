@@ -61,6 +61,11 @@ const game = db.define('InGames', {
         allowNull: false,
         defaultValue: false
     },
+    finished: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    }
 }, { timestamps: false })
 
 

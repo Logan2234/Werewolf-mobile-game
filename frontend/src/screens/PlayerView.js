@@ -6,6 +6,12 @@ import { primaryColor } from '../constants/colors';
 import { CurrentGameView, TokenContext } from '../constants/hooks';
 import { gameViews } from '../constants/screens';
 
+/**
+ * Vues des joueurs dans une partie
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function PlayerView({ idSession }) {
     const [players, setPlayers] = useState(new Set());
     const [players_array, setPlayers_array] = useState([]);

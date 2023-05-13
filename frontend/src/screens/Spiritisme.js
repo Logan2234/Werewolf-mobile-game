@@ -7,7 +7,12 @@ import { BACKEND } from "../constants/backend";
 import { commonStyles } from "../constants/style";
 import Bouton from "../components/Bouton";
 
-
+/**
+ * Affichage pour que le spiritiste puisse choisir avec quel mort parler pendant la nuit
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function ChoixSpiritisme({idSession}) {
     const [proposes, setProposes] = useState([]); //liste des sélectionnables
     const [selectedUser, setSelectedUser] = useState(null); //utilisateur sélectionné
@@ -36,15 +41,15 @@ export default function ChoixSpiritisme({idSession}) {
          * Pour set utilise
          */
         function fetchUsage(){
-            // fetch(`${BACKEND}/game/${idSession}/actions/check`, {
-            //     method: 'GET',
-            //     headers: {
-            //         'x-access-token': token,
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            //     .then(response => response.json())
-            //     .then(data => setUtilise(data.status));
+            fetch(`${BACKEND}/game/${idSession}/actions/check`, {
+                method: 'GET',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => setUtilise(data.status));
         }
 
         fetchUsage();

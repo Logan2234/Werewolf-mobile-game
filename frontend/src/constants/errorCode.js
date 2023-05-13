@@ -1,3 +1,6 @@
+/**
+ * Liste des codes d'erreurs et leur affichage 
+ */
 export const errorCodes = {
     EMPTY: 'Missing information', // Eg: No data can be found in the input
     NOT_COMPLIANT: 'Invalid size', // Eg: The data does not have the correct length

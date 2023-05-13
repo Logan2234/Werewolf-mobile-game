@@ -9,9 +9,10 @@ import { commonStyles } from '../constants/style';
 import StaticUrne from './StaticUrne';
 
 /**
- * Ecran où on peut choisir de ratifier une proposition
- * @param {*} param0
- * @returns
+ * Affichage pour proposer un joueur au vote
+ * 
+ * @param {int} idSession 
+ * @returns 
  */
 export default function Proposition({ idSession }) {
     const [proposes, setProposes] = useState([]);

@@ -9,6 +9,12 @@ import InfoView from './InfoView';
 import PlayerView from './PlayerView';
 import VoteView from './VoteView';
 
+/**
+ * Vue qui gère l'affichage des 4 sous-vues (informations, discussions, votes et joueurs)
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function GameView({ idSession }) {
     const [index, setIndex] = useState(0);
 

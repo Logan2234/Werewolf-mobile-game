@@ -6,7 +6,14 @@ import { BACKEND } from '../constants/backend';
 import { placeholderColor, primaryColor, secondaryColor, textColor } from '../constants/colors';
 import { TokenContext } from '../constants/hooks';
 
-
+/**
+ * Champ en bas de discussion qui va permettre d'écrire et envoyer des messages pour une session et une discussion donnée.
+ * 
+ * @param {string} idDiscussion correspond au salon souhaité, peut être 'place', 'repere' ou 'spiritisme'
+ * @param {string} idSession correspond à l'id de la session pour laquelle on souhaite accéder aux discssion (code à 6 chiffre attendu)
+ * @param {*} ws websocket associé pour actualiser le fil de discussion
+ * @returns Elément JSX
+ */
 export default function InputMessage({ idDiscussion, idSession, ws }) {
     const [text, setText] = useState('');
     const token = useContext(TokenContext).token;

@@ -7,7 +7,12 @@ import { gameViews } from '../constants/screens';
 import ChoixUrne from './ChoixUrne';
 import StaticUrne from './StaticUrne';
 
-
+/**
+ * Vue qui gère les votes et les affichages appropriés en fonction de l'état des votes et des droits du joueur
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function VoteView({ idSession }) {
     const [voteState, setVoteState] = useState(2);
     const [voteJSX, setVoteJSX] = useState(null);

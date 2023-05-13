@@ -12,6 +12,12 @@ import ChoixVoyance from './Voyance';
 import ChoixSpiritisme from './Spiritisme';
 import ChoixContamination from './Contamination';
 
+/**
+ * Vue qui va afficher les informations de la partie et permettre d'utiliser son pouvoir.
+ * 
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function InfoView({ idSession }) {
     const [alivePlayers, setAlivePlayers] = useState({});
     const [deadPlayers, setDeadPlayers] = useState({});

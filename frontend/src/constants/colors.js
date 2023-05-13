@@ -1,3 +1,7 @@
+/**
+ * Liste des couleurs utilisées dasn l'application
+ */
+
 export const backgroundColor = '#313338';
 export const primaryColor = '#3AC670';
 export const errorColor = '#D9042B';

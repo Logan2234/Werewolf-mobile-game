@@ -11,6 +11,13 @@ import { views } from '../constants/screens';
 import { commonStyles } from '../constants/style';
 import { verifyNumber } from '../utils/verifyData';
 
+/**
+ * Vue pour rejoindre une session déjà créée
+ * 
+ * @param {function} setIdSession
+ * @param {int} idSession 
+ * @returns 
+ */
 export default function JoinSession({ setIdSession, idSession }) {
     const [borderColor, setBorderColor] = useState(secondaryColor);
 

@@ -13,10 +13,11 @@ lintjs: # Vérification de la qualité du code JS
     script:
         - cd backend
         - npm i
+        - npm install eslint
+        - npx eslint --config .eslintrc `find . -name "*.js" -not -path "./node_modules/*"` > ../eslint_backend_report.txt
         - cd ../frontend
         - npm i
-        - npx eslint --config frontend/.eslintrc `find ./frontend/ -name "*.js" -not -path "./frontend/node_modules/*"` > eslint_frontend_report.txt
-        - npx eslint --config backend/.eslintrc `find ./backend/ -name "*.js" -not -path "./backend/node_modules/*"` > eslint_backend_report.txt
+        - npx eslint --config .eslintrc `find . -name "*.js" -not -path "./node_modules/*"` > ../eslint_frontend_report.txt
     artifacts:
         paths:
             - eslint_frontend_report.txt

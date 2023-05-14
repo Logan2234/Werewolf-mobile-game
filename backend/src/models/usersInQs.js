@@ -13,6 +13,6 @@ const usersInQs = db.define('UsersInQs', {
         allowNull: false,
     }
 
-}, { timestamps: false })
+}, { timestamps: false });
 
 module.exports = usersInQs;

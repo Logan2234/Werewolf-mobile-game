@@ -26,6 +26,6 @@ const urne = db.define('urnes', {
         allowNull: false,
         defaultValue: 1
     }
-}, { timestamps: false })
+}, { timestamps: false });
 
-module.exports = urne
+module.exports = urne;

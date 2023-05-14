@@ -50,7 +50,7 @@ const game = db.define('InGames', {
     moment: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: "N"
+        defaultValue: 'N'
     },
     finTimer: {
         type: Sequelize.INTEGER,
@@ -66,7 +66,7 @@ const game = db.define('InGames', {
         allowNull: false,
         defaultValue: false
     }
-}, { timestamps: false })
+}, { timestamps: false });
 
 
 module.exports = game;

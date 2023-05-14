@@ -19,6 +19,6 @@ const users = db.define('users', {
         allowNull: false
     }
 
-}, { timestamps: false })
+}, { timestamps: false });
 
 module.exports = users;

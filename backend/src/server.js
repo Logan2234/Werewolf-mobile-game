@@ -10,8 +10,6 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const helmet = require('helmet');
-const http = require('http');
-
 
 const logger = require('./util/logger');
 
@@ -42,15 +40,15 @@ app.use(cors());
 app.use(helmet());
 
 // Swagger Documentation
-const swaggerUi = require('swagger-ui-express')
-const swaggerFile = require('../swagger_output.json')
-app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('../swagger_output.json');
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // This middleware adds the json header to every response
 app.use('*', (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
     next();
-})
+});
 
 // Assign Routes
 
@@ -65,7 +63,7 @@ app.use('*', (req, res) => {
     res
         .status(404)
         .json({ status: false, message: 'Endpoint Not Found' });
-})
+});
 
 // Open Server on selected Port
 app.listen(
@@ -73,14 +71,14 @@ app.listen(
     () => console.info('Server listening on port ', PORT)
 );
 
-const ws = require("ws");
+const ws = require('ws');
 const wss = new ws.Server({ port: 8080 });
 
 wss.on('connection', function (socket) {
     socket.on('message', (msg) => {
         wss.clients.forEach((client) => {
             if (client.readyState === ws.OPEN)
-                client.send(msg.toString())
+                client.send(msg.toString());
         });
     });
 });

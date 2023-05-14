@@ -13,7 +13,7 @@ const usersInGames = db.define('UsersInGames', {
         allowNull: false
     },
     // ! Attention ! Le rôle ne peut être que : V ou LG
-    role: { 
+    role: {
         type: Sequelize.STRING,
         allowNull: false,
     },
@@ -33,6 +33,6 @@ const usersInGames = db.define('UsersInGames', {
         defaultValue: false
     }
 
-}, { timestamps: false })
+}, { timestamps: false });
 
 module.exports = usersInGames;

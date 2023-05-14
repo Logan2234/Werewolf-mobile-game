@@ -13,9 +13,9 @@ fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 const accessLogStream = rfs('access.log', {
     interval: '1d',
     path: logDirectory
-})
+});
 
 module.exports = {
     dev: morgan('dev'),
     combined: morgan('combined', { stream: accessLogStream })
-}
+};

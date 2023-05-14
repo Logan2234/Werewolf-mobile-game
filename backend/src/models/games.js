@@ -57,7 +57,7 @@ const session = db.define('Games', {
         allowNull: false,
         defaultValue: new Date().getTime()
     }
-}, { timestamps: false })
+}, { timestamps: false });
 
 
 module.exports = session;

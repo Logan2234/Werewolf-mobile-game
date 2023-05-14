@@ -17,6 +17,6 @@ const salleEspiritisme = db.define('SallesEspiritismes', {
         defaultValue: null
     }
 
-}, { timestamps: false })
+}, { timestamps: false });
 
-module.exports = salleEspiritisme
+module.exports = salleEspiritisme;

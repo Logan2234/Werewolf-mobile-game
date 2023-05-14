@@ -18,6 +18,6 @@ const lieu = db.define('Lieus', {
         allowNull: false
     }
 
-}, { timestamps: false })
+}, { timestamps: false });
 
-module.exports = lieu
+module.exports = lieu;

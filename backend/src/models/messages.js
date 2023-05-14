@@ -31,6 +31,6 @@ const message = db.define('Messages', {
         defaultValue: Sequelize.NOW
     }
 
-}, { timestamps: false })
+}, { timestamps: false });
 
-module.exports = message
+module.exports = message;

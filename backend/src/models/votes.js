@@ -21,6 +21,6 @@ const vote = db.define('votes', {
         type: Sequelize.INTEGER,
         allowNull: false
     }
-}, { timestamps: false })
+}, { timestamps: false });
 
-module.exports = vote
+module.exports = vote;

@@ -358,19 +358,21 @@ module.exports = {
 
         const data = JSON.parse(req.body.data);
 
-        if ((await inGameModel.findOne({ where: { 'id': idGame } })).finished) {
+        if ((await inGameModel.findOne({ where: { 'id': idGame } })).finished)
             throw new CodeError('The game has finished already', status.FORBIDDEN);
-        }
 
+        let { idGame } = req.params;
         const username = req.login;
+
         let idSpiritist = (await userModel.findOne({ where: { 'username': username } })).id;
         const spiritistInGame = await usersInGames.findOne({ where: { 'idUser': idSpiritist } });
-        if (spiritistInGame == null) {
+
+        if (spiritistInGame == null)
             throw new CodeError('You are not in a game', status.BAD_REQUEST);
-        }
-        if (spiritistInGame.pouvoir != 'S') {
+
+        if (spiritistInGame.pouvoir != 'S')
             throw new CodeError('You are not a spiritist', status.BAD_REQUEST);
-        }
+
 
         const victime = data.victime;
         const idVictime = await userModel.findOne({ where: { 'username': victime } });
@@ -385,7 +387,6 @@ module.exports = {
             throw new CodeError('You cannot use spiritism with alive people', status.BAD_REQUEST);
         }
 
-        let { idGame } = req.params;
 
         const salleEspiritisme = await salleEspiritismeModel.findOne({ where: { 'idGame': idGame } });
         if (salleEspiritisme == null) {
@@ -409,13 +410,13 @@ module.exports = {
         // #swagger.tags = ['Actions']
         // #swagger.summary = 'Select a villager in order to turn him a werewolf'
 
-        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime'))
             throw new CodeError('You have not specified a victim !', status.BAD_REQUEST);
-        }
 
-        const data = JSON.parse(req.body.data);
-        const victime = data.victime;
         const username = req.login;
+        const { idGame } = req.params;
+        const victime = data.victime;
+        const data = JSON.parse(req.body.data);
         let idContaminator = (await userModel.findOne({ where: { 'username': username } })).id;
         const contaminatorInGame = await usersInGames.findOne({ where: { 'idUser': idContaminator } });
         const game = await inGameModel.findOne({ where: { 'id': idGame } });
@@ -432,7 +433,6 @@ module.exports = {
             throw new CodeError('You have already used your power for today', status.FORBIDDEN);
         }
 
-        let { idGame } = req.params;
 
         if (game == null) {
             throw new CodeError('This game does not exist', status.BAD_REQUEST);
@@ -471,16 +471,17 @@ module.exports = {
         // #swagger.tags = ['Actions']
         // #swagger.summary = 'Select an alive person in order to know his role and power'
 
-        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime')) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'victime'))
             throw new CodeError('You have not specified a victim !', status.BAD_REQUEST);
-        }
 
+        const { idGame } = req.params;
+        const username = req.login;
         const data = JSON.parse(req.body.data);
         const victime = data.victime;
-        const username = req.login;
         let idSeer = (await userModel.findOne({ where: { 'username': username } })).id;
         const seerInGame = await usersInGames.findOne({ where: { 'idUser': idSeer } });
         const game = await inGameModel.findOne({ where: { 'id': idGame } });
+
         if (game.finished) {
             throw new CodeError('The game has finished already', status.FORBIDDEN);
         }
@@ -494,7 +495,6 @@ module.exports = {
             throw new CodeError('You have already used your power for today', status.FORBIDDEN);
         }
 
-        let { idGame } = req.params;
 
         if (game == null) {
             throw new CodeError('This game does not exist', status.BAD_REQUEST);

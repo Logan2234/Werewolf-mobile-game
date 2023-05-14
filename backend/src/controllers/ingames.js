@@ -13,7 +13,6 @@ const CodeError = require('../util/CodeError.js')
 
 const has = require('has-keys');
 var timers = {}
-let temp = true
 
 module.exports = {
     async canISendAMessageToPlace(req, res) {
@@ -812,11 +811,6 @@ module.exports = {
         if (game) {
             const timeLeft = game.finTimer - new Date().getTime()
             res.json({ status: true, message: 'Time left in ms ' + idGame.toString(), timeLeft })
-            if (temp) {
-                startNight(idGame)
-                temp = false;
-            }
-            checkIfEndGame(idGame)
             return
         }
 
@@ -839,6 +833,17 @@ module.exports = {
             }
         }
         res.json({ status: true, message: 'Users not victims yet', usersNotVictims })
+    },
+
+    async isGameFinished(req, res) {
+        // #swagger.tags = ['Game Info']
+        // #swagger.summary = 'Return true if the game has finished, false otherwise'
+
+        let { idGame } = req.params
+        if ((await inGameModel.findOne({ where: { "id": idGame } })).finished)
+            res.json({ status: true, message: 'Game has finished', finished: true })
+        else
+            res.json({ status: false, message: 'Game has not finished', finished: false })
     },
 
     async startNight(idGame) {
@@ -948,8 +953,9 @@ let getLG = async (idGame) => {
 }
 
 let checkIfEndGame = async (idGame) => {
-    let nbWerewolves = await getLG(idGame)
-    let aliveUsers = await usersInGames.findAll({ where: { "idGame": parseInt(idGame), "vie": "V", "role": "V" } })
-    if (aliveUsers == null || aliveUsers.length == 0 || nbWerewolves.length == 0 || nbWerewolves >= aliveUsers.length)
+    let nbWerewolves = getLG(idGame)
+    let aliveUsers = await usersInGames.findAll({ where: { "idGame": parseInt(idGame), "role": "V", "vie": "V" } })
+    if (!aliveUsers || aliveUsers.length == 0 || nbWerewolves.length == 0) {
         await finGame(idGame)
+    }
 }

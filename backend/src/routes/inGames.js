@@ -26,6 +26,7 @@ router.get('/game/:idGame/deads', inGames.getDeadUsers);
 router.get('/game/:idGame/werewolves', inGames.getWerewolves);
 router.get('/game/:idGame/info', inGames.getInfos);
 router.get('/game/:idGame/time', inGames.returnTimeLeft);
+router.get('/game/:idGame/finished', inGames.isGameFinished);
 
 // Actions
 

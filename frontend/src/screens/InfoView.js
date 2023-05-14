@@ -8,15 +8,15 @@ import { primaryColor } from '../constants/colors';
 import { CurrentGameView, TokenContext } from '../constants/hooks';
 import { gameViews } from '../constants/screens';
 import { commonStyles } from '../constants/style';
-import ChoixVoyance from './Voyance';
-import ChoixSpiritisme from './Spiritisme';
 import ChoixContamination from './Contamination';
+import ChoixSpiritisme from './Spiritisme';
+import ChoixVoyance from './Voyance';
 
 /**
  * Vue qui va afficher les informations de la partie et permettre d'utiliser son pouvoir.
- * 
- * @param {int} idSession 
- * @returns 
+ *
+ * @param {int} idSession
+ * @returns
  */
 export default function InfoView({ idSession }) {
     const [alivePlayers, setAlivePlayers] = useState({});
@@ -25,7 +25,7 @@ export default function InfoView({ idSession }) {
     const [gameData, setGameData] = useState({});
     const [aliveWerewolves, setAliveWerewolves] = useState(0);
     const [canShow, setCanShow] = useState(false);
-    const [currentJSX, setJSX] = useState(null); 
+    const [currentJSX, setJSX] = useState(null);
 
 
     const currentGameView = useContext(CurrentGameView);
@@ -92,67 +92,67 @@ export default function InfoView({ idSession }) {
         }
     }, [currentGameView, idSession, token]);
 
-    useEffect(()=>{
-    let pouvoir;
-    let onPress;
-    switch (userData.pouvoir) {
-        case 'V':
-            pouvoir = 'Voyance'; 
-            onPress = () => {setJSX(<ChoixVoyance idSession={idSession}/>);};
-            break;
-        case 'S':
-            pouvoir = 'Spiritisme'; 
-            onPress = () => {setJSX(<ChoixSpiritisme idSession={idSession}/>);};
-            break;
-        case 'I':
-            pouvoir = 'Insomnie'; break;
-        case 'C':
-            pouvoir = 'Contamination'; 
-            onPress = () => {setJSX(<ChoixContamination idSession={idSession}/>);};
-            break;
-        default:
-            pouvoir = 'Aucun'; break;
-    }
+    useEffect(() => {
+        let pouvoir;
+        let onPress;
+        switch (userData.pouvoir) {
+            case 'V':
+                pouvoir = 'Voyance';
+                onPress = () => { setJSX(<ChoixVoyance idSession={idSession} />); };
+                break;
+            case 'S':
+                pouvoir = 'Spiritisme';
+                onPress = () => { setJSX(<ChoixSpiritisme idSession={idSession} />); };
+                break;
+            case 'I':
+                pouvoir = 'Insomnie'; break;
+            case 'C':
+                pouvoir = 'Contamination';
+                onPress = () => { setJSX(<ChoixContamination idSession={idSession} />); };
+                break;
+            default:
+                pouvoir = 'Aucun'; break;
+        }
 
-    setJSX (
-        <View style={[commonStyles.container, styles.infoView]}>
-            {
-                (canShow)
-                    ? <>
-                        <Title label={(gameData.moment === 'N') ? 'Nuit' : 'Jour'} />
-                        <View style={styles.status}>
-                            <SizedText label={`Rôle: ${(userData.role === 'V') ? 'Villageois' : 'Loup-garou'}`} />
-                            <SizedText label={`Pouvoir: ${pouvoir}`} />
-                            <SizedText label={`Vie: ${(userData.vie === 'V') ? 'Vivant' : 'Mort'}`} />
-                        </View>
+        setJSX(
+            <View style={[commonStyles.container, styles.infoView]}>
+                {
+                    (canShow)
+                        ? <>
+                            <Title label={(gameData.moment === 'N') ? 'Nuit' : 'Jour'} />
+                            <View style={styles.status}>
+                                <SizedText label={`Rôle: ${(userData.role === 'V') ? 'Villageois' : 'Loup-garou'}`} />
+                                <SizedText label={`Pouvoir: ${pouvoir}`} />
+                                <SizedText label={`Vie: ${(userData.vie === 'V') ? 'Vivant' : 'Mort'}`} />
+                            </View>
 
-                        <View style={styles.time}>
-                            <SizedText label={`Durée jour: ${gameData.dureeJour / 60}h` + ((gameData.dureeJour % 60 != 0) ? `${gameData.dureeJour % 60}mins` : '')} />
-                            <SizedText label={`Durée nuit: ${gameData.dureeNuit / 60}h` + ((gameData.dureeNuit % 60 != 0) ? `${gameData.dureeNuit % 60}mins` : '')} />
-                            <SizedText label='Prochain jour: ' />
-                            <SizedText label='Prochaine nuit: ' />
-                            <SizedText label='Temps actuel: ' />
-                            <SizedText label='Temps de jeu: ' />
-                        </View>
+                            <View style={styles.time}>
+                                <SizedText label={`Durée jour: ${gameData.dureeJour / 60}h` + ((gameData.dureeJour % 60 != 0) ? `${gameData.dureeJour % 60}mins` : '')} />
+                                <SizedText label={`Durée nuit: ${gameData.dureeNuit / 60}h` + ((gameData.dureeNuit % 60 != 0) ? `${gameData.dureeNuit % 60}mins` : '')} />
+                                <SizedText label='Prochain jour: ' />
+                                <SizedText label='Prochaine nuit: ' />
+                                <SizedText label='Temps actuel: ' />
+                                <SizedText label='Temps de jeu: ' />
+                            </View>
 
-                        <View style={styles.gameStatus}>
-                            <SizedText label={`Nombre de joueurs vivants: ${alivePlayers.length} / ${alivePlayers.length + deadPlayers.length}`} />
-                            <SizedText label={`Nombre de loups-garous: ${aliveWerewolves} / ${gameData.nbLG}`} />
-                        </View>
-                        {
-                            ((userData.pouvoir === 'V' || userData.pouvoir === 'C' || userData.pouvoir === 'S')&& userData.vie === 'V')
-                                ? <Bouton style={styles.bouton} label='Utiliser pouvoir' onPress={onPress} />
-                                : null
-                        }
-                    </>
-                    : <ActivityIndicator style={{ height: '100%' }} size={100} color={primaryColor} />
-            }
-        </View>);
-        },[currentGameView, alivePlayers]);
+                            <View style={styles.gameStatus}>
+                                <SizedText label={`Nombre de joueurs vivants: ${alivePlayers.length} / ${alivePlayers.length + deadPlayers.length}`} />
+                                <SizedText label={`Nombre de loups-garous: ${aliveWerewolves} / ${gameData.nbLG}`} />
+                            </View>
+                            {
+                                ((userData.pouvoir === 'V' || userData.pouvoir === 'C' || userData.pouvoir === 'S') && userData.vie === 'V')
+                                    ? <Bouton style={styles.bouton} label='Utiliser pouvoir' onPress={onPress} />
+                                    : null
+                            }
+                        </>
+                        : <ActivityIndicator style={{ height: '100%' }} size={100} color={primaryColor} />
+                }
+            </View>);
+    }, [currentGameView, alivePlayers]);
 
-        return(
-            <View style={styles.container}>{currentJSX}</View>
-        );
+    return (
+        <View style={styles.container}>{currentJSX}</View>
+    );
 }
 
 const styles = StyleSheet.create({

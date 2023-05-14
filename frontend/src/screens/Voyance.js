@@ -1,19 +1,19 @@
-import { useEffect, useContext, useState } from "react";
-import Propose from "../components/Propose";
-import { TokenContext, CurrentGameView } from '../constants/hooks';
-import { FlatList, Pressable, SafeAreaView, StyleSheet } from "react-native";
-import Title from "../components/Title";
-import { BACKEND } from "../constants/backend";
-import { commonStyles } from "../constants/style";
-import Bouton from "../components/Bouton";
+import { useContext, useEffect, useState } from 'react';
+import { FlatList, Pressable, SafeAreaView, StyleSheet } from 'react-native';
+import Bouton from '../components/Bouton';
+import Propose from '../components/Propose';
+import Title from '../components/Title';
+import { BACKEND } from '../constants/backend';
+import { CurrentGameView, TokenContext } from '../constants/hooks';
+import { commonStyles } from '../constants/style';
 
 /**
  * Affichage qui permet à la voyante de choisir et voir le rôle et pouvoir pour un personnage de son choix
- * 
- * @param {int} idSession 
- * @returns 
+ *
+ * @param {int} idSession
+ * @returns
  */
-export default function ChoixVoyance({idSession}) {
+export default function ChoixVoyance({ idSession }) {
     const [proposes, setProposes] = useState([]); //liste des sélectionnables
     const [selectedUser, setSelectedUser] = useState(null); //utilisateur sélectionné
     const [utilise, setUtilise] = useState(false); //précédent usage du pouvoir pendant la nuit
@@ -22,20 +22,20 @@ export default function ChoixVoyance({idSession}) {
     const currentGameView = useContext(CurrentGameView);
     const token = useContext(TokenContext).token;
 
-    useEffect(()=>{
+    useEffect(() => {
         /**
          * Requête qui renvoie la liste des joueurs (cf StaticUrne)
          * Pour set proposes
          */
-        function fetchJoueurs(){
+        function fetchJoueurs() {
             setProposes([]);
             fetch(`${BACKEND}/game/${idSession}/alives`, {
                 method: 'GET',
             })
                 .then(response => response.json())
-                .then(data => {setProposes(data.aliveUsers)})
+                .then(data => { setProposes(data.aliveUsers); })
                 .catch(error => alert(error.message));
-            
+
         }
 
 
@@ -43,7 +43,7 @@ export default function ChoixVoyance({idSession}) {
          * TODO : Requete qui vérifie si le pouvoir a déjà été utilisé
          * Pour set utilise
          */
-        function fetchUsage(){
+        function fetchUsage() {
             // fetch(`${BACKEND}/game/${idSession}/actions/check`, {
             //     method: 'GET',
             //     headers: {
@@ -58,14 +58,14 @@ export default function ChoixVoyance({idSession}) {
         fetchUsage();
         fetchJoueurs();
 
-    },[currentGameView]);
+    }, [currentGameView, idSession, token]);
 
-    useEffect(()=>{
+    useEffect(() => {
         /**
          * Requête qui va récupérer l'ensemble des informations sur le joueur sélectionné
          * (action lorsque l'on valide le choix du joueur)
          */
-        function seePlayerInfo(){
+        function seePlayerInfo() {
             if (selectedUser !== null) {
                 fetch(`${BACKEND}/game/${idSession}/actions/voyance`, {
                     method: 'POST',
@@ -76,10 +76,10 @@ export default function ChoixVoyance({idSession}) {
                     body: JSON.stringify({ data: '{"victime": "' + selectedUser + '"}' })
                 })
                     .then(response => response.json())
-                    .then( data => {
-                        let role = (data.role==='V')? 'Villageois' : 'Loup-garou';
+                    .then(data => {
+                        let role = (data.role === 'V') ? 'Villageois' : 'Loup-garou';
                         let pouvoir;
-                        switch (data.pouvoir){
+                        switch (data.pouvoir) {
                             case 'V':
                                 pouvoir = 'Voyance'; break;
                             case 'S':
@@ -92,7 +92,7 @@ export default function ChoixVoyance({idSession}) {
                                 pouvoir = 'Aucun'; break;
                         }
                         alert(
-                            'Le joueur '+selectedUser+ ' a comme rôle : '
+                            'Le joueur ' + selectedUser + ' a comme rôle : '
                             + role + ' et comme pouvoir : ' + pouvoir
                         );
                     }
@@ -104,39 +104,39 @@ export default function ChoixVoyance({idSession}) {
         }
 
 
-        if(utilise === false){
-            const renderItem = ({item}) => {
+        if (utilise === false) {
+            const renderItem = ({ item }) => {
                 return (
-                <Pressable onPress={() => setSelectedUser(item)} >
-                  <Propose 
-                    name={item} 
-                    selected={item === selectedUser}
-                    />
-                </Pressable>
+                    <Pressable onPress={() => setSelectedUser(item)} >
+                        <Propose
+                            name={item}
+                            selected={item === selectedUser}
+                        />
+                    </Pressable>
                 );
-            } ;
+            };
 
             setJSX(
                 <SafeAreaView style={styles.container}>
-                    <Title label='Voir un joueur'/>
+                    <Title label='Voir un joueur' />
                     <FlatList
                         data={proposes}
                         keyExtractor={item => item}
                         renderItem={renderItem}
                     />
-                    <SafeAreaView  style={[commonStyles.bottom, styles.bottom]} >
-                            <Bouton label='Sélectionner' onPress={seePlayerInfo}/>
+                    <SafeAreaView style={[commonStyles.bottom, styles.bottom]} >
+                        <Bouton label='Sélectionner' onPress={seePlayerInfo} />
                     </SafeAreaView>
                 </SafeAreaView>
             );
         } else {
             setJSX(
-                <Title label='POUVOIR DEJA UTILISE'/>
+                <Title label='POUVOIR DEJA UTILISE' />
             );
         }
-    },[selectedUser, currentGameView, proposes, utilise]);
-    
-    return(currentJSX);
+    }, [selectedUser, currentGameView, proposes, utilise, idSession, token]);
+
+    return (currentJSX);
 }
 
 const styles = StyleSheet.create({
@@ -153,5 +153,5 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'space-around'
     }
-    
-})
+
+});

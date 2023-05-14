@@ -1,6 +1,3 @@
-# La page est disponible au lien suivant:
-# TODO: Mettre le lien de la page
-
 stages:
     - lint # Pour la vérification statique du code
     - test # Test avec cypress et supertest / Jest
@@ -21,17 +18,6 @@ lintjs: # Vérification de la qualité du code JS
         paths:
             - eslint_frontend_report.txt
             - eslint_backend_report.txt
-
-# jest:
-#   stage: test
-#   image: node # L'image de départ dispose des outils node
-#   script:
-#     - cd backend
-#     - npm i # Installe ce qui est décrit dans package.json
-#     - npm run test 2> jest_report.txt # Lance les tests
-#   artifacts:
-#     paths:
-#       - jest_report.txt
 
 jest:
     image: node:latest
@@ -80,7 +66,7 @@ badge_creation: # Étape de création des badges
         - jest
 
 # Job pour exposer l'API sur Scalingo
-# URL d'exposition de l'API : https://projet-web.osc-fr1.scalingo.io
+# URL d'exposition de l'API : https://loup-garou-projet-ensimag.osc-fr1.scalingo.io/
 scalingo:
   stage: deploy
   rules:
@@ -89,7 +75,7 @@ scalingo:
     - docker
   variables:
     # SCALINGO_API_TOKEN # variable à ne pas définir en clair ici (cf instructions à la fin du .gitlab-ci.yml ci-dessous)
-    SCALINGO_APP_NAME: projet-web # le nom de votre appli chez scalingo
+    SCALINGO_APP_NAME: loup-garou-projet-ensimag # le nom de votre appli chez scalingo
     SCALINGO_REGION: osc-fr1 # l'instance de scalingo sur laquelle votre appli est déployée
     GIT_DEPTH: 0
     PROJECT_DIR: backend # Le répertoire dans le dépôt où est le backend
@@ -105,14 +91,3 @@ scalingo:
     # Afin que la variable SCALINGO_API_TOKEN n'apparaissent pas en clair sur notre dépôt public gitlab, on définit cette variable via
     # le menu `Settings > CI/CD > Variables` et on la masque dans le résultat des logs des jobs en lui appliquant la propriété "Masked"
     # Plus de détails sur https://docs.gitlab.com/ee/ci/variables/index.html.
-
-# pages: # Job spécifique permettant de dire qu'on déploie un site GitLab Pages.
-#   stage: deploy
-#   script:
-#     - mkdir -p public # Création du répertoire public
-#     - cp ./frontend/src/frontend/* public/
-#   artifacts:
-#     paths:
-#       - public
-#   dependencies:
-#     - scalingo

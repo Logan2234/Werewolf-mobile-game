@@ -16,9 +16,7 @@ const bcrypt = require('bcrypt');
 (async () => {
   // Regénère la base de données
   await require('../models/database.js').sync({ force: true })
-  console.log('Base de données créée.')
   // Initialise la base avec quelques données
-  const passhash = await bcrypt.hash('123456', 2)
   await userModel.create({
     username: 'lurivanj',
     password: await bcrypt.hash('test', 10)
@@ -27,14 +25,13 @@ const bcrypt = require('bcrypt');
     username: 'willeml',
     password: await bcrypt.hash('test', 10)
   })
-  await inGamesModel.destroy({where: {}, truncate: true})
-  await gamesModel.destroy({where: {}, truncate: true})
-  await lieuModel.destroy({where: {}, truncate: true})
-  await urneModel.destroy({where: {}, truncate: true})
-  await usersInGameModel.destroy({where: {}, truncate: true})
-  await usersInQModel.destroy({where: {}, truncate: true})
-  await salleEspiritismeModel.destroy({where: {}, truncate: true})
-  await messageModel.destroy({where: {}, truncate: true})
-  await voteModel.destroy({where: {}, truncate: true})
-  
+  await inGamesModel.destroy({ where: {}, truncate: true })
+  await gamesModel.destroy({ where: {}, truncate: true })
+  await lieuModel.destroy({ where: {}, truncate: true })
+  await urneModel.destroy({ where: {}, truncate: true })
+  await usersInGameModel.destroy({ where: {}, truncate: true })
+  await usersInQModel.destroy({ where: {}, truncate: true })
+  await salleEspiritismeModel.destroy({ where: {}, truncate: true })
+  await messageModel.destroy({ where: {}, truncate: true })
+  await voteModel.destroy({ where: {}, truncate: true })
 })()

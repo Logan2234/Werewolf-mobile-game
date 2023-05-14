@@ -28,6 +28,7 @@ export default function InfoView({ idSession }) {
     const [canShow, setCanShow] = useState(false);
     const [currentJSX, setJSX] = useState(null);
     const [timeoutOn, setTimeoutOn] = useState(false);
+    const [usePower, setUsePower] = useState(false);
 
     const currentGameView = useContext(CurrentGameView);
     const token = useContext(TokenContext).token;
@@ -115,17 +116,23 @@ export default function InfoView({ idSession }) {
         switch (userData.pouvoir) {
             case 'V':
                 pouvoir = 'Voyance';
-                onPress = () => { setJSX(<ChoixVoyance idSession={idSession} />); };
+                onPress = () => { 
+                    setUsePower(true);
+                    setJSX(<ChoixVoyance idSession={idSession} />); };
                 break;
             case 'S':
                 pouvoir = 'Spiritisme';
-                onPress = () => { setJSX(<ChoixSpiritisme idSession={idSession} />); };
+                onPress = () => { 
+                    setUsePower(true);
+                    setJSX(<ChoixSpiritisme idSession={idSession} />); };
                 break;
             case 'I':
                 pouvoir = 'Insomnie'; break;
             case 'C':
                 pouvoir = 'Contamination';
-                onPress = () => { setJSX(<ChoixContamination idSession={idSession} />); };
+                onPress = () => { 
+                    setUsePower(true);
+                    setJSX(<ChoixContamination idSession={idSession} />); };
                 break;
             default:
                 pouvoir = 'Aucun'; break;
@@ -135,7 +142,7 @@ export default function InfoView({ idSession }) {
             setJSX(<Title label='Les loups-garous ont gagné !' />);
         else if (aliveWerewolves == 0)
             setJSX(<Title label='Les villageois ont gagné !' />);
-        else
+        else if (usePower === false)
             setJSX(
                 <View style={[commonStyles.container, styles.infoView]}>
                     {
@@ -182,7 +189,7 @@ export default function InfoView({ idSession }) {
                     }
                 </View>
             );
-    }, [currentGameView, alivePlayers, idSession, aliveWerewolves, canShow, deadPlayers, gameData, userData, timeUntilNextStage]);
+    }, [currentGameView, alivePlayers, idSession, aliveWerewolves, canShow, deadPlayers, gameData, userData, timeUntilNextStage, usePower]);
 
     return (
         <View style={styles.container}>{currentJSX}</View>

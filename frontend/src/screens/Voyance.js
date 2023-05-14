@@ -44,15 +44,15 @@ export default function ChoixVoyance({ idSession }) {
          * Pour set utilise
          */
         function fetchUsage() {
-            // fetch(`${BACKEND}/game/${idSession}/actions/check`, {
-            //     method: 'GET',
-            //     headers: {
-            //         'x-access-token': token,
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            //     .then(response => response.json())
-            //     .then(data => setUtilise(data.status));
+            fetch(`${BACKEND}/game/${idSession}/actions/check`, {
+                method: 'GET',
+                headers: {
+                    'x-access-token': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => setUtilise(data.status));
         }
 
         fetchUsage();

@@ -183,29 +183,25 @@ module.exports = {
         // #swagger.tags = ['Messages']
         // #swagger.summary = 'Send a message to the main place'
 
-        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message')) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message'))
             throw new CodeError('You have not specified a message !', status.BAD_REQUEST);
-        }
 
+        const username = req.login;
+        const { idGame } = req.params;
         const data = JSON.parse(req.body.data);
         const message = data.message;
         const session = await inGameModel.findOne({ where: { 'id': idGame } });
+
         if (session.finished) throw new CodeError('The game is finished', status.FORBIDDEN);
+        if (message == '') throw new CodeError('Your message can\'t be empty', status.BAD_REQUEST);
 
-        if (message == '') {
-            throw new CodeError('Your message can\'t be empty', status.BAD_REQUEST);
-        }
-
-        const username = req.login;
-        let { idGame } = req.params;
         const userId = (await userModel.findOne({ where: { username } })).id;
         const userInGame = await usersInGames.findOne({ where: { 'idUser': userId, 'idGame': parseInt(idGame) } });
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN);
         const idLieu = (await lieuModel.findOne({ where: { 'idPartie': idGame, 'typeLieu': 'P' } })).idLieu;
 
-        if (userInGame.vie == 'M') {
-            throw new CodeError(username + ' is dead in game ' + idGame, status.FORBIDDEN);
-        } else {
+        if (userInGame.vie == 'M') throw new CodeError(username + ' is dead in game ' + idGame, status.FORBIDDEN);
+        else {
             if (session.moment != 'J') throw new CodeError('You can\'t send messages to the Central Place during the night', status.FORBIDDEN);
             await messageModel.create({ 'idLieu': idLieu, 'username': username, 'message': message, 'archive': false });
             res.json({ status: true, message: 'Message sent' });
@@ -217,21 +213,18 @@ module.exports = {
         // #swagger.tags = ['Messages']
         // #swagger.summary = 'Send a message to the lair of werewolves'
 
-        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message')) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message'))
             throw new CodeError('You have not specified a message !', status.BAD_REQUEST);
-        }
-
-        const data = JSON.parse(req.body.data);
-        const message = data.message;
-        const session = await inGameModel.findOne({ where: { 'id': idGame } });
-        if (session.finished) throw new CodeError('The game is finished', status.FORBIDDEN);
-
-        if (message == '') {
-            throw new CodeError('Your message can\'t be empty', status.BAD_REQUEST);
-        }
 
         const username = req.login;
         let { idGame } = req.params;
+        const data = JSON.parse(req.body.data);
+        const message = data.message;
+        const session = await inGameModel.findOne({ where: { 'id': idGame } });
+
+        if (session.finished) throw new CodeError('The game is finished', status.FORBIDDEN);
+        if (message == '') throw new CodeError('Your message can\'t be empty', status.BAD_REQUEST);
+
         const userId = (await userModel.findOne({ where: { username } })).id;
         const userInGame = await usersInGames.findOne({ where: { 'idUser': userId, 'idGame': parseInt(idGame) } });
         if (!userInGame) throw new CodeError(username + ' is not in game ' + idGame, status.FORBIDDEN);
@@ -255,9 +248,8 @@ module.exports = {
         // #swagger.tags = ['Messages']
         // #swagger.summary = 'Send a message to the spiritism room'
 
-        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message')) {
+        if (!has(req.body, ['data']) || !has(JSON.parse(req.body.data), 'message'))
             throw new CodeError('You have not specified a message !', status.BAD_REQUEST);
-        }
 
         const data = JSON.parse(req.body.data);
         const message = data.message;

@@ -13,7 +13,6 @@ lintjs: # Vérification de la qualité du code JS
     script:
         - cd backend
         - npm i
-        - npm install eslint
         - npx eslint --config .eslintrc `find . -name "*.js" -not -path "./node_modules/*"` > ../eslint_backend_report.txt
         - cd ../frontend
         - npm i

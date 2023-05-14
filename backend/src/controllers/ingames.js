@@ -862,6 +862,18 @@ module.exports = {
             }
         }
         res.json({status: true, message: 'Users not victims yet', usersNotVictims})
+    },
+
+    async isGameFinished(req, res) {
+        // #swagger.tags = ['Game Info']
+        // #swagger.summary = 'Return true if the game has finished, false otherwise'
+
+        let {idGame} = req.params
+        if ((await inGameModel.findOne({where: {"id": idGame}})).finished) {
+            res.json({status: true, message: 'Game has finished', finished: true})
+        } else {
+            res.json({status: false, message: 'Game has not finished', finished: false})
+        }
     }
 
 }
@@ -958,8 +970,8 @@ let getLG = async (idGame) => {
 
 let checkIfEndGame = async (idGame) => {
     let nbWerewolves = getLG(idGame)
-    let aliveUsers = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "vie": "V"}})
-    if (aliveUsers == null || nbWerewolves == 0 || nbWerewolves >= aliveUsers.length) {
+    let aliveUsers = await usersInGames.findAll({where: {"idGame": parseInt(idGame), "role": "V", "vie": "V"}})
+    if (!aliveUsers || nbWerewolves == 0) {
         await finGame(idGame)
     }
 }

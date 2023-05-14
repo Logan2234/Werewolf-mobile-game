@@ -664,6 +664,28 @@
         }
       }
     },
+    "/game/{idGame}/finished": {
+      "get": {
+        "tags": [
+          "Game Info"
+        ],
+        "summary": "Return true if the game has finished, false otherwise",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/game/{idGame}/actions/spiritism": {
       "post": {
         "tags": [

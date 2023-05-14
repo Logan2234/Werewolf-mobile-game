@@ -11,6 +11,7 @@ lintjs: # Vérification de la qualité du code JS
     stage: lint
     image: node
     script:
+        - npm install react
         - npm install eslint
         - npm install eslint-config-standard
         - npm install eslint-plugin-cypress

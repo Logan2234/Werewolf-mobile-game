@@ -17,11 +17,6 @@ const vote = db.define('votes', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    decision: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-    },
     idGame: {
         type: Sequelize.INTEGER,
         allowNull: false

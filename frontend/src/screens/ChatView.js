@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, BackHandler, FlatList, StyleSheet, Vibration, View } from 'react-native';
 import Bouton from '../components/Bouton';
 import Title from '../components/Title';
 import { BACKEND } from '../constants/backend';
@@ -12,9 +12,9 @@ import DiscussionVillage from './DiscussionVillage';
 
 /**
  * Vue qui gère l'accès aux différentes discussions.
- * 
- * @param {int} idSession 
- * @returns 
+ *
+ * @param {int} idSession
+ * @returns
  */
 export default function ChatView({ idSession }) {
     // ------------------------ Constantes -------------------------
@@ -61,10 +61,24 @@ export default function ChatView({ idSession }) {
 
         if (currentGameView == gameViews.CHAT) {
             setCanShow(false);
+            selectChat(0);
             fetchUserData();
             fetchMomentData();
         }
     }, [currentGameView, token, idSession]);
+
+    useEffect(() => {
+        const backActionHandler = () => {
+            if (selectedChat != 0) {
+                selectChat(0);
+                Vibration.vibrate(10);
+                return true;
+            }
+        };
+
+        BackHandler.addEventListener('hardwareBackPress', backActionHandler);
+        return () => BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
+    });
 
     useEffect(() => {
         switch (selectedChat) {
@@ -83,7 +97,7 @@ export default function ChatView({ idSession }) {
 
     useEffect(() => {
         /**
-         * Ajoute le fil à listeChats sans écraser ce qui a été précédemment demander
+         * Ajoute le fil à listeChats sans écraser ce qui a été précédemment demandé
          */
         function addChat(nom, id, onPress) {
             const elementToAdd = { id: id, nom: nom, affichage: onPress };
@@ -116,7 +130,7 @@ export default function ChatView({ idSession }) {
     return (
         (canShow)
             ? (listeChats.length === 0)
-                ? <Title label='AUCUNE DISCUSSION DISPONIBLE POUR L&apos;INSTANT' />
+                ? <Title label='Aucune discussion disponible pour le moment' />
                 : <View style={styles.container}>{currentChatJSX}</View>
             : <ActivityIndicator style={{ height: '100%' }} size={100} color={primaryColor} />
     );

@@ -25,11 +25,6 @@ const urne = db.define('urnes', {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 1
-    },
-    votesContre: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0
     }
 }, { timestamps: false })
 

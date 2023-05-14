@@ -7,9 +7,9 @@ import { TokenContext } from '../constants/hooks';
 
 /**
  * Affichage de l'urne de vote statique avec uniquement les personnes proposées et le nombre de voies contre elles
- * 
- * @param {int} idSession 
- * @returns 
+ *
+ * @param {int} idSession
+ * @returns
  */
 export default function StaticUrne({ idSession }) {
     const token = useContext(TokenContext).token;
@@ -30,23 +30,22 @@ export default function StaticUrne({ idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then((data) => {
-                    setProposes([]);
+                .then(data => {
                     for (const i in data.victimes) {
                         const newVictim = {
                             username: data.victimes[i],
-                            votes: data.votesPour[i] - data.votesContre[i]
+                            votes: data.votesPour[i]
                         };
                         setProposes(proposes => [...proposes, newVictim]);
                     }
                 });
         }
 
+        setProposes([]);
         fetchPropose();
     }, [idSession, token]);
 
     useEffect(() => {
-        console.log(proposes);
         if (proposes.length > 0) {
             const renderItem = ({ item }) => {
                 return (

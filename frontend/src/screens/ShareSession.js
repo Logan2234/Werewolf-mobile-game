@@ -12,9 +12,9 @@ import { commonStyles } from '../constants/style';
 
 /**
  * Vues qui va gérer la salle d'attente d'une partie
- * 
- * @param {int} idSession 
- * @returns 
+ *
+ * @param {int} idSession
+ * @returns
  */
 export default function ShareSession({ idSession }) {
     const [donnees, setDonnees] = useState({});
@@ -87,7 +87,7 @@ export default function ShareSession({ idSession }) {
                 },
             })
                 .then((response) => response.json())
-                .then((data) => (data.message === 'Session joined and game started') ? changeView(views.IN_GAME) : null) // In case it's the last player
+                // .then((data) => (data.message === 'Session joined and game started') ? changeView(views.IN_GAME) : null) // In case it's the last player
                 .catch(error => alert('Server error: ' + error));
         }
 
@@ -109,7 +109,7 @@ export default function ShareSession({ idSession }) {
 
     useEffect(() => {
         if (users.length == donnees.nbMaxJoueurs)
-            changeView(views.IN_GAME);
+            setTimeout(() => changeView(views.IN_GAME), 2000);
     }, [users, donnees, changeView]);
 
     useEffect(() => {
@@ -154,11 +154,11 @@ export default function ShareSession({ idSession }) {
                         </View>
                         <View style={styles.res}>
                             <SizedText label={'Durée d\'une journée:'} />
-                            <SizedText label={((parseInt(donnees.dureeJour / 60) != '0') ? `${parseInt(donnees.dureeJour / 60)}h` : '') + ((donnees.dureeJour % 60 != '0') ? `${donnees.dureeJour % 60}min` : '')} />
+                            <SizedText label={((parseInt(donnees.dureeJour / 60 / 60 / 1000) != '0') ? `${parseInt(donnees.dureeJour / 60 / 60 / 1000)}h` : '') + ((donnees.dureeJour / 60 / 1000 % 60 != '0') ? `${donnees.dureeJour / 60 / 1000 % 60}min` : '')} />
                         </View>
                         <View style={styles.res}>
                             <SizedText label={'Durée d\'une nuit:'} />
-                            <SizedText label={((parseInt(donnees.dureeNuit / 60) != '0') ? `${parseInt(donnees.dureeNuit / 60)}h` : '') + ((donnees.dureeNuit % 60 != '0') ? `${donnees.dureeNuit % 60}min` : '')} />
+                            <SizedText label={((parseInt(donnees.dureeNuit / 60 / 60 / 1000) != '0') ? `${parseInt(donnees.dureeNuit / 60 / 60 / 1000)}h` : '') + ((donnees.dureeNuit / 60 / 1000 % 60 != '0') ? `${donnees.dureeNuit / 60 / 1000 % 60}min` : '')} />
                         </View>
                         <View style={styles.res}>
                             <SizedText label={'Probabilité de contamination:'} />

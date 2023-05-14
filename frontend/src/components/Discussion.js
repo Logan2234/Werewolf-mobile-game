@@ -11,7 +11,7 @@ import Title from './Title';
 /**
  * Element JSX qui va afficher une discussion pour une salle donnée.
  * On affichera un titre, les messages et éventuellement la barre d'entrée de texte pour envoyer des messages.
- * 
+ *
  * @param {title} title titre de la discussion
  * @param {string} idDiscussion correspond au salon souhaité, peut être 'place', 'repere' ou 'spiritisme'
  * @param {string} idSession correspond à l'id de la session pour laquelle on souhaite accéder aux discssion (code à 6 chiffre attendu)
@@ -33,11 +33,8 @@ export default function Discussion({ title, idDiscussion, idSession }) {
         };
         ws.onmessage = (e) => {
             let data = JSON.parse(e.data);
-            console.log(data);
             if (parseInt(data.idSession) == idSession && data.idDiscussion == idDiscussion)
                 setMessages(messages => [...messages, { username: data.username, message: data.message, timePosted: new Date() }]);
-            // let newUser = (JSON.parse(e.data).idSession == idSession.toString()) ? JSON.parse(e.data).player : null;
-            // if (newUser != null && !users.includes(newUser))
         };
     }, []);
 
@@ -55,11 +52,8 @@ export default function Discussion({ title, idDiscussion, idSession }) {
             })
                 .then(response => response.json())
                 .then(data => setWriting(data.status))
-                .catch(error => {
-                    setWriting(false);
-                    console.log(error);
-                });
-            setWriting(true);
+                .catch(error => alert(error.message));
+            // setWriting(true);
         }
 
         /**
@@ -78,15 +72,8 @@ export default function Discussion({ title, idDiscussion, idSession }) {
                 .catch(error => alert(error.message));
         }
 
-        // TODO : backhandler
-        // const backActionHandler = () => {
-        //     setJSX(<VoteView idSession={idSession} />);
-        //     return true;
-        // };
-        // BackHandler.addEventListener('hardwareBackPress', backActionHandler);
         canIWriteHere();
         getMessages();
-        // return () => BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
     }, [token, idSession, idDiscussion]);
 
     /**
@@ -106,7 +93,7 @@ export default function Discussion({ title, idDiscussion, idSession }) {
     };
 
     useEffect(() => {
-        if (reference != null && messages.length != 0)
+        if (reference && messages && messages.length != 0)
             reference.scrollToEnd({ animated: false });
     }, [reference, messages]);
 

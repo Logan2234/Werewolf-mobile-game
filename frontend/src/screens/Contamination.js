@@ -36,10 +36,7 @@ export default function Contamination({ idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then((data) => {
-                    console.log(data);
-                    setProposes(data.aliveUsers);
-                });
+                .then(data => setProposes(data.aliveUsers));
         }
 
         /**

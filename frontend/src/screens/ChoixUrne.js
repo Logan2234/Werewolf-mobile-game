@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { FlatList, Pressable, SafeAreaView, StyleSheet } from 'react-native';
+import { BackHandler, FlatList, Pressable, SafeAreaView, StyleSheet, Vibration } from 'react-native';
 import Bouton from '../components/Bouton';
 import Propose from '../components/Propose';
 import Title from '../components/Title';
@@ -42,34 +42,35 @@ export default function ChoixUrne({ idSession }) {
                     for (const i in data.victimes) {
                         const newVictim = {
                             username: data.victimes[i],
-                            votes: data.votesPour[i] - data.votesContre[i]
+                            votes: data.votesPour[i]
                         };
                         setProposes(proposes => [...proposes, newVictim]);
                     }
-                });
+                })
+                .catch(error => alert(error.message));
         }
         fetchPropose();
     }, [idSession, token]);
 
     useEffect(() => {
         /**
-         * Requête qui permet de voter pour le joueur sélectionné
-         */
+     * Requête qui permet de voter pour le joueur sélectionné
+        */
         function vote() {
             setAction(false);
-            if (selectedUser !== null) {
+            if (selectedUser != null) {
                 fetch(`${BACKEND}/game/${idSession}/vote/`, {
                     method: 'POST',
                     headers: {
                         'x-access-token': token,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ data: '{"victime": "' + selectedUser + '", "decision":"true"}' })
+                    body: JSON.stringify({ data: '{"victime": "' + selectedUser + '"}' })
                 })
                     .then(response => response.json())
-                    .then(() => setJSX(<StaticUrne idSession={idSession} />));
+                    .then(() => setJSX(<StaticUrne idSession={idSession} />))
+                    .catch(error => alert(error.message));
             }
-
         }
 
         /**
@@ -83,9 +84,7 @@ export default function ChoixUrne({ idSession }) {
         const renderItem = ({ item }) => {
             return (
                 <Pressable onPress={() => setSelectedUser(item.username)} >
-                    <Propose name={item.username}
-                        votes={item.votes}
-                        selected={item.username === selectedUser} />
+                    <Propose name={item.username} votes={item.votes} selected={item.username === selectedUser} />
                 </Pressable>
             );
         };
@@ -105,7 +104,20 @@ export default function ChoixUrne({ idSession }) {
 
     }, [idSession, token, action, selectedUser, proposes]);
 
-    return (currentJSX);
+    useEffect(() => {
+        const backActionHandler = () => {
+            if (!action) {
+                setAction(true);
+                Vibration.vibrate(10);
+                return true;
+            }
+        };
+
+        BackHandler.addEventListener('hardwareBackPress', backActionHandler);
+        return () => BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
+    });
+
+    return currentJSX;
 }
 
 const styles = StyleSheet.create({

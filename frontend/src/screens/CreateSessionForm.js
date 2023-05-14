@@ -12,10 +12,10 @@ import subDates, { tomorrowDate } from '../utils/dates';
 import { verifyProba } from '../utils/verifyData';
 
 /**
- * Vue pour créer une partie 
- * 
+ * Vue pour créer une partie
+ *
  * @param {function} setIdSession
- * @returns 
+ * @returns
  */
 export default function CreateSessionForm({ setIdSession }) {
     // ------------------------ Constantes --------------------------------------
@@ -40,8 +40,8 @@ export default function CreateSessionForm({ setIdSession }) {
 
     // ------------------------ Création de la session --------------------------------------
     function verifyData() {
-        const lengthDay = lengthDayHours * 60 + parseInt(lengthDayMin);
-        const lengthNight = lengthNightHours * 60 + parseInt(lengthNightMin);
+        const lengthDay = (lengthDayHours * 60 + parseInt(lengthDayMin)) * 60 * 1000; // en ms
+        const lengthNight = (lengthNightHours * 60 + parseInt(lengthNightMin)) * 60 * 1000; // en ms
         const probaC = verifyProba(contamination);
         const probaIn = verifyProba(insomnie);
         const probaVo = verifyProba(voyance);

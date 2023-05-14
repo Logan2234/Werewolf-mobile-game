@@ -10,9 +10,9 @@ import StaticUrne from './StaticUrne';
 
 /**
  * Affichage pour proposer un joueur au vote
- * 
- * @param {int} idSession 
- * @returns 
+ *
+ * @param {int} idSession
+ * @returns
  */
 export default function Proposition({ idSession }) {
     const [proposes, setProposes] = useState([]);
@@ -20,7 +20,6 @@ export default function Proposition({ idSession }) {
     const [currentJSX, setJSX] = useState(null);
 
     const token = useContext(TokenContext).token;
-    // TODO : Rajouter un backhandler pour retourner à la ratification
 
     useEffect(() => {
         /**
@@ -35,9 +34,8 @@ export default function Proposition({ idSession }) {
                 }
             })
                 .then(response => response.json())
-                .then((data) => {
-                    setProposes(data.usersNotVictims);
-                });
+                .then(data => setProposes(data.usersNotVictims))
+                .catch(error => alert(error.message));
         }
 
         fetchEligible();
@@ -54,7 +52,7 @@ export default function Proposition({ idSession }) {
 
         /**
          * Fonction qui envoie sur la page des votes
-         */
+        */
         function choisir() {
             if (selectedUser !== null) {
                 fetch(`${BACKEND}/game/${idSession}/vote/start`, {
@@ -66,7 +64,8 @@ export default function Proposition({ idSession }) {
                     body: JSON.stringify({ data: '{"victime": "' + selectedUser + '"}' })
                 })
                     .then(response => response.json())
-                    .then(() => setJSX(<StaticUrne idSession={idSession}/>));
+                    .then(() => setJSX(<StaticUrne idSession={idSession} />))
+                    .catch(error => alert(error.message));
             }
         }
 

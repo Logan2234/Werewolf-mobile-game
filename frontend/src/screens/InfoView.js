@@ -24,9 +24,10 @@ export default function InfoView({ idSession }) {
     const [userData, setUserData] = useState({});
     const [gameData, setGameData] = useState({});
     const [aliveWerewolves, setAliveWerewolves] = useState(0);
+    const [timeUntilNextStage, setTimeUntilNextStage] = useState(0);
     const [canShow, setCanShow] = useState(false);
     const [currentJSX, setJSX] = useState(null);
-
+    const [timeoutOn, setTimeoutOn] = useState(false);
 
     const currentGameView = useContext(CurrentGameView);
     const token = useContext(TokenContext).token;
@@ -72,6 +73,15 @@ export default function InfoView({ idSession }) {
                 .catch(error => alert(error.message));
         }
 
+        function fetchTimeUntilNextStage() {
+            fetch(`${BACKEND}/game/${idSession}/time`, {
+                method: 'GET',
+            })
+                .then(response => response.json())
+                .then(data => setTimeUntilNextStage(data.timeLeft))
+                .catch(error => alert(error.message));
+        }
+
         function fetchAliveWerewolves() {
             fetch(`${BACKEND}/game/${idSession}/werewolves`, {
                 method: 'GET',
@@ -79,18 +89,25 @@ export default function InfoView({ idSession }) {
                 .then(response => response.json())
                 .then(data => setAliveWerewolves(data.nbWerewolves))
                 .then(() => setCanShow(true))
+                .then(() => { if (!timeoutOn) { setTimeout(fetchEverything, 1000); setTimeoutOn(true); } }) // To limitate the number of timeouts
                 .catch(error => alert(error.message));
         }
 
-        if (currentGameView == gameViews.INFO) {
-            setCanShow(false);
+        function fetchEverything() {
             fetchAliveData();
             fetchDeadData();
             fetchUserData();
             fetchGameData();
+            fetchTimeUntilNextStage();
             fetchAliveWerewolves();
         }
-    }, [currentGameView, idSession, token]);
+
+        if (currentGameView == gameViews.INFO) {
+            setCanShow(false);
+            fetchEverything();
+        }
+
+    }, [currentGameView, idSession, token, timeoutOn]);
 
     useEffect(() => {
         let pouvoir;
@@ -114,41 +131,58 @@ export default function InfoView({ idSession }) {
                 pouvoir = 'Aucun'; break;
         }
 
-        setJSX(
-            <View style={[commonStyles.container, styles.infoView]}>
-                {
-                    (canShow)
-                        ? <>
-                            <Title label={(gameData.moment === 'N') ? 'Nuit' : 'Jour'} />
-                            <View style={styles.status}>
-                                <SizedText label={`Rôle: ${(userData.role === 'V') ? 'Villageois' : 'Loup-garou'}`} />
-                                <SizedText label={`Pouvoir: ${pouvoir}`} />
-                                <SizedText label={`Vie: ${(userData.vie === 'V') ? 'Vivant' : 'Mort'}`} />
-                            </View>
+        if (alivePlayers.length == aliveWerewolves)
+            setJSX(<Title label='Les loups-garous ont gagné !' />);
+        else if (aliveWerewolves == 0)
+            setJSX(<Title label='Les villageois ont gagné !' />);
+        else
+            setJSX(
+                <View style={[commonStyles.container, styles.infoView]}>
+                    {
+                        (canShow)
+                            ? <>
+                                <Title label={(gameData.moment == 'N') ? 'Nuit' : 'Jour'} />
+                                <View style={styles.status}>
+                                    <SizedText label={`Rôle: ${(userData.role == 'V') ? 'Villageois' : 'Loup-garou'}`} />
+                                    <SizedText label={`Pouvoir: ${pouvoir}`} />
+                                    <SizedText label={`Vie: ${(userData.vie == 'V') ? 'Vivant' : 'Mort'}`} />
+                                </View>
 
-                            <View style={styles.time}>
-                                <SizedText label={`Durée jour: ${gameData.dureeJour / 60}h` + ((gameData.dureeJour % 60 != 0) ? `${gameData.dureeJour % 60}mins` : '')} />
-                                <SizedText label={`Durée nuit: ${gameData.dureeNuit / 60}h` + ((gameData.dureeNuit % 60 != 0) ? `${gameData.dureeNuit % 60}mins` : '')} />
-                                <SizedText label='Prochain jour: ' />
-                                <SizedText label='Prochaine nuit: ' />
-                                <SizedText label='Temps actuel: ' />
-                                <SizedText label='Temps de jeu: ' />
-                            </View>
+                                <View style={styles.time}>
+                                    <SizedText label={'Durée jour: ' + ((Math.floor(gameData.dureeJour / 60000 / 60) != 0) ? `${Math.floor(gameData.dureeJour / 60000 / 60)}h` : '') + ((gameData.dureeJour / 60000 % 60 != 0) ? `${gameData.dureeJour / 60000 % 60}min` : '')} />
+                                    <SizedText label={'Durée nuit: ' + ((Math.floor(gameData.dureeNuit / 60000 / 60) != 0) ? `${Math.floor(gameData.dureeNuit / 60000 / 60)}h` : '') + ((gameData.dureeNuit / 60000 % 60 != 0) ? `${gameData.dureeNuit / 60000 % 60}min` : '')} />
+                                    <SizedText label={'Prochain jour: ' + ((gameData.moment == 'J')
+                                        ? `${Math.floor((timeUntilNextStage + gameData.dureeNuit) / 1000 / 60 / 60)}:`
+                                        + `${Math.floor((timeUntilNextStage + gameData.dureeNuit) / 1000 / 60 % 60)}:`
+                                        + `${Math.ceil((timeUntilNextStage + gameData.dureeNuit) / 1000 % 60)}`
+                                        : `${Math.floor(timeUntilNextStage / 1000 / 60 / 60)}:`
+                                        + `${Math.floor(timeUntilNextStage / 1000 / 60 % 60)}:`
+                                        + `${Math.ceil(timeUntilNextStage / 1000 % 60)}`)} />
+                                    <SizedText label={'Prochaine nuit: ' + ((gameData.moment == 'N')
+                                        ? `${Math.floor((timeUntilNextStage + gameData.dureeJour) / 1000 / 60 / 60)}:`
+                                        + `${Math.floor((timeUntilNextStage + gameData.dureeJour) / 1000 / 60 % 60)}:`
+                                        + `${Math.ceil((timeUntilNextStage + gameData.dureeJour) / 1000 % 60)}`
+                                        : `${Math.floor(timeUntilNextStage / 1000 / 60 / 60)}:`
+                                        + `${Math.floor(timeUntilNextStage / 1000 / 60 % 60)}:`
+                                        + `${Math.ceil(timeUntilNextStage / 1000 % 60)}`)} />
+                                    <SizedText label={'Temps actuel: ' + new Date().toLocaleString('fr-FR')} />
+                                </View>
 
-                            <View style={styles.gameStatus}>
-                                <SizedText label={`Nombre de joueurs vivants: ${alivePlayers.length} / ${alivePlayers.length + deadPlayers.length}`} />
-                                <SizedText label={`Nombre de loups-garous: ${aliveWerewolves} / ${gameData.nbLG}`} />
-                            </View>
-                            {
-                                ((userData.pouvoir === 'V' || userData.pouvoir === 'C' || userData.pouvoir === 'S') && userData.vie === 'V')
-                                    ? <Bouton style={styles.bouton} label='Utiliser pouvoir' onPress={onPress} />
-                                    : null
-                            }
-                        </>
-                        : <ActivityIndicator style={{ height: '100%' }} size={100} color={primaryColor} />
-                }
-            </View>);
-    }, [currentGameView, alivePlayers]);
+                                <View style={styles.gameStatus}>
+                                    <SizedText label={`Nombre de joueurs vivants: ${alivePlayers.length} / ${alivePlayers.length + deadPlayers.length}`} />
+                                    <SizedText label={`Nombre de loups-garous: ${aliveWerewolves} / ${gameData.nbLG}`} />
+                                </View>
+                                {
+                                    ((userData.pouvoir === 'V' || userData.pouvoir === 'C' || userData.pouvoir === 'S') && userData.vie === 'V')
+                                        ? <Bouton style={styles.bouton} label='Utiliser pouvoir' onPress={onPress} />
+                                        : null
+                                }
+                            </>
+                            : <ActivityIndicator style={{ height: '100%' }} size={100} color={primaryColor} />
+                    }
+                </View>
+            );
+    }, [currentGameView, alivePlayers, idSession, aliveWerewolves, canShow, deadPlayers, gameData, userData, timeUntilNextStage]);
 
     return (
         <View style={styles.container}>{currentJSX}</View>

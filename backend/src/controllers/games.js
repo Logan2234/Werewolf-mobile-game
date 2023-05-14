@@ -51,7 +51,7 @@ module.exports = {
 
         if (nbMinJoueurs > nbMaxJoueurs)
             throw new CodeError('The minimum number of players must be less than the maximum number of players', status.BAD_REQUEST)
-        
+
         if (probaLG < 0 || probaLG > 100)
             throw new CodeError('The probability of a werewolf must be between 0 and 100', status.BAD_REQUEST)
 
@@ -63,10 +63,10 @@ module.exports = {
 
         if (probaI < 0 || probaI > 100)
             throw new CodeError('The probability of an insomniac must be between 0 and 100', status.BAD_REQUEST)
-        
+
         if (probaC < 0 || probaC > 100)
             throw new CodeError('The probability of a contaminator must be between 0 and 100', status.BAD_REQUEST)
-        
+
         if (debutPartie < 0)
             throw new CodeError('The time of the beginning of the game must be higher than 0 minutes', status.BAD_REQUEST)
 
@@ -81,7 +81,7 @@ module.exports = {
         }
 
         const gameData = await gameModel.create({"id": idGame, "nbMinJoueurs": nbMinJoueurs, "nbMaxJoueurs": nbMaxJoueurs, "dureeJour": dureeJour, "dureeNuit": dureeNuit, "probaLG": probaLG, "probaV": probaV, "probaS": probaS, "probaI": probaI, "probaC": probaC, "dateDebut": debutPartie + new Date().getTime()});
-        
+
         timers[idGame] = setTimeout(() => {createGame(idGame)}, debutPartie)
 
         idGame = "0".repeat(6 - idGame.toString().length) + idGame.toString()  // On renvoit l'id sous forme de string de 6 caractères
@@ -111,7 +111,7 @@ module.exports = {
         }
         res.json({status: true, message: 'Session joined' })
     },
-    
+
     async getSessionParam (req, res){
         // #swagger.tags = ['Session']
         // #swagger.summary = 'Return the parameters of a session, including the number of players in the session and the roles percentages'
@@ -140,7 +140,7 @@ module.exports = {
         }
         res.json({status: true, message: 'Users of session ' + idSession.toString(), usersList})
     },
-    
+
     async returnTimeLeft(req, res) {
         // #swagger.tags = ['Session']
         // #swagger.summary = 'Return the time left before the game starts'
@@ -152,12 +152,12 @@ module.exports = {
             res.json({status: true, message: 'Time left in ms' + idSession.toString(), timeLeft})
             return
         }
-        
+
         if (await inGameModel.findOne({where: {"id": idSession}}))
             throw new CodeError('Game has started already !', status.BAD_REQUEST)
         throw new CodeError("Game doesn't exist", status.BAD_REQUEST)
     }
-    
+
 }
 
 let createGame = async (idSession) => {
@@ -187,7 +187,7 @@ let createGame = async (idSession) => {
 
         // On détermine si il y a un voyant, un spiritiste, un insomniac et un contaminator
         let random = Math.trunc(Math.random() * 100)
-        if (random < probaV) {isThereAV = true} 
+        if (random < probaV) { isThereAV = true }
         random = Math.trunc(Math.random() * 100)
         if (random < probaS) {isThereAS = true}
         random = Math.trunc(Math.random() * 100)
@@ -197,17 +197,19 @@ let createGame = async (idSession) => {
         if (Math.random() < 0.5) {VisLG = true} // On détermine si le voyant est un loup garou
         if (Math.random() < 0.5) {SisLG = true} // On détermine si le spiritiste est un loup garou
         users.sort(() => Math.random() - 0.5); // On mélange les joueurs pour attribuer les rôles aléatoirement
-        
+
         let indicateur = 0
         if (isThereAC && indicateur < nbUsers) {
             await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "C", "vie": "V"})
             indicateur++
         }
-        if (isThereAV && VisLG && indicateur < nbUsers) {
+        if (isThereAV && VisLG && indicateur < nbUsers && indicateur < nbLG) {
+            isThereAV = false
             await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "V", "vie": "V"})
             indicateur++
         }
-        if (isThereAS && SisLG && indicateur < nbUsers) {
+        if (isThereAS && SisLG && indicateur < nbUsers && indicateur < nbLG) {
+            isThereAS = false
             await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "LG", "pouvoir": "S", "vie": "V"})
             indicateur++
         }
@@ -215,11 +217,11 @@ let createGame = async (idSession) => {
             await usersInGames.create({"idUser": users[i].idUser, "idGame": idSession, "role": "LG", "pouvoir": "R", "vie": "V"})
         }
         indicateur = nbLG
-        if (isThereAV && !VisLG && indicateur < nbUsers) {
+        if (isThereAV && indicateur < nbUsers) {
             await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "V", "vie": "V"})
             indicateur++
         }
-        if (isThereAS && !SisLG && indicateur < nbUsers) {
+        if (isThereAS && indicateur < nbUsers) {
             await usersInGames.create({"idUser": users[indicateur].idUser, "idGame": idSession, "role": "V", "pouvoir": "S", "vie": "V"})
             indicateur++
         }

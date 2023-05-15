@@ -68,7 +68,7 @@ export default function CreateSessionForm({ setIdSession }) {
         } if (lengthDayMin < 0 || lengthNightMin < 0 || lengthDayMin > 59 || lengthNightMin > 59) {
             Alert.alert('Erreur des données rentrées', 'Les durées demandées en minutes doivent être comprises entre 0 et 59 minutes.');
             return;
-        } if (parseInt(minPlayer) > maxPlayer) {
+        } if (parseInt(minPlayer) > parseInt(maxPlayer)) {
             Alert.alert('Erreur des données rentrées', 'Le nombre minimum de joueurs ne peut être supérieur au nombre maximal.');
             return;
         }
